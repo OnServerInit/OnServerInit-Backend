@@ -29,6 +29,7 @@ public class PluginSiteApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws IOException {
 
+        // Load the config
         if(!FileUtil.doesFileExist("config.json")) {
             InputStream stream = PluginSiteApplication.class.getResourceAsStream("/" + "config.json");
             assert stream != null;

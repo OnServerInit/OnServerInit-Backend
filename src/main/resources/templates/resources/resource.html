@@ -11,6 +11,7 @@
 <p th:text="'Donation Link: ' + ${resource.getDonation()}"></p>
 <p th:text="'Source Code: ' + ${resource.getSource()}"></p>
 <div th:utext="${resource.getDescription()}"></div>
+<a th:href="${url}">Edit Plugin</a>
 <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>

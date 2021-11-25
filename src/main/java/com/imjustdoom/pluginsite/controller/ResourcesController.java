@@ -3,7 +3,6 @@ package com.imjustdoom.pluginsite.controller;
 import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +61,38 @@ public class ResourcesController {
         resource.setDonation(rs.getString("donation"));
         resource.setSource(rs.getString("source"));
         model.addAttribute("resource", resource);
+        model.addAttribute("url", "/resources/edit/" + id);
         return "/resources/resource";
+    }
+
+    @GetMapping("/resources/edit/{id}")
+    public String editResource(@PathVariable("id") int id, Model model) throws SQLException {
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
+        if(!rs.next()) return "resources/404";
+
+        Resource resource = new Resource();
+        resource.setId(id);
+        resource.setName(rs.getString("name"));
+        resource.setDescription(rs.getString("description"));
+        resource.setBlurb(rs.getString("blurb"));
+        resource.setDonation(rs.getString("donation"));
+        resource.setSource(rs.getString("source"));
+        model.addAttribute("resource", resource);
+        model.addAttribute("url", "/resources/edit/" + id);
+        return "/resources/edit";
+    }
+
+    @PostMapping("/resources/edit/{id}")
+    public RedirectView editSubmit(@ModelAttribute Resource resource, @PathVariable("id") int id) throws SQLException {
+
+        if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
+            // TODO: return an error message
+            //return "";
+        }
+
+        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='" + resource.getName() + "', blurb='" + resource.getBlurb() + "', description='" + resource.getDescription() + "', donation='" + resource.getDonation() + "', source='" + resource.getSource() + "'" +
+                "WHERE id=" + id + ";");
+        return new RedirectView("/resources/" + resource.getId());
     }
 
     @PostMapping("/resources/create")
