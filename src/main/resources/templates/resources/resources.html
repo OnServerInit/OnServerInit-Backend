@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Resources</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+</head>
+<body>
+<div lang="en" th:include="header :: header"></div>
+<div>
+    <ul class="plugin-list">
+        <li th:each="file : ${files}">
+            <div class="plugin-box">
+                <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}"></a>
+                <p th:text="${file.getBlurb()}" class="blurb"></p>
+                <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
+                <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
+                <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
+            </div>
+        </li>
+    </ul>
+</div>
+<div lang="en" th:include="footer :: footer"></div>
+</body>
+</html>

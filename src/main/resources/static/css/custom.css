@@ -1,0 +1,49 @@
+/* Affect elements */
+
+* {
+    margin: 0;
+    padding: 0;
+    /*border: 0;*/
+    /*outline: 0;*/
+    /*font-size: 100%;*/
+    /*vertical-align: baseline;*/
+    background: transparent;
+}
+
+/* custom classes */
+
+/* header */
+.header {
+    width: 100%;
+    background-color: rgb(226, 226, 226);
+}
+
+.align-right {
+    position: relative;
+    float: right;
+    padding-right: 10px;
+}
+
+.align-left {
+    padding-left: 10px;
+}
+
+/* plugins list */
+
+.plugin-box {
+    margin-right: 10%;
+    margin-left: 10%;
+    border-color: black;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.plugin-list {
+    list-style-type: none;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.blurb {
+    font-size: 12px;
+}

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Resource (Name)</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+<body>
+<div lang="en" th:include="header :: header"></div>
+<p th:text="'Name: ' + ${resource.getName()}"></p>
+<p th:text="'Blurb: ' + ${resource.getBlurb()}"></p>
+<p th:text="'Donation Link: ' + ${resource.getDonation()}"></p>
+<p th:text="'Source Code: ' + ${resource.getSource()}"></p>
+<div th:utext="${resource.getDescription()}"></div>
+<div lang="en" th:include="footer :: footer"></div>
+</body>
+</html>
