@@ -11,6 +11,7 @@ import java.sql.Statement;
 public class PluginDatabase {
 
     private Statement stmt;
+    private Connection conn;
 
     public void init() {
 
@@ -23,9 +24,9 @@ public class PluginDatabase {
         //Connect and setup database
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection(
+            conn = DriverManager.getConnection(
                     "jdbc:mysql://" + server + ":" + port + "/" + database, user, pass);
-            stmt = con.createStatement();
+            stmt = conn.createStatement();
 
             String sql = "CREATE TABLE IF NOT EXISTS resources (" +
                     "id INT NOT NULL, " +
@@ -44,11 +45,19 @@ public class PluginDatabase {
 
             sql = "CREATE TABLE IF NOT EXISTS accounts (" +
                     "id INT NOT NULL, " +
-                    "name VARCHAR(16) NOT NULL," +
+                    "username VARCHAR(16) NOT NULL," +
                     "email VARCHAR(320) NOT NULL," +
                     "password VARCHAR(64) NOT NULL," +
                     "provider VARCHAR(16) NOT NULL," +
                     "CONSTRAINT id PRIMARY KEY (id));";
+
+            stmt.executeUpdate(sql);
+
+            sql = "CREATE TABLE IF NOT EXISTS files (" +
+                    "id INT NOT NULL, " +
+                    "fileId INT NOT NULL, " +
+                    "filename VARCHAR(1024) NOT NULL," +
+                    "CONSTRAINT fileId PRIMARY KEY (fileId));";
 
             stmt.executeUpdate(sql);
         } catch (Exception e) {

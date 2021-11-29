@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title th:text="${resource.getName()}"></title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+<body>
+<div lang="en" th:include="header :: header"></div>
+<p th:text="'Name: ' + ${resource.getName()}"></p>
+<p th:text="'Blurb: ' + ${resource.getBlurb()}"></p>
+<p th:text="'Donation Link: '"></p><a th:href="${resource.getDonation()}" th:text="${resource.getDonation()}"></a>
+<p th:text="'Source Code: '"></p><a th:href="${resource.getSource()}" th:text="${resource.getSource()}"></a>
+<div th:utext="${resource.getDescription()}"></div>
+<a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${editUrl}">Edit Plugin</a>
+<a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${uploadUrl}">Upload</a>
+<div lang="en" th:include="footer :: footer"></div>
+</body>
+</html>

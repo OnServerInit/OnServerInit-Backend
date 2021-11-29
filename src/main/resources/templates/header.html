@@ -1,11 +1,15 @@
-<link th:href="@{/css/custom.css}" rel="stylesheet" />
+<link th:href="@{/css/custom.css}" rel="stylesheet"/>
 <div th:fragment="header" class="header">
     <header class="header">
-        <div class="container">
-            <a th:href="@{/}" class="align-left">Home</a>
+        <div class="container header-body">
+            <a th:href="@{/}">Home</a>
             <a th:href="@{/resources}" class="align-left">Resources</a>
             <a th:href="@{/resources/create}" class="align-left">Create Resource</a>
-            <a th:href="@{/}" class="align-right">Sign Up</a>
+            <a href="https://discord.gg/QRjusA2uAZ" class="align-left">Discord</a>
+            <a th:href="@{/signup}" th:if="${username} == ''" class="align-right">Sign Up</a>
+            <a th:href="@{/login}" th:if="${username} == ''" class="align-right">Login</a>
+            <a th:href="@{/profile/}" th:if="${username} != ''" th:text="${username}" class="align-right"></a>
+            <a th:href="@{/logout}" th:if="${username} != ''" class="align-right">Logout</a>
         </div>
     </header>
 </div>

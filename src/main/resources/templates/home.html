@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Spring Security Example</title>
+  <title>Home</title>
   <link th:href="@{/css/custom.css}" rel="stylesheet" />
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<h1>Welcome!</h1>
-<p>Click <a th:href="@{/}">here</a> to see a greeting.</p>
+<h1>Home</h1>
+<p th:text="${username}"></p>
 <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>

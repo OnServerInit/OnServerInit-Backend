@@ -9,5 +9,5 @@ public class Resource {
 
     private String name, description, blurb, created, updated, donation, source;
 
-    private int id, downloads;
+    private int id, downloads, authorid;
 }

@@ -2,12 +2,23 @@ package com.imjustdoom.pluginsite.controller;
 
 import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.model.Resource;
+import com.imjustdoom.pluginsite.model.ResourceFile;
 import com.imjustdoom.pluginsite.util.DateUtil;
+import com.imjustdoom.pluginsite.util.FileUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,7 +34,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 public class ResourcesController {
 
     @GetMapping("/resources")
-    public String resources(Model model, TimeZone timezone) {
+    public String resources(Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username) {
+        model.addAttribute("username", username);
         List<Resource> data = new ArrayList<>();
         try {
             ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources");
@@ -45,13 +57,14 @@ public class ResourcesController {
 
         model.addAttribute("files", data);
 
-        return "resources/resources";
+        return "resource/resources";
     }
 
     @GetMapping("/resources/{id}")
-    public String resources(@PathVariable("id") int id, Model model) throws SQLException {
+    public String resources(@PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+        model.addAttribute("username", username);
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
-        if(!rs.next()) return "resources/404";
+        if(!rs.next()) return "resource/404";
 
         Resource resource = new Resource();
         resource.setId(id);
@@ -60,15 +73,21 @@ public class ResourcesController {
         resource.setBlurb(rs.getString("blurb"));
         resource.setDonation(rs.getString("donation"));
         resource.setSource(rs.getString("source"));
+        resource.setAuthorid(rs.getInt("authorid"));
         model.addAttribute("resource", resource);
-        model.addAttribute("url", "/resources/edit/" + id);
-        return "/resources/resource";
+        model.addAttribute("editUrl", "/resources/edit/" + id);
+        model.addAttribute("uploadUrl", "/resources/upload/" + id);
+        model.addAttribute("authorid", authorid);
+        return "/resource/resource";
     }
 
     @GetMapping("/resources/edit/{id}")
-    public String editResource(@PathVariable("id") int id, Model model) throws SQLException {
+    public String editResource(@PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+        model.addAttribute("username", username);
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
-        if(!rs.next()) return "resources/404";
+        if(!rs.next()) return "resource/404";
+
+        if(Integer.parseInt(authorid) != rs.getInt("authorid")) return "resource/editDeny";
 
         Resource resource = new Resource();
         resource.setId(id);
@@ -79,7 +98,7 @@ public class ResourcesController {
         resource.setSource(rs.getString("source"));
         model.addAttribute("resource", resource);
         model.addAttribute("url", "/resources/edit/" + id);
-        return "/resources/edit";
+        return "/resource/edit";
     }
 
     @PostMapping("/resources/edit/{id}")
@@ -96,7 +115,7 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/create")
-    public RedirectView createSubmit(@ModelAttribute Resource resource) throws SQLException {
+    public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid) throws SQLException {
 
         if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
             // TODO: return an error message
@@ -104,7 +123,9 @@ public class ResourcesController {
         }
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id FROM resources WHERE id=(SELECT MAX(id) FROM resources) GROUP BY id");
+
         int id;
+
         if(!rs.next()) id = 0;
         else id = rs.getInt("id");
 
@@ -114,14 +135,15 @@ public class ResourcesController {
 
         long created = new Date().getTime() / 1000;
         PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO resources (id, name, blurb, description, donation, source, creation, updated, downloads, authorid) " +
-                "VALUES(" + id + ", '" + resource.getName() + "', '" + resource.getBlurb() + "','" + resource.getDescription() + "', '" + resource.getDonation() + "', '" + resource.getSource() + "', " + created + ", " + created + ", 0, 0)");
+                "VALUES(" + id + ", '" + resource.getName() + "', '" + resource.getBlurb() + "','" + resource.getDescription() + "', '" + resource.getDonation() + "', '" + resource.getSource() + "', " + created + ", " + created + ", 0, " + authorid + ")");
         return new RedirectView("/resources/" + resource.getId());
     }
 
     @GetMapping("/resources/create")
-    public String create(Model model) {
+    public String create(Model model, @CookieValue(value = "username", defaultValue = "") String username) {
+        model.addAttribute("username", username);
         model.addAttribute("resource", new Resource());
-        return "resources/create";
+        return "resource/create";
     }
 
     public String markdownToHtml(String markdown) {
@@ -129,5 +151,54 @@ public class ResourcesController {
         Node document = parser.parse(markdown);
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         return renderer.render(document);
+    }
+
+    @GetMapping("/resources/upload/{id}")
+    public String uploadFile(@PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+        model.addAttribute("username", username);
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
+        if(!rs.next()) return "resource/404";
+
+        if(Integer.parseInt(authorid) != rs.getInt("authorid")) return "resource/editDeny";
+
+        ResourceFile file = new ResourceFile();
+        file.setId(id);
+        model.addAttribute("resourceFile", file);
+        model.addAttribute("url", "/resources/upload/" + id);
+        return "resource/upload";
+    }
+
+    @PostMapping("/resources/upload/{id}")
+    public RedirectView uploadFilePost(@RequestParam("file") MultipartFile file, @ModelAttribute ResourceFile resourceFile, @CookieValue(value = "id", defaultValue = "") String authorid) throws IOException, SQLException {
+
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT fileId FROM files WHERE fileId=(SELECT MAX(fileId) FROM files) GROUP BY fileId");
+
+
+        int fileId;
+
+        if(!rs.next()) fileId = 0;
+        else fileId = rs.getInt("fileId");
+
+        fileId++;
+
+        if (!FileUtil.doesFileExist("./resources/plugins/" + fileId)) {
+            try {
+                Files.createDirectory(Paths.get("./resources/plugins/" + fileId));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Path destinationFile = Path.of("./resources/plugins/" + fileId + "/" + file.getOriginalFilename()).normalize().toAbsolutePath();
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, destinationFile,
+                    StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO files (id, fileId, filename)" +
+                "VALUES(" + resourceFile.getId() + ", " + fileId + ", '" + file.getOriginalFilename() + "')");
+
+        return new RedirectView("/resources/" + resourceFile.getId());
     }
 }

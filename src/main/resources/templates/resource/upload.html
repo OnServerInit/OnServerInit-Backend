@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Upload File</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+</head>
+<body>
+<div lang="en" th:include="header :: header"></div>
+<div class="main-body">
+    <form method="POST" th:action="${url}" th:object="${resourceFile}" enctype="multipart/form-data" action="#">
+        <table>
+            <tr>
+                <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
+                <p>Version: <input type="text" th:field="*{version}" maxlength="256" required/></p>
+                <p>File: <input type="file" name="file" accept=".jar"></p>
+                <p>The description uses Markdown as formatting</p>
+                <textarea th:field="*{description}" rows="4" cols="50" style="resize: none;" required></textarea>
+                <td><input type="submit" value="Submit" /></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div lang="en" th:include="footer :: footer"></div>
+</body>
+</html>

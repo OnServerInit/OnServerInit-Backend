@@ -6,11 +6,11 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<div>
+<div class="main-body">
     <ul class="plugin-list">
         <li th:each="file : ${files}">
             <div class="plugin-box">
-                <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}"></a>
+                <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}" class="align-centre title"></a>
                 <p th:text="${file.getBlurb()}" class="blurb"></p>
                 <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
                 <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
