@@ -26,9 +26,7 @@ public class FileController {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=" + id + " AND fileId=" + fileId);
 
-        if(!rs.next()) return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body("Error Message");;
+        if(!rs.next()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error Message");
 
         Path path = Paths.get("./resources/plugins/" + fileId + "/");
         Resource file = new UrlResource(path.resolve(rs.getString("filename")).toUri());

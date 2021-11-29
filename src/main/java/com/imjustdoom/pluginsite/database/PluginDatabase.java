@@ -57,6 +57,7 @@ public class PluginDatabase {
                     "id INT NOT NULL, " +
                     "fileId INT NOT NULL, " +
                     "filename VARCHAR(1024) NOT NULL," +
+                    "description TEXT(65535) NOT NULL," +
                     "CONSTRAINT fileId PRIMARY KEY (fileId));";
 
             stmt.executeUpdate(sql);
