@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 config.json
+resources/
 
 ### STS ###
 .apt_generated
