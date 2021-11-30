@@ -1,0 +1,9 @@
+{
+  "username": "root",
+  "password": "mysql",
+  "host": "localhost",
+  "port": "3306",
+  "database": "resources",
+  "maxUploadSize": "1MB",
+  "domain": "http://localhost:8080"
+}
