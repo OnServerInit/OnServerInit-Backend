@@ -234,17 +234,10 @@ public class ResourcesController {
                     StandardCopyOption.REPLACE_EXISTING);
         }
 
-        String message;
         JsonObject json = new JsonObject();
-
         JsonArray array = new JsonArray();
         array.add("1.17.1");
-
         json.add("versions", array);
-
-        message = json.toString();
-
-        System.out.println(message);
 
         long created = new Date().getTime() / 1000;
         PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO files (id, fileId, filename, description, versions, uploaded)" +
