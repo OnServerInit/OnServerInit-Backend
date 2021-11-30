@@ -20,13 +20,13 @@ import java.sql.SQLException;
 @Controller
 public class FileController {
 
-    @GetMapping("/files/{id}/{fileId}")
+    @GetMapping("/files/{id}/download/{fileId}")
     @ResponseBody
     public ResponseEntity serveFile(@PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException, MalformedURLException {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=" + id + " AND fileId=" + fileId);
 
-        if(!rs.next()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error Message");
+        if(!rs.next()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error. Can't find file on this plugin");
 
         Path path = Paths.get("./resources/plugins/" + fileId + "/");
         Resource file = new UrlResource(path.resolve(rs.getString("filename")).toUri());

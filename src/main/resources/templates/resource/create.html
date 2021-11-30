@@ -6,19 +6,17 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#">
-    <table>
-        <tr>
+<form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body">
+    <div class="inside-main-body">
             <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
             <p>Blurb: <input type="text" th:field="*{blurb}" maxlength="256" required/></p>
             <p>Donation Link (Optional): <input type="text" th:field="*{donation}" maxlength="2048"/></p>
             <p>Source Code (Optional): <input type="text" th:field="*{source}" maxlength="2048"/></p>
             <p>The description uses Markdown as formatting</p>
             <textarea th:field="*{description}" rows="4" cols="50" style="resize: none;" required></textarea>
-            <td><input type="submit" value="Submit" /></td>
-        </tr>
-    </table>
-    </form>
+            <p><td><input type="submit" value="Submit" /></td></p>
+    </div>
+</form>
 <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>

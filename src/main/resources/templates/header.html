@@ -2,14 +2,14 @@
 <div th:fragment="header" class="header">
     <header class="header">
         <div class="container header-body">
-            <a th:href="@{/}">Home</a>
-            <a th:href="@{/resources}" class="align-left">Resources</a>
-            <a th:href="@{/resources/create}" class="align-left">Create Resource</a>
-            <a href="https://discord.gg/QRjusA2uAZ" class="align-left">Discord</a>
-            <a th:href="@{/signup}" th:if="${username} == ''" class="align-right">Sign Up</a>
-            <a th:href="@{/login}" th:if="${username} == ''" class="align-right">Login</a>
-            <a th:href="@{/profile/}" th:if="${username} != ''" th:text="${username}" class="align-right"></a>
-            <a th:href="@{/logout}" th:if="${username} != ''" class="align-right">Logout</a>
+            <a th:href="@{/}"><button>Home</button></a>
+            <a th:href="@{/resources}" class="align-left"><button>Resources</button></a>
+            <a th:href="@{/resources/create}" class="align-left"><button>Create Resource</button></a>
+            <a href="https://discord.gg/QRjusA2uAZ" class="align-left"><button>Discord</button></a>
+            <a th:href="@{/signup}" th:if="${username} == ''" class="align-right"><button>Sign Up</button></a>
+            <a th:href="@{/login}" th:if="${username} == ''" class="align-right"><button>Login</button></a>
+            <a th:href="@{/profile/}" th:if="${username} != ''" th:utext="'<button>' + ${username} + '</button>'" class="align-right"></a>
+            <a th:href="@{/logout}" th:if="${username} != ''" class="align-right"><button>Logout</button></a>
         </div>
     </header>
 </div>

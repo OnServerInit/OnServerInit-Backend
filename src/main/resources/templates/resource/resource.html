@@ -6,13 +6,38 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<p th:text="'Name: ' + ${resource.getName()}"></p>
-<p th:text="'Blurb: ' + ${resource.getBlurb()}"></p>
-<p th:text="'Donation Link: '"></p><a th:href="${resource.getDonation()}" th:text="${resource.getDonation()}"></a>
-<p th:text="'Source Code: '"></p><a th:href="${resource.getSource()}" th:text="${resource.getSource()}"></a>
-<div th:utext="${resource.getDescription()}"></div>
-<a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${editUrl}">Edit Plugin</a>
-<a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${uploadUrl}">Upload</a>
+<div class="main-body">
+    <div class="inside-main-body">
+        <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}" enctype="multipart/form-data" action="#">
+            <p>
+                <input type="submit" name="field" value="Overview">
+                <input type="submit" name="field" value="Update">
+            </p>
+        </form>
+        <p th:text="${resource.getName()}"></p>
+        <p th:text="${resource.getBlurb()}" class="blurb"></p>
+        <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
+                                                      th:text="'Donation Link: ' + ${resource.getDonation()}"></a></p>
+        <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
+                                                    th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
+        <br>
+        <hr>
+        <br>
+        <div th:utext="${resource.getDescription()}"></div>
+        <br>
+        <hr>
+        <br>
+        <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${editUrl}">
+            <button>Edit Plugin</button>
+        </a>
+        <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${uploadUrl}">
+            <button>Upload</button>
+        </a>
+        <a th:if="${resource.getDownload()} != ''" th:href="${resource.getDownload()}">
+            <button>Download</button>
+        </a>
+    </div>
+</div>
 <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>

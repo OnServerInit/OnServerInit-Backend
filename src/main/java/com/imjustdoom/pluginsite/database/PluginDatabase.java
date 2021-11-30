@@ -33,6 +33,7 @@ public class PluginDatabase {
                     "name VARCHAR(128) NOT NULL," +
                     "blurb VARCHAR(256) NOT NULL," +
                     "description TEXT(65535) NOT NULL," +
+                    "download VARCHAR(2048) NOT NULL," +
                     "donation VARCHAR(2048) NOT NULL," +
                     "source VARCHAR(2048) NOT NULL," +
                     "creation INT NOT NULL," +
@@ -58,6 +59,8 @@ public class PluginDatabase {
                     "fileId INT NOT NULL, " +
                     "filename VARCHAR(1024) NOT NULL," +
                     "description TEXT(65535) NOT NULL," +
+                    "versions JSON NOT NULL," +
+                    "uploaded INT NOT NULL, " +
                     "CONSTRAINT fileId PRIMARY KEY (fileId));";
 
             stmt.executeUpdate(sql);
