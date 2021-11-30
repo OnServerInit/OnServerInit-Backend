@@ -84,7 +84,7 @@ public class ResourcesController {
         model.addAttribute("authorid", authorid);
 
         switch (field.toLowerCase()) {
-            case "update":
+            case "updates":
                 rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=" + id);
                 List<Update> data = new ArrayList<>();
                 while (rs.next()) {

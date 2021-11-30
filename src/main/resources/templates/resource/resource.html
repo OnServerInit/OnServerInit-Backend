@@ -11,7 +11,7 @@
         <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}" enctype="multipart/form-data" action="#">
             <p>
                 <input type="submit" name="field" value="Overview">
-                <input type="submit" name="field" value="Update">
+                <input type="submit" name="field" value="Updates">
             </p>
         </form>
         <p th:text="${resource.getName()}"></p>
