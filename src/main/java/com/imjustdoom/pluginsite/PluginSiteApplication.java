@@ -41,9 +41,11 @@ public class PluginSiteApplication extends SpringBootServletInitializer {
         String data = Files.readString(Path.of("config.json"));
         config = gson.fromJson(data, Config.class);
 
+        // Load Database
         db = new PluginDatabase();
         storageManager = new StorageManager();
 
+        // Load StorageManager
         db.init();
         storageManager.init();
 
