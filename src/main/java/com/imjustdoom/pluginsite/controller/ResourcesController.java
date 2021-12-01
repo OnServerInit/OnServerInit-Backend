@@ -26,10 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 @Controller
 public class ResourcesController {
@@ -101,6 +98,7 @@ public class ResourcesController {
                     update.setDownload(PluginSiteApplication.config.domain + "/files/" + id + "/download/" + update.getFileId());
                     data.add(update);
                 }
+                Collections.reverse(data);
                 model.addAttribute("updates", data);
                 return "resource/updates";
             default:
