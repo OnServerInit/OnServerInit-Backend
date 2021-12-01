@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title th:text="${resource.getName()} + ' Updates'"></title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+<body>
+<div lang="en" th:include="header :: header"></div>
+<div class="content">
+    <div class="main-body">
+        <div class="inside-main-body">
+            <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
+                  enctype="multipart/form-data" action="#">
+                <p>
+                    <input type="submit" name="field" value="Overview">
+                    <input type="submit" name="field" value="Update">
+                </p>
+            </form>
+            <ul class="plugin-list">
+                <li th:each="update : ${updates}">
+                    <div class="plugin-box">
+                        <p th:text="${update.getFilename()}"></p>
+                        <br>
+                        <hr>
+                        <br>
+                        <p th:text="${update.getDescription()}"></p>
+                        <br>
+                        <hr>
+                        <br>
+                        <a th:href="${update.getDownload()}">
+                            <button>Download</button>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="side-body">
+        <div class="inside-main-body">
+            <p th:text="'Created: ' + ${resource.getCreated()}"></p>
+            <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
+            <p th:text="'Author: ' + ${resource.getAuthorid()}"></p>
+            <p th:text="'Downloads: ' + ${resource.getDownloads()}"></p>
+        </div>
+    </div>
+</div>
+<div lang="en" th:include="footer :: footer"></div>
+</body>
+</html>
