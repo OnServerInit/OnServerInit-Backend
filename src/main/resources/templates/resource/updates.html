@@ -39,7 +39,7 @@
         <div class="inside-main-body">
             <p th:text="'Created: ' + ${resource.getCreated()}"></p>
             <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
-            <p th:text="'Author: ' + ${resource.getAuthor()}"></p>
+            Author: <a th:href="'/profile/' + ${resource.getAuthorid()}" th:text="${resource.getAuthor()}"></a>
             <p th:text="'Downloads: ' + ${resource.getDownloads()}"></p>
         </div>
     </div>
