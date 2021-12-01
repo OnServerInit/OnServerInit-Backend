@@ -6,20 +6,22 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<p th:text="'Name: ' + ${account.getUsername()}"></p>
-<div>
-    <ul class="plugin-list">
-        <p th:text="'Resources: '"></p>
-        <li th:each="file : ${resources}">
-            <div class="plugin-box">
-                <a th:href="${'/resources/' + file.getId()}" th:text="${file.getName()}"></a>
-                <p th:text="${file.getBlurb()}" class="blurb"></p>
-                <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
-                <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
-                <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
-            </div>
-        </li>
-    </ul>
+<div class="main-body">
+    <div class="inside-main-body">
+        <p th:text="'Name: ' + ${account.getUsername()}"></p>
+        <ul class="plugin-list">
+            <p th:text="'Resources: '"></p>
+            <li th:each="file : ${resources}">
+                <div class="plugin-box">
+                    <a th:href="${'/resources/' + file.getId()}" th:text="${file.getName()}"></a>
+                    <p th:text="${file.getBlurb()}" class="blurb"></p>
+                    <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
+                    <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
+                    <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
 <div lang="en" th:include="footer :: footer"></div>
 </body>

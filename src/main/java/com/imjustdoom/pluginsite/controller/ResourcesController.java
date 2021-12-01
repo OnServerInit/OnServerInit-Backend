@@ -61,7 +61,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/{id}")
-    public String resources(@PathVariable("id") int id, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+    public String resources(@PathVariable("id") int id, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
         if(!rs.next()) return "resource/404";
@@ -76,6 +76,9 @@ public class ResourcesController {
         resource.setSource(rs.getString("source"));
         resource.setAuthorid(rs.getInt("authorid"));
         resource.setDownload(rs.getString("download"));
+        resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timeZone));
+        resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timeZone));
+        resource.setDownloads(rs.getInt("downloads"));
 
         model.addAttribute("username", username);
         model.addAttribute("resource", resource);

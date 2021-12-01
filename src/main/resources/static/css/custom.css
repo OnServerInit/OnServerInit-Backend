@@ -9,6 +9,16 @@
     /* vertical-align: baseline;*/
 }
 
+button, input[type="submit"], input[type="reset"] {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+
 a {
     text-decoration: none;
 }
@@ -28,12 +38,27 @@ html {
 
 /* Body */
 
+.content {
+    margin-top: 3%;
+    background-color: #2a0404;
+    margin-right: 18%;
+    margin-left: 18%;
+}
+
 .main-body {
-    margin-right: 15%;
-    margin-left: 15%;
     background-color: #f1f1f1;
     border-radius: 15px;
-    margin-top: 4%;
+    width: 70%;
+    display: inline-block;
+    float: left;
+}
+
+.side-body {
+    width: 28%;
+    background-color: #f1f1f1;
+    border-radius: 15px;
+    display: inline-block;
+    float: right;
 }
 
 .inside-main-body {
@@ -45,6 +70,7 @@ html {
     width: 100%;
     background-color: #424242;
     margin-top: 4%;
+    float: left;
 }
 
 .footer-text {
@@ -73,6 +99,8 @@ html {
 
 .header-body {
     padding-left: 15%;
+    padding-bottom: 3px;
+    padding-top: 3px;
 }
 
 /* plugins list */
@@ -87,7 +115,6 @@ html {
 .plugin-list {
     padding: 3% 10%;
     list-style-type: none;
-    margin-top: 5%;
 }
 
 .blurb {

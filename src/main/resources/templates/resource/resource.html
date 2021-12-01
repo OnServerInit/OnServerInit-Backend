@@ -6,38 +6,52 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<div class="main-body">
-    <div class="inside-main-body">
-        <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}" enctype="multipart/form-data" action="#">
-            <p>
-                <input type="submit" name="field" value="Overview">
-                <input type="submit" name="field" value="Updates">
+<div class="content">
+    <div class="main-body">
+        <div class="inside-main-body">
+            <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
+                  enctype="multipart/form-data" action="#">
+                <p>
+                    <input type="submit" name="field" value="Overview">
+                    <input type="submit" name="field" value="Updates">
+                </p>
+            </form>
+            <br><hr><br>
+            <p th:text="${resource.getName()}"></p>
+            <p th:text="${resource.getBlurb()}" class="blurb"></p>
+            <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
+                                                          th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
             </p>
-        </form>
-        <p th:text="${resource.getName()}"></p>
-        <p th:text="${resource.getBlurb()}" class="blurb"></p>
-        <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
-                                                      th:text="'Donation Link: ' + ${resource.getDonation()}"></a></p>
-        <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
-                                                    th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
-        <br>
-        <hr>
-        <br>
-        <div th:utext="${resource.getDescription()}"></div>
-        <br>
-        <hr>
-        <br>
-        <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${editUrl}">
-            <button>Edit Plugin</button>
-        </a>
-        <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${uploadUrl}">
-            <button>Upload</button>
-        </a>
-        <a th:if="${resource.getDownload()} != ''" th:href="${resource.getDownload()}">
-            <button>Download</button>
-        </a>
+            <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
+                                                        th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
+            <br>
+            <hr>
+            <br>
+            <div th:utext="${resource.getDescription()}"></div>
+            <br>
+            <hr>
+            <br>
+            <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${editUrl}">
+                <button>Edit Plugin</button>
+            </a>
+            <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${uploadUrl}">
+                <button>Upload</button>
+            </a>
+            <a th:if="${resource.getDownload()} != ''" th:href="${resource.getDownload()}">
+                <button>Download</button>
+            </a>
+        </div>
+    </div>
+    <div class="side-body">
+        <div class="inside-main-body">
+            <p th:text="'Created: ' + ${resource.getCreated()}"></p>
+            <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
+            <p th:text="'Author: ' + ${resource.getAuthorid()}"></p>
+            <p th:text="'Downloads: ' + ${resource.getDownloads()}"></p>
+        </div>
     </div>
 </div>
+<br>
 <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>
