@@ -6,6 +6,7 @@ import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.model.ResourceFile;
 import com.imjustdoom.pluginsite.model.Update;
+import com.imjustdoom.pluginsite.util.AccountUtil;
 import com.imjustdoom.pluginsite.util.DateUtil;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import org.commonmark.node.Node;
@@ -79,6 +80,7 @@ public class ResourcesController {
         resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timeZone));
         resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timeZone));
         resource.setDownloads(rs.getInt("downloads"));
+        resource.setAuthor(AccountUtil.getAuthorFromId(resource.getId()));
 
         model.addAttribute("username", username);
         model.addAttribute("resource", resource);

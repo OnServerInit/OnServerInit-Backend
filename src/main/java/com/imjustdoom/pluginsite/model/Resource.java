@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class Resource {
 
-    private String name, description, blurb, created, updated, donation, source, download;
+    private String name, description, blurb, created, updated, donation, source, download, author;
 
     private int id, downloads, authorid;
 }
