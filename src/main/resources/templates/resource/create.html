@@ -2,21 +2,30 @@
 <html lang="">
 <head>
     <title>Create Resource</title>
-    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body">
-    <div class="inside-main-body">
+<div class="content">
+    <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body">
+        <div class="inside-main-body">
             <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
             <p>Blurb: <input type="text" th:field="*{blurb}" maxlength="256" required/></p>
             <p>Donation Link (Optional): <input type="text" th:field="*{donation}" maxlength="2048"/></p>
             <p>Source Code (Optional): <input type="text" th:field="*{source}" maxlength="2048"/></p>
             <p>The description uses Markdown as formatting</p>
             <textarea th:field="*{description}" rows="4" cols="50" style="resize: none;" required></textarea>
-            <p><td><input type="submit" value="Submit" /></td></p>
+            <p>
+            <td><input type="submit" value="Submit"/></td>
+            </p>
+        </div>
+    </form>
+    <div class="side-body">
+        <div class="inside-main-body">
+            <p>Sponsor</p>
+        </div>
     </div>
-</form>
+</div>
 <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>
