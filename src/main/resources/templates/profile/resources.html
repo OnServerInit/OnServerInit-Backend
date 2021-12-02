@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title th:text="${account.getUsername()}"></title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+<body>
+<div lang="en" th:include="header :: header"></div>
+<div class="content">
+    <div class="main-body">
+        <div class="inside-main-body">
+            <form method="GET" th:action="'/profile/' + ${account.getId()}" th:object="${account}"
+                  enctype="multipart/form-data" action="#">
+                <p>
+                    <input type="submit" name="field" value="Overview">
+                    <input type="submit" name="field" value="Resources">
+                </p>
+            </form>
+            <p th:text="'Name: ' + ${account.getUsername()}"></p>
+            <ul class="plugin-list">
+                <p th:text="'Resources: '"></p>
+                <li th:each="file : ${resources}">
+                    <div class="plugin-box">
+                        <a th:href="${'/resources/' + file.getId()}" th:text="${file.getName()}"></a>
+                        <p th:text="${file.getBlurb()}" class="blurb"></p>
+                        <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
+                        <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
+                        <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="side-body">
+        <div class="inside-main-body">
+            <div lang="en" th:include="sponsor :: sponsor"></div>
+        </div>
+    </div>
+    <div class="side-body slight-margin">
+        <div class="inside-main-body">
+            <p th:text="'Total Downloads: ' + ${account.getTotalDownloads()}"></p>
+        </div>
+    </div>
+</div>
+<div lang="en" th:include="footer :: footer"></div>
+</body>
+</html>
