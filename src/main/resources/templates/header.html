@@ -8,7 +8,7 @@
             <a href="https://discord.gg/Qw8N9J9zEc" class="align-left"><button>Discord</button></a>
             <a th:href="@{/signup}" th:if="${username} == ''" class="align-right"><button>Sign Up</button></a>
             <a th:href="@{/login}" th:if="${username} == ''" class="align-right"><button>Login</button></a>
-            <a th:href="@{/profile/}" th:if="${username} != ''" th:utext="'<button>' + ${username} + '</button>'" class="align-right"></a>
+            <a th:href="'/profile/' + ${userId}" th:if="${username} != ''" th:utext="'<button>' + ${username} + '</button>'" class="align-right"></a>
             <a th:href="@{/logout}" th:if="${username} != ''" class="align-right"><button>Logout</button></a>
         </div>
     </header>

@@ -32,8 +32,9 @@ import java.util.*;
 public class ResourcesController {
 
     @GetMapping("/resources")
-    public String resources(Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username) {
+    public String resources(Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
         model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
         List<Resource> data = new ArrayList<>();
         try {
             ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources");
@@ -59,7 +60,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/{id}")
-    public String resources(@PathVariable("id") int id, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException {
+    public String resources(@PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
         if(!rs.next()) return "resource/404";
@@ -80,6 +81,7 @@ public class ResourcesController {
         resource.setAuthor(AccountUtil.getAuthorFromId(resource.getId()));
 
         model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
         model.addAttribute("resource", resource);
         model.addAttribute("editUrl", "/resources/edit/" + id);
         model.addAttribute("uploadUrl", "/resources/upload/" + id);
@@ -115,8 +117,10 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/edit/{id}")
-    public String editResource(@PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+    public String editResource(@PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
         model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
+
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
         if(!rs.next()) return "resource/404";
 
@@ -135,7 +139,7 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/edit/{id}")
-    public RedirectView editSubmit(@ModelAttribute Resource resource, @PathVariable("id") int id) throws SQLException {
+    public RedirectView editSubmit(@ModelAttribute Resource resource, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
 
         if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
             // TODO: return an error message
@@ -148,7 +152,7 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/create")
-    public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid) throws SQLException {
+    public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
 
         if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
             // TODO: return an error message
@@ -173,8 +177,9 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/create")
-    public String create(Model model, @CookieValue(value = "username", defaultValue = "") String username) {
+    public String create(Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
         model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
         model.addAttribute("resource", new Resource());
         return "resource/create";
     }
@@ -187,11 +192,12 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/upload/{id}")
-    public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+    public String uploadFile(@RequestParam(name = "error", required = false) String error, @CookieValue(value = "id", defaultValue = "") String userId, @PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
 
         model.addAttribute("error", error);
         model.addAttribute("config", PluginSiteApplication.config);
         model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
         if(!rs.next()) return "resource/404";
 

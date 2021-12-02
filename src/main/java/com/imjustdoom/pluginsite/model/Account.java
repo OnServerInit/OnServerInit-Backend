@@ -9,5 +9,5 @@ public class Account {
 
     private String username, password, email;
 
-    private int id;
+    private int id, totalDownloads;
 }

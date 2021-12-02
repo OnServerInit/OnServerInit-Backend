@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     @GetMapping({"/", "/home"})
-    public String home(@CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String id, Model model) {
+    public String home(@CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String id, Model model, @CookieValue(value = "id", defaultValue = "") String userId) {
         model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
         model.addAttribute("id", id);
         return "home";
     }
