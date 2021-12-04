@@ -6,15 +6,22 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<form method="POST" th:action="@{/login}" th:object="${account}" action="#">
-    <table>
-        <tr>
-            <p>Name: <input type="text" th:field="*{username}" maxlength="16" required/></p>
-            <p>Password: <input type="password" th:field="*{password}" maxlength="64" required/></p>
-            <td><input type="submit" value="Login" /></td>
-        </tr>
-    </table>
-</form>
+<div class="content">
+    <div class="main-body">
+        <div class="inside-main-body">
+            <form method="POST" th:action="@{/login}" th:object="${account}" action="#">
+                <p>Name: <input type="text" th:field="*{username}" maxlength="16" required/></p>
+                <p>Password: <input type="password" th:field="*{password}" maxlength="64" required/></p>
+                <td><input type="submit" value="Login"/></td>
+            </form>
+        </div>
+    </div>
+    <div class="side-body">
+        <div class="inside-main-body">
+            <div lang="en" th:include="sponsor :: sponsor"></div>
+        </div>
+    </div>
+</div>
 <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>
