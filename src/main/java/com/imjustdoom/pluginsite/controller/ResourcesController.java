@@ -135,7 +135,7 @@ public class ResourcesController {
         resource.setSource(rs.getString("source"));
         model.addAttribute("resource", resource);
         model.addAttribute("url", "/resources/edit/" + id);
-        return "/resource/edit";
+        return "resource/edit";
     }
 
     @PostMapping("/resources/edit/{id}")
