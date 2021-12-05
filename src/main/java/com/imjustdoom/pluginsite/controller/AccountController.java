@@ -56,7 +56,7 @@ public class AccountController {
             return new RedirectView("/");
         }
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT username FROM accounts WHERE username='" + account.getUsername() + "'");
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT username FROM accounts WHERE username='%s'".formatted(account.getUsername()));
 
         if (rs.next()) {
             System.out.println("Already acc with email");
@@ -73,7 +73,7 @@ public class AccountController {
         account.setId(id);
 
         PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO accounts (id, username, email, password, provider)" +
-                "VALUES(" + id + ", '" + account.getUsername() + "', '" + account.getEmail() + "', '" + passwordEncoder.encode(account.getPassword()) + "', 'LOCAL');");
+                "VALUES('%s', '%s', '%s', '%s', 'LOCAL');".formatted(id, account.getUsername(), account.getEmail(), passwordEncoder.encode(account.getPassword())));
 
         Cookie ck = new Cookie("username", account.getUsername());
         response.addCookie(ck);
@@ -93,8 +93,7 @@ public class AccountController {
     @PostMapping("/login")
     public RedirectView loginSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
-        System.out.println(passwordEncoder.encode(account.getPassword()));
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id, password FROM accounts WHERE username='" + account.getUsername() + "'");
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id, password FROM accounts WHERE username='%s'".formatted(account.getUsername()));
 
         while (rs.next()) {
             if(BCrypt.checkpw(account.getPassword(), rs.getString("password"))) {

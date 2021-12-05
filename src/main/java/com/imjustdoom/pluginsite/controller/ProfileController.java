@@ -26,7 +26,7 @@ public class ProfileController {
     public String profile(@RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM accounts WHERE id=" + id);
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM accounts WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
         Account account = new Account();
@@ -39,7 +39,7 @@ public class ProfileController {
 
                 List<Resource> data = new ArrayList<>();
                 try {
-                    rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE authorid=" + id);
+                    rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE authorid=%s".formatted(id));
                     while (rs.next()) {
                         Resource resource = new Resource();
                         resource.setName(rs.getString("name"));

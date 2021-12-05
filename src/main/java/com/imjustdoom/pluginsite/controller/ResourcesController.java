@@ -63,7 +63,7 @@ public class ResourcesController {
     @GetMapping("/resources/{id}")
     public String resources(@PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException {
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
         Resource resource = new Resource();
@@ -90,7 +90,7 @@ public class ResourcesController {
 
         switch (field.toLowerCase()) {
             case "updates":
-                rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=" + id);
+                rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=%s".formatted(id));
                 List<Update> data = new ArrayList<>();
                 while (rs.next()) {
                     Update update = new Update();
@@ -122,7 +122,7 @@ public class ResourcesController {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
         if(Integer.parseInt(authorid) != rs.getInt("authorid")) return "resource/editDeny";
@@ -147,8 +147,7 @@ public class ResourcesController {
             //return "";
         }
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='" + resource.getName() + "', blurb='" + resource.getBlurb() + "', description='" + resource.getDescription() + "', donation='" + resource.getDonation() + "', source='" + resource.getSource() + "'" +
-                "WHERE id=" + id + ";");
+        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='%s', blurb='%s', description='%s', donation='%s', source='%s' WHERE id=%s;".formatted(resource.getName(), resource.getBlurb(), resource.getDescription(), resource.getDonation(), resource.getSource(), id));
         return new RedirectView("/resources/" + resource.getId());
     }
 
@@ -199,7 +198,7 @@ public class ResourcesController {
         model.addAttribute("config", PluginSiteApplication.config);
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=" + id);
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
         if(Integer.parseInt(authorid) != rs.getInt("authorid")) return "resource/editDeny";

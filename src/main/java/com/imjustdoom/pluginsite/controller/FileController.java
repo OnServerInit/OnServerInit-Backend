@@ -24,14 +24,14 @@ public class FileController {
     @ResponseBody
     public ResponseEntity serveFile(@PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException, MalformedURLException {
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=" + id + " AND fileId=" + fileId);
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=%s AND fileId=%s".formatted(id, fileId));
 
         if(!rs.next()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error. Can't find file on this plugin");
 
         Path path = Paths.get("./resources/plugins/" + fileId + "/");
         Resource file = new UrlResource(path.resolve(rs.getString("filename")).toUri());
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=" + id);
+        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
