@@ -29,8 +29,9 @@ public class AccountController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/signup")
-    public String signup(Model model) {
+    public String signup(Model model, @CookieValue(value = "username", defaultValue = "") String username) {
         model.addAttribute("account", new Account());
+        model.addAttribute("username", username);
         return "account/signup";
     }
 
