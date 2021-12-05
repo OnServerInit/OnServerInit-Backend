@@ -3,6 +3,12 @@ package com.imjustdoom.pluginsite.controller;
 import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -18,6 +24,9 @@ import java.sql.SQLException;
 
 @Controller
 public class AccountController {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/signup")
     public String signup(Model model) {
@@ -64,7 +73,7 @@ public class AccountController {
         account.setId(id);
 
         PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO accounts (id, username, email, password, provider)" +
-                "VALUES(" + id + ", '" + account.getUsername() + "', '" + account.getEmail() + "', '" + account.getPassword() + "', 'LOCAL');");
+                "VALUES(" + id + ", '" + account.getUsername() + "', '" + account.getEmail() + "', '" + passwordEncoder.encode(account.getPassword()) + "', 'LOCAL');");
 
         Cookie ck = new Cookie("username", account.getUsername());
         response.addCookie(ck);
@@ -84,18 +93,20 @@ public class AccountController {
     @PostMapping("/login")
     public RedirectView loginSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id FROM accounts WHERE username='" + account.getUsername() + "' AND password='" + account.getPassword() + "'");
+        System.out.println(passwordEncoder.encode(account.getPassword()));
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id, password FROM accounts WHERE username='" + account.getUsername() + "'");
 
-        if (!rs.next()) {
-            System.out.println("No account found");
-            return new RedirectView("");
+        while (rs.next()) {
+            if(BCrypt.checkpw(account.getPassword(), rs.getString("password"))) {
+                Cookie ck = new Cookie("username", account.getUsername());
+                response.addCookie(ck);
+                ck = new Cookie("id", String.valueOf(rs.getInt("id")));
+                response.addCookie(ck);
+
+                return new RedirectView("/profile/" + rs.getInt("id"));
+            }
         }
-
-        Cookie ck = new Cookie("username", account.getUsername());
-        response.addCookie(ck);
-        ck = new Cookie("id", String.valueOf(rs.getInt("id")));
-        response.addCookie(ck);
-
-        return new RedirectView("/profile/" + rs.getInt("id"));
+        System.out.println("No account found");
+        return new RedirectView("");
     }
 }
