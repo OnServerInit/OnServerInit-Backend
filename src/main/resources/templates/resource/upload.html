@@ -11,7 +11,7 @@
         <form method="POST" th:action="${url}" th:object="${resourceFile}" enctype="multipart/form-data" action="#">
             <div class="inside-main-body">
                 <p th:if="${error} != null"
-                   th:text="File size is too large, the max size is ${config.getMaxUploadSize()}"></p>
+                   th:text="File size is too large or is empty, the max size is ${config.getMaxUploadSize()}"></p>
                 <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
                 <p>Version: <input type="text" th:field="*{version}" maxlength="256" required/></p>
                 <p>File: <input type="file" name="file" accept=".jar"></p>
