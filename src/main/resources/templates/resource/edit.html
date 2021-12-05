@@ -14,7 +14,9 @@
             <p>Donation Link (Optional): <input type="text" th:field="*{donation}" maxlength="2048"/></p>
             <p>Source Code (Optional): <input type="text" th:field="*{source}" maxlength="2048"/></p>
             <p>The description uses Markdown as formatting</p>
-            <textarea th:field="*{description}" rows="4" cols="50" style="resize: none;" required></textarea>
+            <label>
+                <textarea th:field="*{description}" required class="text-box"></textarea>
+            </label>
             <p>
             <td><input type="submit" value="Save Edit"/></td>
             </p>
