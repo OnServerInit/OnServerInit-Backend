@@ -78,7 +78,7 @@ public class ResourcesController {
         resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timeZone));
         resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timeZone));
         resource.setDownloads(rs.getInt("downloads"));
-        resource.setAuthor(AccountUtil.getAuthorFromId(resource.getId()));
+        resource.setAuthor(AccountUtil.getAuthorFromId(resource.getAuthorid()));
 
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
