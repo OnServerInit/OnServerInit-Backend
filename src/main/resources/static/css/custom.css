@@ -138,3 +138,9 @@ html {
     overflow: auto;
     resize: none;
 }
+
+.page-button {
+    height: 20px;
+    width: 20px;
+    color: #ff0101;
+}

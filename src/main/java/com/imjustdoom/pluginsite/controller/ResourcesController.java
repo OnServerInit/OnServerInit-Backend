@@ -32,13 +32,37 @@ import java.util.*;
 @Controller
 public class ResourcesController {
 
+    /**
+     *
+     * @param model
+     * @param timezone
+     * @param username
+     * @param userId
+     * @return
+     */
     @GetMapping("/resources")
-    public String resources(Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
+    public String resources(@RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
+        model.addAttribute("page", Integer.parseInt(page));
+
+        if(Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
         List<Resource> data = new ArrayList<>();
         try {
-            ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources");
+            ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT COUNT(id) FROM resources");
+
+            rs.next();
+            int resources = rs.getInt(1);
+
+            int startRow = Integer.parseInt(page) * 25 - 25;
+            int endRow = startRow + 25;
+            int total = resources / 25;
+            int remainder = resources % 25;
+            if(remainder > 1) total++;
+
+            model.addAttribute("total", total);
+
+            rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources LIMIT " + startRow + ",25");
             while (rs.next()) {
                 Resource resource = new Resource();
                 resource.setName(rs.getString("name"));
@@ -51,8 +75,6 @@ public class ResourcesController {
             }
         } catch (SQLException e ) {
             e.printStackTrace();
-        } finally {
-            //if (PluginSiteApplication.getDB().getStmt() != null) { PluginSiteApplication.getDB().getStmt().close(); }
         }
 
         model.addAttribute("files", data);

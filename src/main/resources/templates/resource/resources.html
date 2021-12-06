@@ -8,21 +8,34 @@
 <div lang="en" th:include="header :: header"></div>
 <div class="content">
     <div class="main-body">
-        <ul class="plugin-list">
-            <li th:each="file : ${files}">
-                <div class="plugin-box">
-                    <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}"
-                       class="align-centre title"></a>
-                    <p th:text="${file.getBlurb()}" class="blurb"></p>
-                    <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
-                    <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
-                    <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
-                </div>
-                <br>
-                <hr>
-                <br>
-            </li>
-        </ul>
+        <div class="inside-main-body">
+            <ul class="plugin-list">
+                <li th:each="file : ${files}">
+                    <div class="plugin-box">
+                        <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}"
+                           class="align-centre title"></a>
+                        <p th:text="${file.getBlurb()}" class="blurb"></p>
+                        <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
+                        <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
+                        <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
+                    </div>
+                    <br>
+                    <hr>
+                    <br>
+                </li>
+                <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
+                    <button><</button>
+                </a>
+                <a th:if="${page > 2}" class="page-button" th:text="${page - 2}" th:href="'/resources?page=' + ${page - 2}"></a>
+                <a th:if="${page > 1}" class="page-button" th:text="${page - 1}" th:href="'/resources?page=' + ${page - 1}"></a>
+                <span th:text="${page}"></span>
+                <a th:if="${page < total}" class="page-button" th:text="${page + 1}" th:href="'/resources?page=' + ${page + 1}"></a>
+                <a th:if="${page + 1 < total}" class="page-button" th:text="${page + 2}" th:href="'/resources?page=' + ${page + 2}"></a>
+                <a th:if="${page < total}" th:href="'/resources?page=' + ${page + 1}" class="page-button">
+                    <button>></button>
+                </a>
+            </ul>
+        </div>
     </div>
     <div class="side-body">
         <div class="inside-main-body">
