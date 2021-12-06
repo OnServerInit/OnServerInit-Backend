@@ -66,6 +66,7 @@ public class ResourcesController {
                 case "created" -> "ORDER BY creation DESC";
                 case "updated" -> "ORDER BY updated DESC";
                 case "downloads" -> "ORDER BY downloads DESC";
+                case "alphabetical" -> "ORDER BY name ASC";
                 default -> "";
             };
 
