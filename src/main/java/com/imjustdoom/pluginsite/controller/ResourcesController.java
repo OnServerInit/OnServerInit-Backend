@@ -118,14 +118,15 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/edit/{id}")
-    public String editResource(@PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+    public String editResource(@PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
-        if(Integer.parseInt(authorid) != rs.getInt("authorid")) return "resource/editDeny";
+        int authorid = rs.getInt("authorid");
+        model.addAttribute("authorid", String.valueOf(authorid));
 
         Resource resource = new Resource();
         resource.setId(id);
@@ -195,7 +196,7 @@ public class ResourcesController {
     public String uploadFile(@RequestParam(name = "error", required = false) String error, @CookieValue(value = "id", defaultValue = "") String userId, @PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
 
         model.addAttribute("error", error);
-        model.addAttribute("config", PluginSiteApplication.config);
+        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
@@ -216,7 +217,9 @@ public class ResourcesController {
         if(file.isEmpty()) {
             return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filesize";
         }
-        System.out.println(file.getSize());
+        if(!file.getOriginalFilename().endsWith(".jar")) {
+            return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filetype";
+        }
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT fileId FROM files WHERE fileId=(SELECT MAX(fileId) FROM files) GROUP BY fileId");
 
