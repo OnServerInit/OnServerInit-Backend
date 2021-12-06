@@ -9,6 +9,9 @@
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
+            <p th:if="${error == 'invalidemail'}">Invalid Email</p>
+            <p th:if="${error == 'emailtaken'}">Email is taken</p>
+            <p th:if="${error == 'usernametaken'}">Username is taken</p>
             <form method="POST" th:action="@{/signup}" th:object="${account}" action="#">
                 <p>Name: <input type="text" th:field="*{username}" maxlength="16" required/></p>
                 <p>EMail: <input type="text" th:field="*{email}" maxlength="320" required/></p>

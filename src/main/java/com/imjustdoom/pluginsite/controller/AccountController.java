@@ -26,9 +26,10 @@ public class AccountController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/signup")
-    public String signup(Model model, @CookieValue(value = "username", defaultValue = "") String username) {
+    public String signup(Model model, @CookieValue(value = "username", defaultValue = "") String username, @RequestParam(name = "error", required = false) String error) {
         model.addAttribute("account", new Account());
         model.addAttribute("username", username);
+        model.addAttribute("error", error);
         return "account/signup";
     }
 
@@ -43,23 +44,21 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public RedirectView signupSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
+    public String signupSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
         String emailAddress = account.getEmail();
         String regexPattern = "^(.+)@(\\S+)$";
         boolean validEmail = StringUtil.patternMatches(emailAddress, regexPattern);
 
-        if (!validEmail) {
-            System.out.println("invalid email");
-            return new RedirectView("/");
-        }
+        if (!validEmail) return "redirect:/signup?error=invalidemail";
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT username FROM accounts WHERE username='%s'".formatted(account.getUsername()));
 
-        if (rs.next()) {
-            System.out.println("Already acc with email");
-            return new RedirectView("");
-        }
+        if (rs.next()) return "redirect:/signup?error=usernametaken";
+
+        rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT email FROM accounts WHERE email='%s'".formatted(account.getEmail()));
+
+        if (rs.next()) return "redirect:/signup?error=emailtaken";
 
         rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id FROM accounts WHERE id=(SELECT MAX(id) FROM accounts) GROUP BY id");
         int id;
@@ -78,7 +77,7 @@ public class AccountController {
         ck = new Cookie("id", String.valueOf(account.getId()));
         response.addCookie(ck);
 
-        return new RedirectView("/profile/" + account.getId());
+        return "redirect:/profile/" + account.getId();
     }
 
     @GetMapping("/login")
