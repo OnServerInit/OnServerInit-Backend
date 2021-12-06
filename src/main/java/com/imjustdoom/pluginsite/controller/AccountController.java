@@ -11,10 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
@@ -85,28 +82,30 @@ public class AccountController {
     }
 
     @GetMapping("/login")
-    public String login(Model model, @CookieValue(value = "username", defaultValue = "") String username) {
+    public String login(Model model, @CookieValue(value = "username", defaultValue = "") String username, @RequestParam(name = "error", required = false) String error) {
+        model.addAttribute("error", error);
         model.addAttribute("account", new Account());
         model.addAttribute("username", username);
         return "account/login";
     }
 
     @PostMapping("/login")
-    public RedirectView loginSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
+    public String loginSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id, password FROM accounts WHERE username='%s'".formatted(account.getUsername()));
 
-        while (rs.next()) {
+        if (rs.next()) {
             if(BCrypt.checkpw(account.getPassword(), rs.getString("password"))) {
                 Cookie ck = new Cookie("username", account.getUsername());
                 response.addCookie(ck);
                 ck = new Cookie("id", String.valueOf(rs.getInt("id")));
                 response.addCookie(ck);
 
-                return new RedirectView("/profile/" + rs.getInt("id"));
+                return "redirect:/profile/" + rs.getInt("id");
             }
+            return "redirect:/login?error=incorrectpassword";
         }
-        System.out.println("No account found");
-        return new RedirectView("");
+
+        return "redirect:/login?error=notfound";
     }
 }
