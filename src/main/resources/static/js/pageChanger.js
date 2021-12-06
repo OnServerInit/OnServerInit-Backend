@@ -1,6 +1,9 @@
 function changePage(increaseBy) {
     let key = encodeURIComponent("page");
-    let value = encodeURIComponent(parseInt(getQueryVariable("page")) + increaseBy);
+
+    let page = parseInt(getQueryVariable("page"));
+    if(isNaN(page)) page = 1;
+    let value = encodeURIComponent(page + increaseBy);
 
     const kvp = document.location.search.substr(1).split('&');
     let i=0;
