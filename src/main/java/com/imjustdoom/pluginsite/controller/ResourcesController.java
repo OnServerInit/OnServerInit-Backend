@@ -63,7 +63,7 @@ public class ResourcesController {
             model.addAttribute("total", total);
 
             String orderBy = switch (sort) {
-                case "created" -> "ORDER BY creation ASC";
+                case "created" -> "ORDER BY creation DESC";
                 case "updated" -> "ORDER BY updated DESC";
                 case "downloads" -> "ORDER BY downloads DESC";
                 default -> "";
