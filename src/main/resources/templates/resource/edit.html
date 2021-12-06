@@ -7,21 +7,24 @@
 <body>
 <div lang="en" th:include="header :: header"></div>
 <div class="content">
-    <form method="POST" th:action="${url}" th:object="${resource}" action="#" class="main-body">
+    <div class="main-body">
         <div class="inside-main-body">
-            <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
-            <p>Blurb: <input type="text" th:field="*{blurb}" maxlength="256" required/></p>
-            <p>Donation Link (Optional): <input type="text" th:field="*{donation}" maxlength="2048"/></p>
-            <p>Source Code (Optional): <input type="text" th:field="*{source}" maxlength="2048"/></p>
-            <p>The description uses Markdown as formatting</p>
-            <label>
-                <textarea th:field="*{description}" required class="text-box"></textarea>
-            </label>
-            <p>
-            <td><input type="submit" value="Save Edit"/></td>
-            </p>
+            <form method="POST" th:action="${url}" th:object="${resource}" action="#" th:if="${userId == authorid}">
+                <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
+                <p>Blurb: <input type="text" th:field="*{blurb}" maxlength="256" required/></p>
+                <p>Donation Link (Optional): <input type="text" th:field="*{donation}" maxlength="2048"/></p>
+                <p>Source Code (Optional): <input type="text" th:field="*{source}" maxlength="2048"/></p>
+                <p>The description uses Markdown as formatting</p>
+                <label>
+                    <textarea th:field="*{description}" required class="text-box"></textarea>
+                </label>
+                <p>
+                <td><input type="submit" value="Save Edit"/></td>
+                </p>
+            </form>
+            <p th:unless="${userId == authorid}">You do not have permission to edit this plugin</p>
         </div>
-    </form>
+    </div>
     <div class="side-body">
         <div class="inside-main-body">
             <div lang="en" th:include="sponsor :: sponsor"></div>
