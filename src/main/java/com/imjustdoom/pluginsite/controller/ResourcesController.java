@@ -193,7 +193,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/upload/{id}")
-    public String uploadFile(@RequestParam(name = "error", required = false) String error, @CookieValue(value = "id", defaultValue = "") String userId, @PathVariable("id") int id, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+    public String uploadFile(@RequestParam(name = "error", required = false) String error, @CookieValue(value = "id", defaultValue = "") String userId, @PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
 
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
@@ -202,7 +202,8 @@ public class ResourcesController {
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
-        if(Integer.parseInt(authorid) != rs.getInt("authorid")) return "resource/editDeny";
+        int authorid = rs.getInt("authorid");
+        model.addAttribute("authorid", String.valueOf(authorid));
 
         ResourceFile file = new ResourceFile();
         file.setId(id);

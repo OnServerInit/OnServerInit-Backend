@@ -8,8 +8,8 @@
 <div lang="en" th:include="header :: header"></div>
 <div class="content">
     <div class="main-body">
-        <form method="POST" th:action="${url}" th:object="${resourceFile}" enctype="multipart/form-data" action="#">
-            <div class="inside-main-body">
+        <div class="inside-main-body">
+            <form method="POST" th:action="${url}" th:object="${resourceFile}" enctype="multipart/form-data" action="#" th:if="${userId == authorid}">
                 <p th:if="${error == 'filesize'}"
                    th:text="'File size is too large or is empty, the max size is ' + ${maxUploadSize}"></p>
                 <p th:if="${error == 'filetype'}"
@@ -40,8 +40,9 @@
                 <p>
                 <td><input type="submit" value="Submit"/></td>
                 </p>
-            </div>
-        </form>
+            </form>
+            <p th:unless="${userId == authorid}">You do not have permission to edit this plugin</p>
+        </div>
     </div>
     <div class="side-body">
         <div class="inside-main-body">
