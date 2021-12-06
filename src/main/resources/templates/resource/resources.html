@@ -12,11 +12,14 @@
     <div class="main-body">
         <div class="inside-main-body">
             <ul class="plugin-list">
+                <div>
                 <select id="sortby" onchange="changeSort()">
                     <option value="created"><a href="/resources?sort=created">Created</a></option>
                     <option value="updated"><a href="/resources?sort=updated">Updated</a></option>
                     <option value="downloads"><a href="/resources?sort=downloads">Downloads</a></option>
                 </select>
+                </div>
+                <br><hr><br>
                 <li th:each="file : ${files}">
                     <div class="plugin-box">
                         <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}"
