@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class Account {
 
-    private String username, password, email;
+    private String username, password, email, joined;
 
     private int id, totalDownloads;
 }

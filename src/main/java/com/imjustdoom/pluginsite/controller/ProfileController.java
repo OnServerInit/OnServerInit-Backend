@@ -30,6 +30,7 @@ public class ProfileController {
         if(!rs.next()) return "resource/404";
 
         Account account = new Account();
+        account.setJoined(DateUtil.formatDate(rs.getInt("joined"), timezone));
         account.setId(id);
         account.setUsername(rs.getString("username"));
 

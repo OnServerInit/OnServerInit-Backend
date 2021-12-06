@@ -18,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 @Controller
 public class AccountController {
@@ -69,8 +70,8 @@ public class AccountController {
 
         account.setId(id);
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO accounts (id, username, email, password, provider)" +
-                "VALUES('%s', '%s', '%s', '%s', 'LOCAL');".formatted(id, account.getUsername(), account.getEmail(), passwordEncoder.encode(account.getPassword())));
+        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO accounts (id, username, email, password, joined, provider)" +
+                "VALUES('%s', '%s', '%s', '%s', %s, 'LOCAL');".formatted(id, account.getUsername(), account.getEmail(), passwordEncoder.encode(account.getPassword()), new Date().getTime() / 1000));
 
         Cookie ck = new Cookie("username", account.getUsername());
         response.addCookie(ck);

@@ -49,6 +49,7 @@ public class PluginDatabase {
                     "username VARCHAR(16) NOT NULL," +
                     "email VARCHAR(320) NOT NULL," +
                     "password VARCHAR(64) NOT NULL," +
+                    "joined INT NOT NULL," +
                     "provider VARCHAR(16) NOT NULL," +
                     "CONSTRAINT id PRIMARY KEY (id));";
 
