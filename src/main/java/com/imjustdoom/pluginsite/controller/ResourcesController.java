@@ -41,7 +41,7 @@ public class ResourcesController {
      * @return
      */
     @GetMapping("/resources")
-    public String resources(@RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
+    public String resources(@RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
         model.addAttribute("page", Integer.parseInt(page));
@@ -62,7 +62,14 @@ public class ResourcesController {
 
             model.addAttribute("total", total);
 
-            rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources LIMIT " + startRow + ",25");
+            String orderBy = switch (sort) {
+                case "created" -> "ORDER BY creation ASC";
+                case "updated" -> "ORDER BY updated DESC";
+                case "downloads" -> "ORDER BY downloads DESC";
+                default -> "";
+            };
+
+            rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources %s LIMIT %s,25".formatted(orderBy ,startRow));
             while (rs.next()) {
                 Resource resource = new Resource();
                 resource.setName(rs.getString("name"));
