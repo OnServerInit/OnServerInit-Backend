@@ -324,7 +324,7 @@ public class ResourcesController {
                     "VALUES(%s, %s, '%s', '%s', '%s', %s, '%s')"
                             .formatted(resourceFile.getId(), fileId, "", resourceFile.getDescription(),
                                     json, created, resourceFile.getExternalDownload());
-            download = resourceFile.getExternalDownload();
+            download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
         }
 
         PluginSiteApplication.getDB().getStmt().executeUpdate(SQL);

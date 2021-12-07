@@ -43,16 +43,17 @@ public class FileController {
 
         if(!rs.next()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error. Can't find file on this plugin");
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
-
         if(!rs.getString("external").equals("")) {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", rs.getString("external"));
+            PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
             return new ResponseEntity<String>(headers,HttpStatus.FOUND);
         }
 
         Path path = Paths.get("resources/plugins/" + fileId + "/");
         Resource file = new UrlResource(path.resolve(rs.getString("filename")).toUri());
+
+        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
