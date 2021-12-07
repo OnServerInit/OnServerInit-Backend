@@ -31,15 +31,19 @@
                 <br><hr><br>
                 <li th:each="file : ${files}">
                     <div class="plugin-box">
-                        <img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo">
-                        <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}"
-                           class="align-centre title"></a>
-                        <p th:text="${file.getBlurb()}" class="blurb"></p>
-                        <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
-                        <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
-                        <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
+                        <div class="info-left"><img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo"></div>
+                        <div class="info-left"><a th:href="${'/resources/' + file.getId()}" th:text="${file.getName()}"
+                                                  class="align-centre title"></a>
+                            <p th:text="${file.getBlurb()}" class="blurb"></p></div>
+                        <div class="info-right">
+                            <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
+                            <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
+                            <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
+                        </div>
                     </div>
-                    <br><hr><br>
+                    <br>
+                    <hr>
+                    <br>
                 </li>
                 <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
                     <button><</button>

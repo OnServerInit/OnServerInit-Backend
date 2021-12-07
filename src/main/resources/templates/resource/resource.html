@@ -9,6 +9,16 @@
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
+            <div class="info-left">
+                <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
+            </div>
+            <div class="info-left">
+                <p th:text="${resource.getName()}"></p>
+                <p th:text="${resource.getBlurb()}" class="blurb"></p>
+                <br>
+            </div>
+            <br>
+            <div style="clear: both;">
             <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
                   enctype="multipart/form-data" action="#">
                 <p>
@@ -16,23 +26,20 @@
                     <input type="submit" name="field" value="Updates">
                 </p>
             </form>
+            </div>
             <br>
             <hr>
             <br>
-            <div>
-                <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
-                <p th:text="${resource.getName()}"></p>
-                <p th:text="${resource.getBlurb()}" class="blurb"></p>
-                <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
-                                                              th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
-                </p>
-                <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
-                                                            th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
-                <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
-                                                             th:text="'Support: ' + ${resource.getSupport()}"></a></p>
-                <br>
-            </div>
+
+            <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
+                                                          th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
+            </p>
+            <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
+                                                        th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
+            <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
+                                                         th:text="'Support: ' + ${resource.getSupport()}"></a></p>
             <br>
+
             <hr>
             <br>
             <div th:utext="${resource.getDescription()}"></div>
