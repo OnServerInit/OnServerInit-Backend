@@ -12,6 +12,7 @@ import com.imjustdoom.pluginsite.util.FileUtil;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -91,7 +93,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/{id}")
-    public String resources(@PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException {
+    public String resources(@PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException, MalformedURLException {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
@@ -176,11 +178,18 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/edit/{id}")
-    public RedirectView editSubmit(@ModelAttribute Resource resource, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+    public RedirectView editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
 
         if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
             // TODO: return an error message
             //return "";
+        }
+
+        Path destinationFile = Path.of("./resources/logos/%s/logo.png".formatted(id)).normalize().toAbsolutePath();
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, destinationFile,
+                    StandardCopyOption.REPLACE_EXISTING);
         }
 
         PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='%s', blurb='%s', description='%s', donation='%s', source='%s', support='%s' WHERE id=%s;".formatted(resource.getName(), resource.getBlurb(), resource.getDescription(), resource.getDonation(), resource.getSource(), resource.getSupport(), id));
@@ -188,7 +197,7 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/create")
-    public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+    public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
 
         if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
             // TODO: return an error message
@@ -209,6 +218,21 @@ public class ResourcesController {
         long created = new Date().getTime() / 1000;
         PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO resources (id, name, blurb, description, download, donation, source, support, creation, updated, downloads, authorid) " +
                 "VALUES(" + id + ", '" + resource.getName() + "', '" + resource.getBlurb() + "','" + resource.getDescription() + "', '', '" + resource.getDonation() + "', '" + resource.getSource() + "', '" + resource.getSupport() + "', " + created + ", " + created + ", 0, " + authorid + ")");
+
+        if (!FileUtil.doesFileExist("./resources/logos/" + id)) {
+            try {
+                Files.createDirectory(Paths.get("./resources/logos/" + id));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(!FileUtil.doesFileExist("./resources/logos/" + id + "/default.png")) {
+            InputStream stream = PluginSiteApplication.class.getResourceAsStream("/pictures/default.png");
+            assert stream != null;
+            Files.copy(stream, Path.of("./resources/logos/" + id + "/default.png"));
+        }
+
         return new RedirectView("/resources/" + resource.getId());
     }
 

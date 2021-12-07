@@ -17,6 +17,7 @@
                 </p>
             </form>
             <br><hr><br>
+            <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" style="width:100px;height:100px;">
             <p th:text="${resource.getName()}"></p>
             <p th:text="${resource.getBlurb()}" class="blurb"></p>
             <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
