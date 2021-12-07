@@ -169,6 +169,7 @@ public class ResourcesController {
         resource.setBlurb(rs.getString("blurb"));
         resource.setDonation(rs.getString("donation"));
         resource.setSource(rs.getString("source"));
+        resource.setSource(rs.getString("support"));
         model.addAttribute("resource", resource);
         model.addAttribute("url", "/resources/edit/" + id);
         return "resource/edit";
@@ -182,7 +183,7 @@ public class ResourcesController {
             //return "";
         }
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='%s', blurb='%s', description='%s', donation='%s', source='%s' WHERE id=%s;".formatted(resource.getName(), resource.getBlurb(), resource.getDescription(), resource.getDonation(), resource.getSource(), id));
+        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='%s', blurb='%s', description='%s', donation='%s', source='%s', support='%s' WHERE id=%s;".formatted(resource.getName(), resource.getBlurb(), resource.getDescription(), resource.getDonation(), resource.getSource(), resource.getSupport(), id));
         return new RedirectView("/resources/" + resource.getId());
     }
 
@@ -206,8 +207,8 @@ public class ResourcesController {
         resource.setId(id);
 
         long created = new Date().getTime() / 1000;
-        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO resources (id, name, blurb, description, download, donation, source, creation, updated, downloads, authorid) " +
-                "VALUES(" + id + ", '" + resource.getName() + "', '" + resource.getBlurb() + "','" + resource.getDescription() + "', '', '" + resource.getDonation() + "', '" + resource.getSource() + "', " + created + ", " + created + ", 0, " + authorid + ")");
+        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO resources (id, name, blurb, description, download, donation, source, support, creation, updated, downloads, authorid) " +
+                "VALUES(" + id + ", '" + resource.getName() + "', '" + resource.getBlurb() + "','" + resource.getDescription() + "', '', '" + resource.getDonation() + "', '" + resource.getSource() + "', '" + resource.getSupport() + "', " + created + ", " + created + ", 0, " + authorid + ")");
         return new RedirectView("/resources/" + resource.getId());
     }
 

@@ -24,6 +24,8 @@
             </p>
             <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
                                                         th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
+            <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
+                                                        th:text="'Support: ' + ${resource.getSupport()}"></a></p>
             <br>
             <hr>
             <br>

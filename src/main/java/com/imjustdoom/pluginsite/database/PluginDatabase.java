@@ -36,6 +36,7 @@ public class PluginDatabase {
                     "download VARCHAR(2048) NOT NULL," +
                     "donation VARCHAR(2048) NOT NULL," +
                     "source VARCHAR(2048) NOT NULL," +
+                    "support VARCHAR(2048) NOT NULL," +
                     "creation INT NOT NULL," +
                     "updated INT NOT NULL," +
                     "downloads INT NOT NULL," +
