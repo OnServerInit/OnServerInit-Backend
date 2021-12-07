@@ -5,3 +5,5 @@ This is a site created in Java using Springboot for the backend and html/css for
 I aim to create a site for people to upload their Minecraft plugins for all different software, Sponge, Spigot, Minestom etc
 
 Current name is OnServerInit but not final
+
+You can view a demo of thw site here (Usually on the latest update) http://168.138.14.84:25503/
