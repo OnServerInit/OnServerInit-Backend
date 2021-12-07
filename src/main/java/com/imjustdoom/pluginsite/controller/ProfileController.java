@@ -23,9 +23,10 @@ import java.util.TimeZone;
 public class ProfileController {
 
     @GetMapping("/profile/{id}")
-    public String profile(@RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+    public String profile(@RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, @RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
+        model.addAttribute("page", Integer.parseInt(page));
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM accounts WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
@@ -34,14 +35,47 @@ public class ProfileController {
         account.setId(id);
         account.setUsername(rs.getString("username"));
 
+        System.out.println(1);
+
         switch (field.toLowerCase()) {
             case "resources":
+                System.out.println(2);
+                if (Integer.parseInt(page) < 1) return "redirect:/profile/1?page=1";
                 account.setTotalDownloads(0);
+
+                System.out.println(3);
 
                 List<Resource> data = new ArrayList<>();
                 try {
-                    rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE authorid=%s".formatted(id));
+                    rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT COUNT(id) FROM resources WHERE authorid=%s".formatted(id));
+
+                    rs.next();
+                    int resources = rs.getInt(1);
+
+                    System.out.println(4);
+
+                    int startRow = Integer.parseInt(page) * 25 - 25;
+                    int endRow = startRow + 25;
+                    int total = resources / 25;
+                    int remainder = resources % 25;
+                    if (remainder > 1) total++;
+
+                    System.out.println(5);
+
+                    model.addAttribute("total", total);
+
+                    String orderBy = switch (sort) {
+                        case "created" -> "ORDER BY creation DESC";
+                        case "updated" -> "ORDER BY updated DESC";
+                        case "downloads" -> "ORDER BY downloads DESC";
+                        case "alphabetical" -> "ORDER BY name ASC";
+                        default -> "";
+                    };
+
+                    System.out.println(6);
+                    rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE authorid=%s %s LIMIT %s,25".formatted(id, orderBy, startRow));
                     while (rs.next()) {
+                        System.out.println(7);
                         Resource resource = new Resource();
                         resource.setName(rs.getString("name"));
                         resource.setBlurb(rs.getString("blurb"));
@@ -55,7 +89,7 @@ public class ProfileController {
                 } catch (SQLException e ) {
                     e.printStackTrace();
                 }
-                model.addAttribute("resources", data);
+                model.addAttribute("files", data);
                 model.addAttribute("account", account);
                 return "profile/resources";
             default:
