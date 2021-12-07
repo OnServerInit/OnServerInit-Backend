@@ -16,17 +16,22 @@
                     <input type="submit" name="field" value="Updates">
                 </p>
             </form>
-            <br><hr><br>
-            <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" style="width:100px;height:100px;">
-            <p th:text="${resource.getName()}"></p>
-            <p th:text="${resource.getBlurb()}" class="blurb"></p>
-            <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
-                                                          th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
-            </p>
-            <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
-                                                        th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
-            <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
-                                                        th:text="'Support: ' + ${resource.getSupport()}"></a></p>
+            <br>
+            <hr>
+            <br>
+            <div>
+                <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
+                <p th:text="${resource.getName()}"></p>
+                <p th:text="${resource.getBlurb()}" class="blurb"></p>
+                <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
+                                                              th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
+                </p>
+                <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
+                                                            th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
+                <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
+                                                             th:text="'Support: ' + ${resource.getSupport()}"></a></p>
+                <br>
+            </div>
             <br>
             <hr>
             <br>

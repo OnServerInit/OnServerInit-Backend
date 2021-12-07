@@ -33,7 +33,6 @@ import java.util.*;
 public class ResourcesController {
 
     /**
-     *
      * @param model
      * @param timezone
      * @param username
@@ -46,7 +45,7 @@ public class ResourcesController {
         model.addAttribute("userId", userId);
         model.addAttribute("page", Integer.parseInt(page));
 
-        if(Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
+        if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
         List<Resource> data = new ArrayList<>();
         try {
             ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT COUNT(id) FROM resources");
@@ -58,7 +57,7 @@ public class ResourcesController {
             int endRow = startRow + 25;
             int total = resources / 25;
             int remainder = resources % 25;
-            if(remainder > 1) total++;
+            if (remainder > 1) total++;
 
             model.addAttribute("total", total);
 
@@ -70,7 +69,7 @@ public class ResourcesController {
                 default -> "";
             };
 
-            rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources %s LIMIT %s,25".formatted(orderBy ,startRow));
+            rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources %s LIMIT %s,25".formatted(orderBy, startRow));
             while (rs.next()) {
                 Resource resource = new Resource();
                 resource.setName(rs.getString("name"));
@@ -81,7 +80,7 @@ public class ResourcesController {
                 resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timezone));
                 data.add(resource);
             }
-        } catch (SQLException e ) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -94,7 +93,7 @@ public class ResourcesController {
     public String resources(@PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException, MalformedURLException {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
-        if(!rs.next()) return "resource/404";
+        if (!rs.next()) return "resource/404";
 
         Resource resource = new Resource();
 
@@ -128,7 +127,7 @@ public class ResourcesController {
                     update.setDescription(rs.getString("description"));
                     update.setVersions(rs.getString("versions"));
                     update.setFileId(rs.getInt("fileId"));
-                    if(!rs.getString("external").equals("")) {
+                    if (!rs.getString("external").equals("")) {
                         update.setDownload(rs.getString("external"));
                     } else {
                         update.setDownload(PluginSiteApplication.config.domain + "/files/" + id + "/download/" + update.getFileId());
@@ -159,7 +158,7 @@ public class ResourcesController {
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
-        if(!rs.next()) return "resource/404";
+        if (!rs.next()) return "resource/404";
 
         int authorid = rs.getInt("authorid");
         model.addAttribute("authorid", String.valueOf(authorid));
@@ -180,23 +179,26 @@ public class ResourcesController {
     @PostMapping("/resources/edit/{id}")
     public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id) throws SQLException, IOException {
 
-        if(!file.getContentType().contains("image")) {
-            return "redirect:/resources/edit/%s/?error=logotype".formatted(resource.getId());
-        }
+        if (!file.isEmpty()) {
+            if (!file.getContentType().contains("image")) {
+                return "redirect:/resources/edit/%s/?error=logotype".formatted(resource.getId());
+            }
 
-        if(file.getSize() > 10000) {
-            return "redirect:/resources/edit/%s/?error=filesize".formatted(resource.getId());
-        }
+            if (file.getSize() > 10000) {
+                return "redirect:/resources/edit/%s/?error=filesize".formatted(resource.getId());
+            }
 
-        BufferedImage image = ImageIO.read(file.getInputStream());
+            BufferedImage image = ImageIO.read(file.getInputStream());
 
-        if(image.getHeight() != image.getWidth()) return "redirect:/resources/edit/%s/?error=logosize".formatted(resource.getId());
+            if (image.getHeight() != image.getWidth())
+                return "redirect:/resources/edit/%s/?error=logosize".formatted(resource.getId());
 
-        Path destinationFile = Path.of("./resources/logos/%s/logo.png".formatted(id)).normalize().toAbsolutePath();
+            Path destinationFile = Path.of("./resources/logos/%s/logo.png".formatted(id)).normalize().toAbsolutePath();
 
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, destinationFile,
-                    StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, destinationFile,
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
         }
 
         PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='%s', blurb='%s', description='%s', donation='%s', source='%s', support='%s' WHERE id=%s;".formatted(resource.getName(), resource.getBlurb(), resource.getDescription(), resource.getDonation(), resource.getSource(), resource.getSupport(), id));
@@ -210,7 +212,7 @@ public class ResourcesController {
 
         int id;
 
-        if(!rs.next()) id = 0;
+        if (!rs.next()) id = 0;
         else id = rs.getInt("id");
 
         id++;
@@ -229,7 +231,7 @@ public class ResourcesController {
             }
         }
 
-        if(!FileUtil.doesFileExist("./resources/logos/" + id + "/logo.png")) {
+        if (!FileUtil.doesFileExist("./resources/logos/" + id + "/logo.png")) {
             InputStream stream = PluginSiteApplication.class.getResourceAsStream("/pictures/logo.png");
             assert stream != null;
             Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
@@ -254,7 +256,7 @@ public class ResourcesController {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
-        if(!rs.next()) return "resource/404";
+        if (!rs.next()) return "resource/404";
 
         int authorid = rs.getInt("authorid");
         model.addAttribute("authorid", String.valueOf(authorid));
@@ -269,10 +271,10 @@ public class ResourcesController {
     @PostMapping("/resources/upload/{id}")
     public String uploadFilePost(@RequestParam("file") MultipartFile file, @ModelAttribute ResourceFile resourceFile, @CookieValue(value = "id", defaultValue = "") String authorid) throws IOException, SQLException {
 
-        if(file.isEmpty() && resourceFile.getExternalDownload() == null) {
+        if (file.isEmpty() && resourceFile.getExternalDownload() == null) {
             return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filesize";
         }
-        if(!file.getOriginalFilename().endsWith(".jar") && resourceFile.getExternalDownload() == null) {
+        if (!file.getOriginalFilename().endsWith(".jar") && resourceFile.getExternalDownload() == null) {
             return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filetype";
         }
 
@@ -280,7 +282,7 @@ public class ResourcesController {
 
         int fileId;
 
-        if(!rs.next()) fileId = 0;
+        if (!rs.next()) fileId = 0;
         else fileId = rs.getInt("fileId");
 
         fileId++;
@@ -295,7 +297,7 @@ public class ResourcesController {
         System.out.println(resourceFile.getExternalDownload());
 
         long created = new Date().getTime() / 1000;
-        if(resourceFile.getExternalDownload() == null || resourceFile.getExternalDownload().equals("")) {
+        if (resourceFile.getExternalDownload() == null || resourceFile.getExternalDownload().equals("")) {
             if (!FileUtil.doesFileExist("./resources/plugins/" + fileId)) {
                 try {
                     Files.createDirectory(Paths.get("./resources/plugins/" + fileId));
@@ -313,8 +315,8 @@ public class ResourcesController {
 
             SQL = "INSERT INTO files (id, fileId, filename, description, versions, uploaded, external)" +
                     "VALUES(%s, %s, '%s', '%s', '%s', %s, '%s')"
-                    .formatted(resourceFile.getId(), fileId, file.getOriginalFilename(), resourceFile.getDescription(),
-                            json, created, "");
+                            .formatted(resourceFile.getId(), fileId, file.getOriginalFilename(), resourceFile.getDescription(),
+                                    json, created, "");
 
             download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
         } else {

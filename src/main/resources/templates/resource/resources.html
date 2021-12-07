@@ -23,6 +23,7 @@
                 <br><hr><br>
                 <li th:each="file : ${files}">
                     <div class="plugin-box">
+                        <img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo">
                         <a th:href="${'resources/' + file.getId()}" th:text="${file.getName()}"
                            class="align-centre title"></a>
                         <p th:text="${file.getBlurb()}" class="blurb"></p>
