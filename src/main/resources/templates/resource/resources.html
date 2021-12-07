@@ -13,6 +13,7 @@
         <div class="inside-main-body">
             <ul class="plugin-list">
                 <div>
+                    Sort By:
                     <select id="sortby" onchange="changeSort()">
                         <option value="created">Created</option>
                         <option value="updated">Updated</option>
@@ -22,7 +23,6 @@
                 </div>
                 <br>
                 <hr>
-                <br>
                 <li th:each="file : ${files}">
                     <div class="plugin-box">
                         <div class="info-left"><img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo"></div>
@@ -35,21 +35,22 @@
                             <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
                         </div>
                     </div>
-                    <br>
                     <hr>
-                    <br>
                 </li>
-                <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
-                    <button><</button>
-                </a>
-                <a th:if="${page > 2}" class="page-button" th:text="${page - 2}" onclick="changePage(-2)"></a>
-                <a th:if="${page > 1}" class="page-button" th:text="${page - 1}" onclick="changePage(-1)"></a>
-                <span th:text="${page}"></span>
-                <a th:if="${page < total}" class="page-button" th:text="${page + 1}" onclick="changePage(1)"></a>
-                <a th:if="${page + 1 < total}" class="page-button" th:text="${page + 2}" onclick="changePage(2)"></a>
-                <a th:if="${page < total}" th:href="'/resources?page=' + ${page + 1}" class="page-button">
-                    <button>></button>
-                </a>
+                <br>
+                <div class="horizontal-center">
+                    <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
+                        <button><</button>
+                    </a>
+                    <a th:if="${page > 2}" class="page-button" th:text="${page - 2}" onclick="changePage(-2)"></a>
+                    <a th:if="${page > 1}" class="page-button" th:text="${page - 1}" onclick="changePage(-1)"></a>
+                    <span th:text="${page}"></span>
+                    <a th:if="${page < total}" class="page-button" th:text="${page + 1}" onclick="changePage(1)"></a>
+                    <a th:if="${page + 1 < total}" class="page-button" th:text="${page + 2}" onclick="changePage(2)"></a>
+                    <a th:if="${page < total}" th:href="'/resources?page=' + ${page + 1}" class="page-button">
+                        <button>></button>
+                    </a>
+                </div>
             </ul>
         </div>
     </div>

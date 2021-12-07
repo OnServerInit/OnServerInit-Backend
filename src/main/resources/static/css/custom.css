@@ -109,16 +109,14 @@ html {
 /* plugins list */
 
 .plugin-box {
-    border-color: black;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 7px;
     clear: both;
     overflow: hidden;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .plugin-list {
-    padding: 3% 10%;
+    padding: 3% 7%;
     list-style-type: none;
 }
 
@@ -127,6 +125,8 @@ html {
     height: 65px;
     border-radius: 7px;
     margin: 1px;
+    display: flex;
+    align-items: center;
 }
 
 .info-left {
@@ -160,4 +160,9 @@ html {
     height: 20px;
     width: 20px;
     color: #ff0101;
+}
+
+.horizontal-center {
+    display: flex;
+    justify-content: center;
 }
