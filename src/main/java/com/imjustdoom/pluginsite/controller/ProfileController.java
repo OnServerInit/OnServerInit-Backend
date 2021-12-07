@@ -35,15 +35,10 @@ public class ProfileController {
         account.setId(id);
         account.setUsername(rs.getString("username"));
 
-        System.out.println(1);
-
         switch (field.toLowerCase()) {
             case "resources":
-                System.out.println(2);
                 if (Integer.parseInt(page) < 1) return "redirect:/profile/1?page=1";
                 account.setTotalDownloads(0);
-
-                System.out.println(3);
 
                 List<Resource> data = new ArrayList<>();
                 try {
@@ -52,15 +47,11 @@ public class ProfileController {
                     rs.next();
                     int resources = rs.getInt(1);
 
-                    System.out.println(4);
-
                     int startRow = Integer.parseInt(page) * 25 - 25;
                     int endRow = startRow + 25;
                     int total = resources / 25;
                     int remainder = resources % 25;
                     if (remainder > 1) total++;
-
-                    System.out.println(5);
 
                     model.addAttribute("total", total);
 
@@ -72,10 +63,8 @@ public class ProfileController {
                         default -> "";
                     };
 
-                    System.out.println(6);
                     rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE authorid=%s %s LIMIT %s,25".formatted(id, orderBy, startRow));
                     while (rs.next()) {
-                        System.out.println(7);
                         Resource resource = new Resource();
                         resource.setName(rs.getString("name"));
                         resource.setBlurb(rs.getString("blurb"));
