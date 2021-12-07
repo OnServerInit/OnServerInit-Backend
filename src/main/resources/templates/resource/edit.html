@@ -9,6 +9,9 @@
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
+            <p th:if="${error == 'logotype'}">Please upload an image instead</p>
+            <p th:if="${error == 'logosize'}">Please upload an image with the same height and width</p>
+            <p th:if="${error == 'filesize'}" th:text="'Image size is too large' + ${maxUploadSize}"></p>
             <form method="POST" th:action="${url}" th:object="${resource}" action="#" th:if="${userId == authorid}" enctype="multipart/form-data">
                 <p><img th:src="'/logo/' + ${resource.getId()}" alt="Logo" style="width:100px;height:100px;">Logo: <input type="file" name="logo" accept="image/*" id="logo"></p>
                 <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -154,9 +156,11 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/edit/{id}")
-    public String editResource(@PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
+        model.addAttribute("error", error);
+        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
@@ -178,12 +182,24 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/edit/{id}")
-    public RedirectView editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
+    public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
 
         if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
             // TODO: return an error message
             //return "";
         }
+
+        if(!file.getContentType().contains("image")) {
+            return "redirect:/resources/edit/%s/?error=logotype".formatted(resource.getId());
+        }
+
+        if(file.getSize() > 10000) {
+            return "redirect:/resources/edit/%s/?error=filesize".formatted(resource.getId());
+        }
+
+        BufferedImage image = ImageIO.read(file.getInputStream());
+
+        if(image.getHeight() != image.getWidth()) return "redirect:/resources/edit/%s/?error=logosize".formatted(resource.getId());
 
         Path destinationFile = Path.of("./resources/logos/%s/logo.png".formatted(id)).normalize().toAbsolutePath();
 
@@ -193,7 +209,7 @@ public class ResourcesController {
         }
 
         PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='%s', blurb='%s', description='%s', donation='%s', source='%s', support='%s' WHERE id=%s;".formatted(resource.getName(), resource.getBlurb(), resource.getDescription(), resource.getDonation(), resource.getSource(), resource.getSupport(), id));
-        return new RedirectView("/resources/" + resource.getId());
+        return "redirect:/resources/%s".formatted(resource.getId());
     }
 
     @PostMapping("/resources/create")

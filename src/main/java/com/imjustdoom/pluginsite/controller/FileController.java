@@ -24,7 +24,7 @@ public class FileController {
     public HttpEntity<byte[]> serveLogo(@PathVariable("id") int id) throws IOException {
 
         Path path = Paths.get("resources/logos/%s".formatted(id));
-        Resource file = new UrlResource(path.resolve("default.png").toUri());
+        Resource file = new UrlResource(path.resolve("logo.png").toUri());
 
         byte[] image = file.getInputStream().readAllBytes();
 
