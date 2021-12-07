@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -28,7 +29,13 @@ public class FileController {
 
         if(!rs.next()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error. Can't find file on this plugin");
 
-        Path path = Paths.get("./resources/plugins/" + fileId + "/");
+        if(!rs.getString("external").equals("")) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", rs.getString("external"));
+            return new ResponseEntity<String>(headers,HttpStatus.FOUND);
+        }
+
+        Path path = Paths.get("resources/plugins/" + fileId + "/");
         Resource file = new UrlResource(path.resolve(rs.getString("filename")).toUri());
 
         PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));

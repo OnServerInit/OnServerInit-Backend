@@ -10,6 +10,6 @@ import java.io.File;
 @Getter
 public class ResourceFile {
 
-    private String name, version, description;
+    private String name, version, description, externalDownload;
     private int id;
 }

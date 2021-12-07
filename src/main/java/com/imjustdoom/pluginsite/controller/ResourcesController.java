@@ -128,7 +128,11 @@ public class ResourcesController {
                     update.setDescription(rs.getString("description"));
                     update.setVersions(rs.getString("versions"));
                     update.setFileId(rs.getInt("fileId"));
-                    update.setDownload(PluginSiteApplication.config.domain + "/files/" + id + "/download/" + update.getFileId());
+                    if(!rs.getString("external").equals("")) {
+                        update.setDownload(rs.getString("external"));
+                    } else {
+                        update.setDownload(PluginSiteApplication.config.domain + "/files/" + id + "/download/" + update.getFileId());
+                    }
                     data.add(update);
                 }
                 Collections.reverse(data);
@@ -245,15 +249,14 @@ public class ResourcesController {
     @PostMapping("/resources/upload/{id}")
     public String uploadFilePost(@RequestParam("file") MultipartFile file, @ModelAttribute ResourceFile resourceFile, @CookieValue(value = "id", defaultValue = "") String authorid) throws IOException, SQLException {
 
-        if(file.isEmpty()) {
+        if(file.isEmpty() && resourceFile.getExternalDownload() == null) {
             return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filesize";
         }
-        if(!file.getOriginalFilename().endsWith(".jar")) {
+        if(!file.getOriginalFilename().endsWith(".jar") && resourceFile.getExternalDownload() == null) {
             return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filetype";
         }
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT fileId FROM files WHERE fileId=(SELECT MAX(fileId) FROM files) GROUP BY fileId");
-
 
         int fileId;
 
@@ -262,32 +265,53 @@ public class ResourcesController {
 
         fileId++;
 
-        if (!FileUtil.doesFileExist("./resources/plugins/" + fileId)) {
-            try {
-                Files.createDirectory(Paths.get("./resources/plugins/" + fileId));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Path destinationFile = Path.of("./resources/plugins/" + fileId + "/" + file.getOriginalFilename()).normalize().toAbsolutePath();
-
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, destinationFile,
-                    StandardCopyOption.REPLACE_EXISTING);
-        }
-
         JsonObject json = new JsonObject();
         JsonArray array = new JsonArray();
         array.add("1.17.1");
         json.add("versions", array);
 
+        String SQL, download;
+
+        System.out.println(resourceFile.getExternalDownload());
+
         long created = new Date().getTime() / 1000;
-        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO files (id, fileId, filename, description, versions, uploaded)" +
-                "VALUES(" + resourceFile.getId() + ", " + fileId + ", '" + file.getOriginalFilename() + "', '" + resourceFile.getDescription() + "', '" + json + "', " + created + ")");
+        if(resourceFile.getExternalDownload() == null || resourceFile.getExternalDownload().equals("")) {
+            if (!FileUtil.doesFileExist("./resources/plugins/" + fileId)) {
+                try {
+                    Files.createDirectory(Paths.get("./resources/plugins/" + fileId));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET download='" + PluginSiteApplication.config.domain + "/files/" + resourceFile.getId() + "/download/" + fileId + "', updated='" + created + "' WHERE id='" + resourceFile.getId() + "'");
+            Path destinationFile = Path.of("./resources/plugins/" + fileId + "/" + file.getOriginalFilename()).normalize().toAbsolutePath();
 
-        return "redirect:/resources/" + resourceFile.getId();
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, destinationFile,
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            SQL = "INSERT INTO files (id, fileId, filename, description, versions, uploaded, external)" +
+                    "VALUES(%s, %s, '%s', '%s', '%s', %s, '%s')"
+                    .formatted(resourceFile.getId(), fileId, file.getOriginalFilename(), resourceFile.getDescription(),
+                            json, created, "");
+
+            download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
+        } else {
+            SQL = "INSERT INTO files (id, fileId, filename, description, versions, uploaded, external)" +
+                    "VALUES(%s, %s, '%s', '%s', '%s', %s, '%s')"
+                            .formatted(resourceFile.getId(), fileId, "", resourceFile.getDescription(),
+                                    json, created, resourceFile.getExternalDownload());
+            download = resourceFile.getExternalDownload();
+        }
+
+        PluginSiteApplication.getDB().getStmt().executeUpdate(SQL);
+
+        System.out.println(download);
+
+        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET download='%s', updated='%s' WHERE id='%s'"
+                .formatted(download, created, resourceFile.getId()));
+
+        return "redirect:/resources/%s".formatted(resourceFile.getId());
     }
 }

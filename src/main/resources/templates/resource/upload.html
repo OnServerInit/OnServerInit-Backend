@@ -3,6 +3,7 @@
 <head>
     <title>Upload File</title>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <script th:src="@{/js/resourceDownload.js}"></script>
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
@@ -16,7 +17,8 @@
                    th:text="'This file extension is not allowed, you can only use .jar'"></p>
                 <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
                 <p>Version: <input type="text" th:field="*{version}" maxlength="256" required/></p>
-                <p>File: <input type="file" name="file" accept=".jar"></p>
+                <p>File: <input type="file" name="file" accept=".jar" required id="file"></p>
+                <p>External Download: <input type="text" th:field="*{externalDownload}" maxlength="256" required id="externalDownload"/></p>
                 <p>The description uses Markdown as formatting</p>
                 <label>
                     <textarea th:field="*{description}" required class="text-box"></textarea>

@@ -62,6 +62,7 @@ public class PluginDatabase {
                     "description TEXT(65535) NOT NULL," +
                     "versions JSON NOT NULL," +
                     "uploaded INT NOT NULL, " +
+                    "external VARCHAR(2048) NOT NULL," +
                     "CONSTRAINT fileId PRIMARY KEY (fileId));";
 
             stmt.executeUpdate(sql);
