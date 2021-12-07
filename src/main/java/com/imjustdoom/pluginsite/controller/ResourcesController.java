@@ -9,11 +9,7 @@ import com.imjustdoom.pluginsite.model.Update;
 import com.imjustdoom.pluginsite.util.AccountUtil;
 import com.imjustdoom.pluginsite.util.DateUtil;
 import com.imjustdoom.pluginsite.util.FileUtil;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
-import org.springframework.core.io.UrlResource;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.imjustdoom.pluginsite.util.StringUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -104,7 +100,7 @@ public class ResourcesController {
 
         resource.setId(id);
         resource.setName(rs.getString("name"));
-        resource.setDescription(markdownToHtml(rs.getString("description")));
+        resource.setDescription(StringUtil.markdownToHtml(rs.getString("description")));
         resource.setBlurb(rs.getString("blurb"));
         resource.setDonation(rs.getString("donation"));
         resource.setSource(rs.getString("source"));
@@ -182,12 +178,7 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/edit/{id}")
-    public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
-
-        if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
-            // TODO: return an error message
-            //return "";
-        }
+    public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id) throws SQLException, IOException {
 
         if(!file.getContentType().contains("image")) {
             return "redirect:/resources/edit/%s/?error=logotype".formatted(resource.getId());
@@ -215,11 +206,6 @@ public class ResourcesController {
     @PostMapping("/resources/create")
     public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
 
-        if(resource.getName().length() < 1 || resource.getDescription().length() < 1 || resource.getBlurb().length() < 1) {
-            // TODO: return an error message
-            //return "";
-        }
-
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id FROM resources WHERE id=(SELECT MAX(id) FROM resources) GROUP BY id");
 
         int id;
@@ -243,10 +229,10 @@ public class ResourcesController {
             }
         }
 
-        if(!FileUtil.doesFileExist("./resources/logos/" + id + "/default.png")) {
-            InputStream stream = PluginSiteApplication.class.getResourceAsStream("/pictures/default.png");
+        if(!FileUtil.doesFileExist("./resources/logos/" + id + "/logo.png")) {
+            InputStream stream = PluginSiteApplication.class.getResourceAsStream("/pictures/logo.png");
             assert stream != null;
-            Files.copy(stream, Path.of("./resources/logos/" + id + "/default.png"));
+            Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
         }
 
         return new RedirectView("/resources/" + resource.getId());
@@ -258,13 +244,6 @@ public class ResourcesController {
         model.addAttribute("userId", userId);
         model.addAttribute("resource", new Resource());
         return "resource/create";
-    }
-
-    public String markdownToHtml(String markdown) {
-        Parser parser = Parser.builder().build();
-        Node document = parser.parse(markdown);
-        HtmlRenderer renderer = HtmlRenderer.builder().build();
-        return renderer.render(document);
     }
 
     @GetMapping("/resources/upload/{id}")
