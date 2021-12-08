@@ -103,6 +103,7 @@ public class ResourcesController {
         resource.setBlurb(rs.getString("blurb"));
         resource.setDonation(rs.getString("donation"));
         resource.setSource(rs.getString("source"));
+        resource.setSupport(rs.getString("support"));
         resource.setAuthorid(rs.getInt("authorid"));
         resource.setDownload(rs.getString("download"));
         resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timeZone));
@@ -208,6 +209,7 @@ public class ResourcesController {
     @PostMapping("/resources/create")
     public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
 
+        System.out.println(resource.getSupport());
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id FROM resources WHERE id=(SELECT MAX(id) FROM resources) GROUP BY id");
 
         int id;

@@ -3,8 +3,6 @@ package com.imjustdoom.pluginsite.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.nio.file.Path;
-
 @Setter
 @Getter
 public class Resource {
