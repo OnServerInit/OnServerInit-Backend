@@ -102,6 +102,7 @@ html {
 
 .inside-main-body {
     padding: 1rem;
+    word-wrap: break-word;
 }
 
 .slight-margin {
