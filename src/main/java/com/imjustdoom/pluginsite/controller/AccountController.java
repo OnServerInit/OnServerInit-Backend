@@ -49,9 +49,7 @@ public class AccountController {
     public String signupSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");
-        if(!pattern.matcher(account.getUsername()).matches()) {
-            return "redirect:/signup?error=invalidcharacter";
-        }
+        if(!pattern.matcher(account.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
 
         String emailAddress = account.getEmail();
         String regexPattern = "^(.+)@(\\S+)$";
