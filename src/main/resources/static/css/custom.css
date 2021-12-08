@@ -3,6 +3,7 @@
 * {
     margin: 0;
     padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     /* border: 0;*/
     /* outline: 0;*/
     /* font-size: 100%;*/
@@ -19,8 +20,22 @@ button, input[type="submit"], input[type="reset"] {
     outline: inherit;
 }
 
+input[type="text"], input[type="password"], input[type="email"]{
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 5px 0;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus{
+    outline: none;
+    border: 1px solid #aaa;
+    box-shadow: 0 0 5px #aaa;
+}
+
 a {
     text-decoration: none;
+    font-weight: 600;
 }
 
 a:hover {
@@ -39,31 +54,41 @@ html {
 /* Body */
 
 .content {
-    margin-top: 3%;
-    margin-right: 18%;
-    margin-left: 18%;
+    /* margin-top: 3%; */
+    /* margin-right: 18%;
+    margin-left: 18%; */
+    width: 70%;
+    margin: 3rem auto;
+    display: flex;
 }
 
 .main-body {
     background-color: #ffffff;
     border-radius: 15px;
-    width: 70%;
+    /* width: 70%; */
+    flex-grow: 1;
+    height: min-content;
+    margin-right: 2rem;
     display: inline-block;
-    float: left;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
 }
 
-.side-body {
+.side-body-container{
     width: 28%;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-body {
+    width: 100%;
     background-color: #ffffff;
     border-radius: 15px;
     display: inline-block;
-    float: right;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
 }
 
 .inside-main-body {
-    padding: 2%;
+    padding: 1rem;
 }
 
 .slight-margin {
@@ -74,12 +99,20 @@ html {
 .footer {
     width: 100%;
     background-color: #424242;
-    margin-top: 4%;
-    float: left;
+    margin-top: 3rem;
+    position: absolute;
+    bottom: 0;
 }
 
 .footer-text {
     color: #dadada;
+}
+
+.footer .container{
+    width: 70%;
+    margin: 0 auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 }
 
 /* header */
@@ -95,7 +128,7 @@ html {
 }
 
 .align-left {
-    padding-left: 2%;
+    padding-left: 10px;
 }
 
 .align-centre {
@@ -103,7 +136,9 @@ html {
 }
 
 .header-body {
-    padding-left: 15%;
+    /* padding-left: 15%; */
+    width: 70%;
+    margin: 0 auto;
     padding-bottom: 3px;
     padding-top: 3px;
 }
@@ -118,7 +153,7 @@ html {
 }
 
 .plugin-list {
-    padding: 3% 7%;
+    /* padding: 3% 7%; */
     list-style-type: none;
 }
 
