@@ -53,6 +53,11 @@ html {
 
 /* Body */
 
+.content-container {
+    display: flex;
+    flex-direction: column;
+}
+
 .content {
     /* margin-top: 3%; */
     /* margin-right: 18%;
@@ -60,6 +65,7 @@ html {
     width: 70%;
     margin: 3rem auto;
     display: flex;
+    flex-grow: 1;
 }
 
 .main-body {
@@ -99,8 +105,6 @@ html {
 .footer {
     width: 100%;
     background-color: #424242;
-    margin-top: 3rem;
-    bottom: 0;
 }
 
 .footer-text {
