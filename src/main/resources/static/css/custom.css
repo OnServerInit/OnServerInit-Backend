@@ -66,6 +66,8 @@ html {
     background-color: #ffffff;
     border-radius: 15px;
     /* width: 70%; */
+    flex-grow: 1;
+    margin-right: 2rem;
     display: inline-block;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
 }
