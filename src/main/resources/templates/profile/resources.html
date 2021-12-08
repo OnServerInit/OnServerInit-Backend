@@ -60,15 +60,17 @@
             </ul>
         </div>
     </div>
-    <div class="side-body">
-        <div class="inside-main-body">
-            <div lang="en" th:include="sponsor :: sponsor"></div>
+    <div>
+        <div class="side-body">
+            <div class="inside-main-body">
+                <div lang="en" th:include="sponsor :: sponsor"></div>
+            </div>
         </div>
-    </div>
-    <div class="side-body slight-margin">
-        <div class="inside-main-body">
-            <p th:text="'Total Downloads: ' + ${account.getTotalDownloads()}"></p>
-            <p th:text="'Joined: ' + ${account.getJoined()}"></p>
+        <div class="side-body slight-margin">
+            <div class="inside-main-body">
+                <p th:text="'Total Downloads: ' + ${account.getTotalDownloads()}"></p>
+                <p th:text="'Joined: ' + ${account.getJoined()}"></p>
+            </div>
         </div>
     </div>
 </div>
