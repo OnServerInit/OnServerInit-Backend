@@ -46,9 +46,11 @@
             <p th:unless="${userId == authorid}">You do not have permission to edit this plugin</p>
         </div>
     </div>
-    <div class="side-body">
-        <div class="inside-main-body">
-            <div lang="en" th:include="sponsor :: sponsor"></div>
+    <div class="side-body-container">
+        <div class="side-body">
+            <div class="inside-main-body">
+                <div lang="en" th:include="sponsor :: sponsor"></div>
+            </div>
         </div>
     </div>
 </div>

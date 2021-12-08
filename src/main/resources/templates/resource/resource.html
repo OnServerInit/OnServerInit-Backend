@@ -57,12 +57,14 @@
             </a>
         </div>
     </div>
-    <div class="side-body">
-        <div class="inside-main-body">
-            <p th:text="'Created: ' + ${resource.getCreated()}"></p>
-            <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
-            Author: <a th:href="'/profile/' + ${resource.getAuthorid()}" th:text="${resource.getAuthor()}"></a>
-            <p th:text="'Downloads: ' + ${resource.getDownloads()}"></p>
+    <div class="side-body-container">
+        <div class="side-body">
+            <div class="inside-main-body">
+                <p th:text="'Created: ' + ${resource.getCreated()}"></p>
+                <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
+                Author: <a th:href="'/profile/' + ${resource.getAuthorid()}" th:text="${resource.getAuthor()}"></a>
+                <p th:text="'Downloads: ' + ${resource.getDownloads()}"></p>
+            </div>
         </div>
     </div>
 </div>
