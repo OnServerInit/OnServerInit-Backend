@@ -87,6 +87,7 @@ html {
 
 .side-body-container{
     width: 28%;
+    min-width: 230px;
     display: flex;
     flex-direction: column;
 }
@@ -105,6 +106,10 @@ html {
 
 .slight-margin {
     margin-top: 2%;
+}
+
+.side-body-info-text {
+    font-size: 12px;
 }
 
 /* footer */

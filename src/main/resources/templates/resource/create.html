@@ -6,6 +6,7 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
+<div class="content-container">
 <div class="content">
     <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body">
         <div class="inside-main-body">
@@ -29,8 +30,14 @@
                 <div lang="en" th:include="sponsor :: sponsor"></div>
             </div>
         </div>
+        <div class="side-body slight-margin">
+            <div class="inside-main-body">
+                <div lang="en" th:include="sponsor :: sponsor"></div>
+            </div>
+        </div>
     </div>
 </div>
 <div lang="en" th:include="footer :: footer"></div>
+</div>
 </body>
 </html>

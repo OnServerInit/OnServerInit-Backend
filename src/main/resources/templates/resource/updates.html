@@ -6,6 +6,7 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
+<div class="content-container">
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
@@ -38,6 +39,11 @@
     <div class="side-body-container">
         <div class="side-body">
             <div class="inside-main-body">
+                <div lang="en" th:include="sponsor :: sponsor"></div>
+            </div>
+        </div>
+        <div class="side-body slight-margin">
+            <div class="inside-main-body">
                 <p th:text="'Created: ' + ${resource.getCreated()}"></p>
                 <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
                 Author: <a th:href="'/profile/' + ${resource.getAuthorid()}" th:text="${resource.getAuthor()}"></a>
@@ -47,5 +53,6 @@
     </div>
 </div>
 <div lang="en" th:include="footer :: footer"></div>
+</div>
 </body>
 </html>
