@@ -47,7 +47,7 @@ public class AccountController {
     @PostMapping("/signup")
     public String signupSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
-        if(account.getUsername().contains(" ")) {
+        if(account.getUsername().contains(" ") || account.getPassword().contains(" ") || account.getEmail().contains(" ")) {
             return "redirect:/signup?error=invalidcharacter";
         }
 
