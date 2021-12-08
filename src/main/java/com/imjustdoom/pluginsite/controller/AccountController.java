@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 @Controller
 public class AccountController {
@@ -47,7 +48,8 @@ public class AccountController {
     @PostMapping("/signup")
     public String signupSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
-        if(account.getUsername().contains(" ") || account.getPassword().contains(" ") || account.getEmail().contains(" ")) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");
+        if(!pattern.matcher(account.getUsername()).matches()) {
             return "redirect:/signup?error=invalidcharacter";
         }
 
