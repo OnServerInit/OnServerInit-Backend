@@ -221,6 +221,12 @@ html {
     color: #DC2626;
 }
 
+.page-number {
+    height: 20px;
+    width: 20px;
+}
+
+
 .horizontal-center {
     display: flex;
     justify-content: center;
