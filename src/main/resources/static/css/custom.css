@@ -231,3 +231,9 @@ html {
     display: flex;
     justify-content: center;
 }
+
+.password-strength {
+    width: fit-content;
+    padding: 3px 8px;
+    border-radius: 15px;
+}
