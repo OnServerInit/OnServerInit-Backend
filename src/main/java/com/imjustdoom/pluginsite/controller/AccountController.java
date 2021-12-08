@@ -47,6 +47,10 @@ public class AccountController {
     @PostMapping("/signup")
     public String signupSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
+        if(account.getUsername().contains(" ")) {
+            return "redirect:/signup?error=invalidcharacter";
+        }
+
         String emailAddress = account.getEmail();
         String regexPattern = "^(.+)@(\\S+)$";
         boolean validEmail = StringUtil.patternMatches(emailAddress, regexPattern);
