@@ -6,19 +6,23 @@
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
-<div class="content">
-    <div class="main-body">
-        <div class="inside-main-body">
-            <h1>Home</h1>
-            <p th:text="${username}"></p>
+<div class="content-container">
+    <div class="content">
+        <div class="main-body">
+            <div class="inside-main-body">
+                <h1>Home</h1>
+                <p th:text="${username}"></p>
+            </div>
+        </div>
+        <div class="side-body-container">
+            <div class="side-body">
+                <div class="inside-main-body">
+                    <div lang="en" th:include="sponsor :: sponsor"></div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="side-body">
-        <div class="inside-main-body">
-            <div lang="en" th:include="sponsor :: sponsor"></div>
-        </div>
-    </div>
+    <div lang="en" th:include="footer :: footer"></div>
 </div>
-<div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>
