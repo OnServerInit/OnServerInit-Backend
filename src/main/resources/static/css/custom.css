@@ -36,15 +36,20 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 a {
     text-decoration: none;
     font-weight: 600;
+    color: #DC2626;
+}
+
+a:focus{
+    color: #DC2626;
 }
 
 a:hover {
     text-decoration: underline;
-    color: #c90000;
+    color: #EF4444;
 }
 
 html {
-    background-color: #f6f6f6;
+    background-color: #F9FAFB;
 }
 
 /*
@@ -73,6 +78,7 @@ html {
     border-radius: 15px;
     /* width: 70%; */
     flex-grow: 1;
+    min-width: 0;
     height: min-content;
     margin-right: 2rem;
     display: inline-block;
@@ -104,7 +110,7 @@ html {
 /* footer */
 .footer {
     width: 100%;
-    background-color: #424242;
+    background-color: #374151;
 }
 
 .footer-text {
@@ -153,6 +159,8 @@ html {
     overflow: hidden;
     margin-top: 5px;
     margin-bottom: 5px;
+    display: flex;
+    position: relative;
 }
 
 .plugin-list {
@@ -169,12 +177,16 @@ html {
     align-items: center;
 }
 
-.info-left {
-    float: left;
+.info-left:nth-child(2){
+    flex-grow: 1;
+    flex-basis: 100px;
+    position: relative;
+    min-width: 0;
+    width: auto;
 }
 
-.info-right {
-    float: right;
+.info-right{
+    margin-left: 1rem;
 }
 
 .blurb {
@@ -183,8 +195,9 @@ html {
 
 .title {
     font-size: 16px;
-    color: #ff0101;
+    color: #DC2626;
     font-weight: bold;
+    word-wrap: break-word;
 }
 
 /* more */
@@ -199,7 +212,7 @@ html {
 .page-button {
     height: 20px;
     width: 20px;
-    color: #ff0101;
+    color: #DC2626;
 }
 
 .horizontal-center {
