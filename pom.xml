@@ -146,6 +146,7 @@
                                     <mainClass>com.imjustdoom.pluginsite.PluginSiteApplication</mainClass>
                                 </transformer>
                             </transformers>
+                            <addResources>true</addResources>
                         </configuration>
                     </execution>
                 </executions>
