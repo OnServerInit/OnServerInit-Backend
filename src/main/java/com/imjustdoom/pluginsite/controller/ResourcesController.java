@@ -125,6 +125,7 @@ public class ResourcesController {
                 List<Update> data = new ArrayList<>();
                 while (rs.next()) {
                     Update update = new Update();
+                    update.setName(rs.getString("name"));
                     update.setFilename(rs.getString("filename"));
                     update.setDescription(rs.getString("description"));
                     update.setVersions(rs.getString("versions"));
@@ -326,16 +327,16 @@ public class ResourcesController {
                         StandardCopyOption.REPLACE_EXISTING);
             }
 
-            SQL = "INSERT INTO files (id, fileId, filename, description, versions, uploaded, external)" +
-                    "VALUES(%s, %s, '%s', '%s', '%s', %s, '%s')"
-                            .formatted(resourceFile.getId(), fileId, file.getOriginalFilename(), resourceFile.getDescription(),
+            SQL = "INSERT INTO files (id, fileId, name, filename, description, versions, uploaded, external)" +
+                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', %s, '%s')"
+                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), file.getOriginalFilename(), resourceFile.getDescription(),
                                     json, created, "");
 
             download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
         } else {
-            SQL = "INSERT INTO files (id, fileId, filename, description, versions, uploaded, external)" +
-                    "VALUES(%s, %s, '%s', '%s', '%s', %s, '%s')"
-                            .formatted(resourceFile.getId(), fileId, "", resourceFile.getDescription(),
+            SQL = "INSERT INTO files (id, fileId, name, filename, description, versions, uploaded, external)" +
+                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', %s, '%s')"
+                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), "", resourceFile.getDescription(),
                                     json, created, resourceFile.getExternalDownload());
             download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
         }

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class Update {
 
-    private String filename, description, versions, download;
+    private String filename, description, versions, download, name;
 
     private int fileId;
 }

@@ -59,6 +59,7 @@ public class PluginDatabase {
             sql = "CREATE TABLE IF NOT EXISTS files (" +
                     "id INT NOT NULL, " +
                     "fileId INT NOT NULL, " +
+                    "name VARCHAR(128) NOT NULL," +
                     "filename VARCHAR(1024) NOT NULL," +
                     "description TEXT(65535) NOT NULL," +
                     "versions JSON NOT NULL," +
