@@ -16,6 +16,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -57,11 +58,15 @@ public class AccountController {
 
         if (!validEmail) return "redirect:/signup?error=invalidemail";
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT username FROM accounts WHERE username='%s'".formatted(account.getUsername()));
+        PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement("SELECT username FROM accounts WHERE username=?");
+        preparedStatement.setString(1, account.getUsername());
+        ResultSet rs = preparedStatement.executeQuery();
 
         if (rs.next()) return "redirect:/signup?error=usernametaken";
 
-        rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT email FROM accounts WHERE email='%s'".formatted(account.getEmail()));
+        preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement("SELECT email FROM accounts WHERE email=?");
+        preparedStatement.setString(1, account.getEmail());
+        rs = preparedStatement.executeQuery();
 
         if (rs.next()) return "redirect:/signup?error=emailtaken";
 
@@ -74,8 +79,14 @@ public class AccountController {
 
         account.setId(id);
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO accounts (id, username, email, password, joined, provider)" +
-                "VALUES('%s', '%s', '%s', '%s', %s, 'LOCAL');".formatted(id, account.getUsername(), account.getEmail(), passwordEncoder.encode(account.getPassword()), new Date().getTime() / 1000));
+        preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
+                "INSERT INTO accounts (id, username, email, password, joined, provider) VALUES(?, ?, ?, ?, ?, 'LOCAL');");
+        preparedStatement.setString(1, String.valueOf(id));
+        preparedStatement.setString(2, account.getUsername());
+        preparedStatement.setString(3, account.getEmail());
+        preparedStatement.setString(4, passwordEncoder.encode(account.getPassword()));
+        preparedStatement.setString(5, String.valueOf(new Date().getTime() / 1000));
+        preparedStatement.executeUpdate();
 
         Cookie ck = new Cookie("username", account.getUsername());
         response.addCookie(ck);
@@ -96,7 +107,9 @@ public class AccountController {
     @PostMapping("/login")
     public String loginSubmit(@ModelAttribute Account account, HttpServletResponse response) throws SQLException {
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id, password FROM accounts WHERE username='%s'".formatted(account.getUsername()));
+        PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement("SELECT id, password FROM accounts WHERE username=?");
+        preparedStatement.setString(1, account.getUsername());
+        ResultSet rs = preparedStatement.executeQuery();
 
         if (rs.next()) {
             if(BCrypt.checkpw(account.getPassword(), rs.getString("password"))) {

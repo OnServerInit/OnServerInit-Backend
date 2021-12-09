@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -202,7 +203,17 @@ public class ResourcesController {
             }
         }
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET name='%s', blurb='%s', description='%s', donation='%s', source='%s', support='%s' WHERE id=%s;".formatted(resource.getName(), resource.getBlurb(), resource.getDescription(), resource.getDonation(), resource.getSource(), resource.getSupport(), id));
+        PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
+                "UPDATE resources SET name=?, blurb=?, description=?, donation=?, source=?, support=? WHERE id=%?;");
+        preparedStatement.setString(1, resource.getName());
+        preparedStatement.setString(2, resource.getBlurb());
+        preparedStatement.setString(3, resource.getDescription());
+        preparedStatement.setString(4, resource.getDonation());
+        preparedStatement.setString(5, resource.getSource());
+        preparedStatement.setString(6, resource.getSupport());
+        preparedStatement.setString(7, String.valueOf(resource.getId()));
+        preparedStatement.executeUpdate();
+
         return "redirect:/resources/%s".formatted(resource.getId());
     }
 
