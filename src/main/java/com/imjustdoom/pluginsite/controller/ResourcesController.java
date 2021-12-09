@@ -187,8 +187,7 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/edit/{id}/update/{fileId}")
-    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException, IOException {
-        System.out.println("yes");
+    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException {
         PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
                 "UPDATE files SET name=?, description=?, version=? WHERE fileId=?");
         preparedStatement.setString(1, update.getName());
