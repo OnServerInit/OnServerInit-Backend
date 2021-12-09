@@ -1,6 +1,7 @@
 package com.imjustdoom.pluginsite;
 
 import com.google.gson.Gson;
+import com.imjustdoom.pluginsite.cache.ResourceNames;
 import com.imjustdoom.pluginsite.config.Config;
 import com.imjustdoom.pluginsite.database.PluginDatabase;
 import com.imjustdoom.pluginsite.storage.StorageManager;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @SpringBootApplication
 public class PluginSiteApplication extends SpringBootServletInitializer {
@@ -27,7 +30,7 @@ public class PluginSiteApplication extends SpringBootServletInitializer {
         return application.sources(PluginSiteApplication.class);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
 
         // Load the config and create it if it doesn't exist
         if(!FileUtil.doesFileExist("config.json")) {
@@ -50,6 +53,11 @@ public class PluginSiteApplication extends SpringBootServletInitializer {
         storageManager.init();
 
         SpringApplication.run(PluginSiteApplication.class, args);
+
+        ResultSet rs = getDB().getStmt().executeQuery("SELECT name FROM resources");
+        while(rs.next()) {
+            ResourceNames.names.add(rs.getString("name"));
+        }
     }
 
     public static PluginDatabase getDB() {

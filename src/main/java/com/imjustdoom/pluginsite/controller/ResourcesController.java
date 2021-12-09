@@ -3,6 +3,7 @@ package com.imjustdoom.pluginsite.controller;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.imjustdoom.pluginsite.PluginSiteApplication;
+import com.imjustdoom.pluginsite.cache.ResourceNames;
 import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.model.ResourceFile;
 import com.imjustdoom.pluginsite.model.Update;
@@ -10,6 +11,9 @@ import com.imjustdoom.pluginsite.util.AccountUtil;
 import com.imjustdoom.pluginsite.util.DateUtil;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import com.imjustdoom.pluginsite.util.StringUtil;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +45,18 @@ public class ResourcesController {
      * @return
      */
     @GetMapping("/resources")
-    public String resources(@RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
+    public String resources(@RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
         model.addAttribute("page", Integer.parseInt(page));
+
+        if(search != null) {
+            List<ExtractedResult> searchList;
+            searchList = FuzzySearch.extractSorted(search, ResourceNames.names);
+            for (int i = 0; i < searchList.size(); i++) {
+                System.out.println(searchList.get(i));
+            }
+        }
 
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
         List<Resource> data = new ArrayList<>();
