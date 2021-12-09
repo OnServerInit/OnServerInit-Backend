@@ -54,6 +54,7 @@ public class FileController {
         Resource file = new UrlResource(path.resolve(rs.getString("filename")).toUri());
 
         PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
+        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE files SET downloads=downloads + 1 WHERE fileId=%s".formatted(fileId));
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);

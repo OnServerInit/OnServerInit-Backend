@@ -60,11 +60,13 @@ public class PluginDatabase {
                     "id INT NOT NULL, " +
                     "fileId INT NOT NULL, " +
                     "name VARCHAR(128) NOT NULL," +
+                    "version VARCHAR(128) NOT NULL," +
                     "filename VARCHAR(1024) NOT NULL," +
                     "description TEXT(65535) NOT NULL," +
                     "versions JSON NOT NULL," +
                     "uploaded INT NOT NULL, " +
                     "external VARCHAR(2048) NOT NULL," +
+                    "downloads INT NOT NULL," +
                     "CONSTRAINT fileId PRIMARY KEY (fileId));";
 
             stmt.executeUpdate(sql);

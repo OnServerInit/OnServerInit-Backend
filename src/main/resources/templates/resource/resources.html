@@ -22,8 +22,7 @@
                             <option value="alphabetical">Alphabetical</option>
                         </select>
                     </div>
-                    <br>
-                    <hr>
+                    <br><hr>
                     <li th:each="file : ${files}">
                         <div class="plugin-box">
                             <div class="info-left"><img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo">

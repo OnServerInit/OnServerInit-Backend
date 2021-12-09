@@ -91,7 +91,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/{id}")
-    public String resources(@PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException, MalformedURLException {
+    public String resources(@RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException, MalformedURLException {
 
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
         if (!rs.next()) return "resource/404";
@@ -121,7 +121,14 @@ public class ResourcesController {
 
         switch (field.toLowerCase()) {
             case "updates":
-                rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=%s".formatted(id));
+                String orderBy = switch (sort) {
+                    case "uploaded" -> "ORDER BY uploaded DESC";
+                    case "downloads" -> "ORDER BY downloads DESC";
+                    case "alphabetical" -> "ORDER BY name ASC";
+                    default -> "";
+                };
+
+                rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=%s %s".formatted(id, orderBy));
                 List<Update> data = new ArrayList<>();
                 while (rs.next()) {
                     Update update = new Update();
@@ -131,6 +138,8 @@ public class ResourcesController {
                     update.setDescription(rs.getString("description"));
                     update.setVersions(rs.getString("versions"));
                     update.setFileId(rs.getInt("fileId"));
+                    update.setDownloads(rs.getInt("downloads"));
+                    update.setVersion(rs.getString("version"));
                     if (!rs.getString("external").equals("")) {
                         update.setDownload(rs.getString("external"));
                     } else {
@@ -138,7 +147,6 @@ public class ResourcesController {
                     }
                     data.add(update);
                 }
-                Collections.reverse(data);
                 model.addAttribute("updates", data);
                 return "resource/updates";
             default:
@@ -152,6 +160,25 @@ public class ResourcesController {
         model.addAttribute("resource", resource);
 
         return "resource/resource";
+    }
+
+    @GetMapping("/resources/edit/{id}/update")
+    public String editResourceUpdate(@PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+        model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
+
+        return "resource/editUpdate";
+    }
+
+    @PostMapping("/resources/edit/{id}/update")
+    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) throws SQLException, IOException {
+        PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
+                "UPDATE files SET name=?, description=?, version=?");
+        preparedStatement.setString(1, update.getName());
+        preparedStatement.setString(2, update.getDescription());
+        preparedStatement.setString(3, update.getVersions());
+
+        return "redirect:/resources/%s".formatted(id);
     }
 
     @GetMapping("/resources/edit/{id}")
@@ -206,7 +233,7 @@ public class ResourcesController {
         }
 
         PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
-                "UPDATE resources SET name=?, blurb=?, description=?, donation=?, source=?, support=? WHERE id=%?;");
+                "UPDATE resources SET name=?, blurb=?, description=?, donation=?, source=?, support=? WHERE id=?;");
         preparedStatement.setString(1, resource.getName());
         preparedStatement.setString(2, resource.getBlurb());
         preparedStatement.setString(3, resource.getDescription());
@@ -328,17 +355,17 @@ public class ResourcesController {
                         StandardCopyOption.REPLACE_EXISTING);
             }
 
-            SQL = "INSERT INTO files (id, fileId, name, filename, description, versions, uploaded, external)" +
-                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', %s, '%s')"
-                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), file.getOriginalFilename(), resourceFile.getDescription(),
-                                    json, created, "");
+            SQL = "INSERT INTO files (id, fileId, name, version, filename, description, versions, uploaded, external, downloads)" +
+                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', %s, '%s', %s)"
+                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), resourceFile.getVersion(), file.getOriginalFilename(), resourceFile.getDescription(),
+                                    json, created, "", 0);
 
             download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
         } else {
-            SQL = "INSERT INTO files (id, fileId, name, filename, description, versions, uploaded, external)" +
-                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', %s, '%s')"
-                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), "", resourceFile.getDescription(),
-                                    json, created, resourceFile.getExternalDownload());
+            SQL = "INSERT INTO files (id, fileId, name, version, filename, description, versions, uploaded, external, downloads)" +
+                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', %s, '%s', %s)"
+                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), resourceFile.getVersion(), "", resourceFile.getDescription(),
+                                    json, created, resourceFile.getExternalDownload(), 0);
             download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
         }
 
