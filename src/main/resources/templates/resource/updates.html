@@ -10,6 +10,15 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <div class="info-left">
+                    <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
+                </div>
+                <div class="info-left">
+                    <p th:text="${resource.getName()}"></p>
+                    <p th:text="${resource.getBlurb()}" class="blurb"></p>
+                    <br>
+                </div>
+                <br>
                 <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
                       enctype="multipart/form-data" action="#">
                     <p>
@@ -17,10 +26,15 @@
                         <input type="submit" name="field" value="Update">
                     </p>
                 </form>
-                    <table th:each="update : ${updates}">
+                    <table>
                         <tr>
+                            <td>Name</td>
+                            <td>Uploaded</td>
+                            <td>Actions</td>
+                        </tr>
+                        <tr th:each="update : ${updates}">
                             <td th:text="${update.getName()}"></td>
-                            <td th:text="${update.getDescription()}"></td>
+                            <td th:text="${update.getUploaded()}"></td>
                             <td><a th:href="${update.getDownload()}">
                                 <button>Download</button>
                             </a></td>

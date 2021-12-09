@@ -126,6 +126,7 @@ public class ResourcesController {
                 while (rs.next()) {
                     Update update = new Update();
                     update.setName(rs.getString("name"));
+                    update.setUploaded(DateUtil.formatDate(rs.getInt("uploaded"), timeZone));
                     update.setFilename(rs.getString("filename"));
                     update.setDescription(rs.getString("description"));
                     update.setVersions(rs.getString("versions"));
