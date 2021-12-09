@@ -12,17 +12,32 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <div>
+                    Sort By:
+                    <select id="sortby" onchange="changeSort()">
+                        <option value="updated">Updated</option>
+                        <option value="created">Created</option>
+                        <option value="downloads">Downloads</option>
+                        <option value="alphabetical">Alphabetical</option>
+                    </select>
+                </div>
+                <div class="horizontal-center">
+                    <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
+                        <button><</button>
+                    </a>
+                    <a th:if="${page > 2}" class="page-button" th:text="${page - 2}" onclick="changePage(-2)"></a>
+                    <a th:if="${page > 1}" class="page-button" th:text="${page - 1}" onclick="changePage(-1)"></a>
+                    <span th:text="${page}" class="page-number"></span>
+                    <a th:if="${page < total}" class="page-button" th:text="${page + 1}"
+                       onclick="changePage(1)"></a>
+                    <a th:if="${page + 1 < total}" class="page-button" th:text="${page + 2}"
+                       onclick="changePage(2)"></a>
+                    <a th:if="${page < total}" th:href="'/resources?page=' + ${page + 1}" class="page-button">
+                        <button>></button>
+                    </a>
+                </div>
                 <ul class="plugin-list">
-                    <div>
-                        Sort By:
-                        <select id="sortby" onchange="changeSort()">
-                            <option value="updated">Updated</option>
-                            <option value="created">Created</option>
-                            <option value="downloads">Downloads</option>
-                            <option value="alphabetical">Alphabetical</option>
-                        </select>
-                    </div>
-                    <br><hr>
+                    <!-- <hr> -->
                     <li th:each="file : ${files}">
                         <div class="plugin-box">
                             <div class="info-left"><img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo">
@@ -37,24 +52,8 @@
                                 <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
                             </div>
                         </div>
-                        <hr>
+                        <!-- <hr> -->
                     </li>
-                    <br>
-                    <div class="horizontal-center">
-                        <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
-                            <button><</button>
-                        </a>
-                        <a th:if="${page > 2}" class="page-button" th:text="${page - 2}" onclick="changePage(-2)"></a>
-                        <a th:if="${page > 1}" class="page-button" th:text="${page - 1}" onclick="changePage(-1)"></a>
-                        <span th:text="${page}" class="page-number"></span>
-                        <a th:if="${page < total}" class="page-button" th:text="${page + 1}"
-                           onclick="changePage(1)"></a>
-                        <a th:if="${page + 1 < total}" class="page-button" th:text="${page + 2}"
-                           onclick="changePage(2)"></a>
-                        <a th:if="${page < total}" th:href="'/resources?page=' + ${page + 1}" class="page-button">
-                            <button>></button>
-                        </a>
-                    </div>
                 </ul>
             </div>
         </div>

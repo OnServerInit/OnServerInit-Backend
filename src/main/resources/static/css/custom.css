@@ -49,6 +49,19 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
     box-shadow: 0 0 5px #aaa;
 }
 
+input[type="submit"]{
+    border-radius: 3px;
+    padding: 5px 15px 5px 15px;
+    margin: 5px 0;
+    background: #EF4444;
+    color: #fff;
+    font-weight: 600;
+}
+
+input[type="submit"]:not(:first-child){
+    margin-left: 1rem;
+}
+
 a {
     text-decoration: none;
     font-weight: 600;
@@ -77,6 +90,7 @@ html {
 .content-container {
     display: flex;
     flex-direction: column;
+    min-height: 100vh - 50px;
 }
 
 .content {
@@ -176,18 +190,49 @@ html {
 
 /* plugins list */
 
+/* -----[Option 1]----- */
+/* .plugin-box {
+    clear: both;
+    overflow: hidden;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin: 5px;
+    display: flex;
+    position: relative;
+} */
+
+/* .plugin-list {
+    /* padding: 3% 7%; */
+    /* margin-top: 0.5rem;
+    list-style-type: none;
+
+    /* -------- comment out the 2 lines below this to remove the outside border --------- */
+    /* border: 2px solid #374151;
+    border-radius: 1rem;
+}
+
+.plugin-list li:not(:first-child) {
+    border-top: #374151 solid 2px;
+} */
+
+/* -----[Option 2]----- */
 .plugin-box {
     clear: both;
     overflow: hidden;
     margin-top: 5px;
     margin-bottom: 5px;
+    padding: 5px;
+    background-color: #F3F4F6;
+    border-radius: 1rem;
     display: flex;
     position: relative;
 }
 
 .plugin-list {
     /* padding: 3% 7%; */
+    /* margin-top: 0.5rem; */
     list-style-type: none;
+    border-radius: 1rem;
 }
 
 .logo {
@@ -222,6 +267,25 @@ html {
     word-wrap: break-word;
 }
 
+.resource-controls{
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
+    /* align-items: center; */
+}
+
+.resource-controls a{
+    border-radius: 3px;
+    padding: 5px 15px 5px 15px;
+    margin: 5px 0;
+    background: #EF4444;
+    color: #fff;
+}
+
+.resource-controls a:not(:first-child){
+    margin-left: 1rem;
+}
+
 /* more */
 
 .text-box {
@@ -232,14 +296,31 @@ html {
 }
 
 .page-button {
-    height: 20px;
-    width: 20px;
-    color: #DC2626;
+    height: 25px;
+    width: 25px;
+    text-align: center;
+    vertical-align: middle;
+    /* color: #DC2626; */
+    color: #EF4444;
+    background-color: #F3F4F6;
+    border-radius: 5px;
+
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .page-number {
-    height: 20px;
-    width: 20px;
+    height: 25px;
+    width: 25px;
+    text-align: center;
+    vertical-align: middle;
+    /* color: #DC2626; */
+    color: white;
+    background-color: #EF4444;
+    border-radius: 5px;
+    
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 
