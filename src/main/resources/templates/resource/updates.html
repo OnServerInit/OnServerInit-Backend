@@ -51,7 +51,7 @@
                         <td th:text="${update.getDownloads()}"></td>
                         <td>
                             <a th:href="${update.getDownload()}"><button>Download</button></a>
-                            <a th:if="${authorid} == ${resource.getAuthorid()}"><button>Edit</button></a>
+                            <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${'/resources/edit/' + id + '/update/' + update.getFileId()}"><button>Edit</button></a>
                         </td>
                     </tr>
                 </table>

@@ -10,8 +10,7 @@
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
-            <form method="POST" th:action="${url}" th:object="${resource}" action="#" th:if="${userId == authorid}" enctype="multipart/form-data">
-                <p><img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">Logo: <input type="file" name="logo" accept="image/*" id="logo"></p>
+            <form method="POST" th:action="${'/resources/edit/' + id + '/update/' + update.getFileId()}" th:object="${update}" action="#" th:if="${userId == authorid}" enctype="multipart/form-data">
                 <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
                 <p>Version: <input type="text" th:field="*{version}" maxlength="128" required/></p>
                 <p>The description uses Markdown as formatting</p>

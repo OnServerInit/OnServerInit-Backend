@@ -162,21 +162,40 @@ public class ResourcesController {
         return "resource/resource";
     }
 
-    @GetMapping("/resources/edit/{id}/update")
-    public String editResourceUpdate(@PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+    @GetMapping("/resources/edit/{id}/update/{fileId}")
+    public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
+
+        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
+        if (!rs.next()) return "resource/404";
+
+        int authorid = rs.getInt("authorid");
+        model.addAttribute("authorid", String.valueOf(authorid));
+
+        rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE fileId=%s".formatted(fileId));
+        if (!rs.next()) return "resource/404";
+
+        Update update = new Update();
+        update.setFileId(fileId);
+        update.setName(rs.getString("name"));
+        update.setVersion(rs.getString("version"));
+        update.setDescription(rs.getString("description"));
+        model.addAttribute("update", update);
 
         return "resource/editUpdate";
     }
 
-    @PostMapping("/resources/edit/{id}/update")
-    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) throws SQLException, IOException {
+    @PostMapping("/resources/edit/{id}/update/{fileId}")
+    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException, IOException {
+        System.out.println("yes");
         PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
-                "UPDATE files SET name=?, description=?, version=?");
+                "UPDATE files SET name=?, description=?, version=? WHERE fileId=?");
         preparedStatement.setString(1, update.getName());
         preparedStatement.setString(2, update.getDescription());
-        preparedStatement.setString(3, update.getVersions());
+        preparedStatement.setString(3, update.getVersion());
+        preparedStatement.setString(4, String.valueOf(fileId));
+        preparedStatement.executeUpdate();
 
         return "redirect:/resources/%s".formatted(id);
     }
