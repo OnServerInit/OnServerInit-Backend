@@ -63,7 +63,7 @@ public class ResourcesController {
         List<String> searchList = new ArrayList<>();
         int resources, startRow, endRow, total, remainder;
 
-        if (search != null) {
+        if (search != null && !search.equals("")) {
             List<ExtractedResult> searchResults;
             searchResults = FuzzySearch.extractSorted(search, ResourceNames.names);
             for (ExtractedResult extractedResult : searchResults) {
