@@ -5,6 +5,7 @@
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
     <script th:src="@{/js/sortby.js}"></script>
     <script th:src="@{/js/pageChanger.js}"></script>
+    <script th:src="@{/js/search.js}"></script>
 </head>
 <body>
 <div lang="en" th:include="header :: header"></div>
@@ -20,6 +21,9 @@
                         <option value="downloads">Downloads</option>
                         <option value="alphabetical">Alphabetical</option>
                     </select>
+                </div>
+                <div>
+                    <input type="text" id="search-input"><input type="button" value="Search" id="search-button" onclick="search()">
                 </div>
                 <div class="horizontal-center">
                     <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
@@ -37,19 +41,6 @@
                     </a>
                 </div>
                 <ul class="plugin-list">
-                    <div>
-                        Sort By:
-                        <select id="sortby" onchange="changeSort()">
-                            <option value="updated">Updated</option>
-                            <option value="created">Created</option>
-                            <option value="downloads">Downloads</option>
-                            <option value="alphabetical">Alphabetical</option>
-                        </select>
-                    </div>
-                    <div>
-                        <input type="text"><input type="button" text="Search" >
-                    </div>
-                    <br>
                     <!-- <hr> -->
                     <li th:each="file : ${files}">
                         <div class="plugin-box">

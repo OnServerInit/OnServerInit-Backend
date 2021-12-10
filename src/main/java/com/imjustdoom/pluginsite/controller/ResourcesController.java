@@ -12,7 +12,6 @@ import com.imjustdoom.pluginsite.util.DateUtil;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import com.imjustdoom.pluginsite.util.StringUtil;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +31,10 @@ import java.nio.file.StandardCopyOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 @Controller
 public class ResourcesController {
@@ -45,42 +47,69 @@ public class ResourcesController {
      * @return
      */
     @GetMapping("/resources")
-    public String resources(@RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
-        model.addAttribute("username", username);
-        model.addAttribute("userId", userId);
-        model.addAttribute("page", Integer.parseInt(page));
-
-        if(search != null) {
-            List<ExtractedResult> searchList;
-            searchList = FuzzySearch.extractSorted(search, ResourceNames.names);
-            for (int i = 0; i < searchList.size(); i++) {
-                System.out.println(searchList.get(i));
-            }
-        }
+    public String resources(@RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
 
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
+
+        String orderBy = switch (sort) {
+            case "created" -> "ORDER BY creation DESC";
+            case "updated" -> "ORDER BY updated DESC";
+            case "downloads" -> "ORDER BY downloads DESC";
+            case "alphabetical" -> "ORDER BY name ASC";
+            default -> "";
+        };
+
         List<Resource> data = new ArrayList<>();
-        try {
+        List<String> searchList = new ArrayList<>();
+        int resources, startRow, endRow, total, remainder;
+
+        if (search != null) {
+            List<ExtractedResult> searchResults;
+            searchResults = FuzzySearch.extractSorted(search, ResourceNames.names);
+            for (ExtractedResult extractedResult : searchResults) {
+                if (extractedResult.getScore() > 50) {
+                    searchList.add(extractedResult.getString());
+
+                    PreparedStatement ps = PluginSiteApplication.getDB().getConn().prepareStatement(
+                            "SELECT * FROM resources WHERE name=?");
+                    ps.setString(1, extractedResult.getString());
+                    ResultSet rs = ps.executeQuery();
+                    rs.next();
+
+                    Resource resource = new Resource();
+                    resource.setName(rs.getString("name"));
+                    resource.setBlurb(rs.getString("blurb"));
+                    resource.setId(rs.getInt("id"));
+                    resource.setDownloads(rs.getInt("downloads"));
+                    resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timezone));
+                    resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timezone));
+                    data.add(resource);
+                }
+            }
+
+            resources = searchList.size();
+            startRow = Integer.parseInt(page) * 25 - 25;
+            endRow = startRow + 25;
+            total = resources / 25;
+            remainder = resources % 25;
+            if (remainder > 1) total++;
+
+            ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources %s LIMIT %s,25".formatted(orderBy, startRow));
+            while (rs.next()) {
+                if (search != null && !searchList.contains(rs.getString("name"))) continue;
+
+            }
+        } else {
             ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT COUNT(id) FROM resources");
 
             rs.next();
-            int resources = rs.getInt(1);
+            resources = rs.getInt(1);
 
-            int startRow = Integer.parseInt(page) * 25 - 25;
-            int endRow = startRow + 25;
-            int total = resources / 25;
-            int remainder = resources % 25;
+            startRow = Integer.parseInt(page) * 25 - 25;
+            endRow = startRow + 25;
+            total = resources / 25;
+            remainder = resources % 25;
             if (remainder > 1) total++;
-
-            model.addAttribute("total", total);
-
-            String orderBy = switch (sort) {
-                case "created" -> "ORDER BY creation DESC";
-                case "updated" -> "ORDER BY updated DESC";
-                case "downloads" -> "ORDER BY downloads DESC";
-                case "alphabetical" -> "ORDER BY name ASC";
-                default -> "";
-            };
 
             rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources %s LIMIT %s,25".formatted(orderBy, startRow));
             while (rs.next()) {
@@ -93,11 +122,13 @@ public class ResourcesController {
                 resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timezone));
                 data.add(resource);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
+        model.addAttribute("total", total);
         model.addAttribute("files", data);
+        model.addAttribute("username", username);
+        model.addAttribute("userId", userId);
+        model.addAttribute("page", Integer.parseInt(page));
 
         return "resource/resources";
     }
