@@ -5,8 +5,8 @@
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
 </head>
 <body>
-<div lang="en" th:include="header :: header"></div>
 <div class="content-container">
+<div lang="en" th:include="header :: header"></div>
 <div class="content">
     <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body">
         <div class="inside-main-body">
