@@ -41,6 +41,7 @@ input[type="text"], input[type="password"], input[type="email"]{
     border-radius: 3px;
     padding: 5px;
     margin: 5px 0;
+    width: 10rem;
 }
 
 input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus{
@@ -60,6 +61,15 @@ input[type="submit"]{
 
 input[type="submit"]:not(:first-child){
     margin-left: 1rem;
+}
+
+.input{
+    width: min-content;
+    position: relative;
+}
+
+.input p{
+    font-weight: bold;
 }
 
 a {
@@ -90,7 +100,8 @@ html {
 .content-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh - 50px;
+    min-height: 100vh;
+
 }
 
 .content {
@@ -332,4 +343,21 @@ html {
     width: fit-content;
     padding: 3px 8px;
     border-radius: 15px;
+}
+
+#strength-container{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.bar-section{
+    height: 0.35rem;
+    flex-grow: 1;
+    background-color: #D1D5DB;
+    border-radius: 0.1rem;
+}
+
+.bar-section:not(:first-child){
+    margin-left: 0.6rem;
 }
