@@ -51,7 +51,7 @@
                         <td th:text="${update.getDownloads()}"></td>
                         <td>
                             <a th:href="${update.getDownload()}"><button>Download</button></a>
-                            <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${'/resources/edit/' + id + '/update/' + update.getFileId()}"><button>Edit</button></a>
+                            <a th:if="${authorid} == ${resource.getAuthor().getId()}" th:href="${'/resources/edit/' + id + '/update/' + update.getResource().getId()}"><button>Edit</button></a>
                         </td>
                     </tr>
                 </table>
@@ -67,8 +67,8 @@
                 <div class="inside-main-body">
                     <p th:text="'Created: ' + ${resource.getCreated()}"></p>
                     <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
-                    Author: <a th:href="'/profile/' + ${resource.getAuthorid()}" th:text="${resource.getAuthor()}"></a>
-                    <p th:text="'Downloads: ' + ${resource.getDownloads()}"></p>
+                    Author: <a th:href="'/profile/' + ${resource.getAuthor().getId()}" th:text="${resource.getAuthor().getUsername()}"></a>
+                    <p th:text="'Downloads: ' + ${totalDownloads}"></p>
                 </div>
             </div>
         </div>

@@ -11,8 +11,8 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
-                <form method="POST" th:action="${url}" th:object="${resourceFile}" enctype="multipart/form-data"
-                      action="#" th:if="${userId == authorid}">
+                <form method="POST" th:action="${url}" th:object="${update}" enctype="multipart/form-data"
+                      action="#" th:if="${userId} == ${resource.getAuthor().getId()}">
                     <p th:if="${error == 'filesize'}"
                        th:text="'File size is too large or is empty, the max size is ' + ${maxUploadSize}"></p>
                     <p th:if="${error == 'filetype'}"
@@ -20,7 +20,7 @@
                     <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
                     <p>Version: <input type="text" th:field="*{version}" maxlength="128" required/></p>
                     <p>File: <input type="file" name="file" accept=".jar" required id="file"></p>
-                    <p>External Download: <input type="text" th:field="*{externalDownload}" maxlength="256" required
+                    <p>External Download: <input type="text" th:field="*{externalLink}" maxlength="256" required
                                                  id="externalDownload"/></p>
                     <p>The description uses Markdown as formatting</p>
                     <label>
@@ -46,7 +46,7 @@
                     <td><input type="submit" value="Submit"/></td>
                     </p>
                 </form>
-                <p th:unless="${userId == authorid}">You do not have permission to edit this plugin</p>
+                <p th:unless="${userId} == ${resource.getAuthor().getId()}">You do not have permission to edit this plugin</p>
             </div>
         </div>
         <div class="side-body-container">

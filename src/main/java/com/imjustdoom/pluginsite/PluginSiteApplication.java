@@ -49,15 +49,15 @@ public class PluginSiteApplication extends SpringBootServletInitializer {
         storageManager = new StorageManager();
 
         // Load StorageManager
-        db.init();
+        //db.init();
         storageManager.init();
 
         SpringApplication.run(PluginSiteApplication.class, args);
 
-        ResultSet rs = getDB().getStmt().executeQuery("SELECT name FROM resources");
-        while(rs.next()) {
-            ResourceNames.names.add(rs.getString("name"));
-        }
+        //ResultSet rs = getDB().getStmt().executeQuery("SELECT name FROM resources");
+        //while(rs.next()) {
+            //ResourceNames.names.add(rs.getString("name"));
+        //}
     }
 
     public static PluginDatabase getDB() {

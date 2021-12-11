@@ -1,9 +1,11 @@
 package com.imjustdoom.pluginsite.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,6 +21,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -26,8 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public DaoAuthenticationProvider authProvider() {
@@ -45,23 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                // Disable default configurations
-                .logout().disable()
-                .httpBasic().disable()
-                .formLogin().disable()
-
-                // Disable session creation
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
-
-                // Disable csrf (shouldn't need it as its just a backend api now)
                 .csrf().disable()
 
+                .authorizeRequests()
+                .antMatchers("/resources/create").authenticated()
 
-//                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and()
+                .anyRequest().permitAll()
 
-                // Permit all (use method security for controller access)
-                .authorizeRequests().anyRequest().permitAll()
                 .and()
-                .rememberMe().key("uniqueAndSecret");
+                .formLogin();
     }
 }

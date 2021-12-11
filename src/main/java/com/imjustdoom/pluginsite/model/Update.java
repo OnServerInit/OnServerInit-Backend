@@ -1,13 +1,62 @@
 package com.imjustdoom.pluginsite.model;
 
+import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
+@Entity
+@Table(name = "update_table")
 public class Update {
 
-    private String filename, description, versions, download, name, uploaded, version;
+    public Update(String description, String filename, String version, String download, String name, JsonObject json) {
+        this.downloads = 0;
+        this.description = description;
+        this.filename = filename;
+        this.version = version;
+        this.download = download;
+        this.name = name;
+        this.uploaded = LocalDateTime.now();
+        this.versions = "";
+    }
 
-    private int fileId, downloads;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
+    private String filename;
+
+    @Column(nullable = false)
+    private String versions;
+
+    @Column(nullable = false)
+    private String download;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private LocalDateTime uploaded;
+
+    @Column(nullable = false)
+    private String version;
+
+    @Column(nullable = false)
+    private int downloads;
+
+    //@Column(nullable = false)
+    @ManyToOne
+    private Resource resource;
+
+    public Update() {
+
+    }
 }

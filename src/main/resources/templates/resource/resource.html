@@ -48,10 +48,10 @@
                 <hr>
                 <br>
                 <div class="resource-controls">
-                    <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${editUrl}">
+                    <a th:if="${authorid} == ${resource.getAuthor().getId()}" th:href="${editUrl}">
                         <button>Edit Plugin</button>
                     </a>
-                    <a th:if="${authorid} == ${resource.getAuthorid()}" th:href="${uploadUrl}">
+                    <a th:if="${authorid} == ${resource.getAuthor().getId()}" th:href="${uploadUrl}">
                         <button>Upload</button>
                     </a>
                     <a th:if="${resource.getDownload()} != ''" th:href="${resource.getDownload()}">
@@ -70,8 +70,8 @@
                 <div class="inside-main-body side-body-info-text">
                     <p class="" th:text="'Created: ' + ${resource.getCreated()}"></p>
                     <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
-                    Author: <a th:href="'/profile/' + ${resource.getAuthorid()}" th:text="${resource.getAuthor()}"></a>
-                    <p th:text="'Downloads: ' + ${resource.getDownloads()}"></p>
+                    Author: <a th:href="'/profile/' + ${resource.getAuthor().getId()}" th:text="${resource.getAuthor().getUsername()}"></a>
+                    <p th:text="'Downloads: ' + ${totalDownloads}"></p>
                 </div>
             </div>
         </div>

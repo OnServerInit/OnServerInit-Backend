@@ -4,7 +4,10 @@ import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.model.Update;
+import com.imjustdoom.pluginsite.repositories.AccountRepository;
+import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.util.DateUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -20,7 +23,11 @@ import java.util.List;
 import java.util.TimeZone;
 
 @Controller
+@AllArgsConstructor
 public class ProfileController {
+
+    private final ResourceRepository resourceRepository;
+    private final AccountRepository accountRepository;
 
     @GetMapping("/profile/{id}")
     public String profile(@RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, @RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
@@ -30,8 +37,8 @@ public class ProfileController {
         ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM accounts WHERE id=%s".formatted(id));
         if(!rs.next()) return "resource/404";
 
-        Account account = new Account();
-        account.setJoined(DateUtil.formatDate(rs.getInt("joined"), timezone));
+        Account account = accountRepository.getById(id);
+        //account.setJoined(DateUtil.formatDate(rs.getInt("joined"), timezone));
         account.setId(id);
         account.setUsername(rs.getString("username"));
 
@@ -65,14 +72,8 @@ public class ProfileController {
 
                     rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE authorid=%s %s LIMIT %s,25".formatted(id, orderBy, startRow));
                     while (rs.next()) {
-                        Resource resource = new Resource();
-                        resource.setName(rs.getString("name"));
-                        resource.setBlurb(rs.getString("blurb"));
-                        resource.setId(rs.getInt("id"));
-                        resource.setDownloads(rs.getInt("downloads"));
-                        resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timezone));
-                        resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timezone));
-                        account.setTotalDownloads(account.getTotalDownloads() + resource.getDownloads());
+                        Resource resource = resourceRepository.getById(rs.getInt("id"));
+                        //account.setTotalDownloads(account.getTotalDownloads() + resource.getDownloads());
                         data.add(resource);
                     }
                 } catch (SQLException e ) {

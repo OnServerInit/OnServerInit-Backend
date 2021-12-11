@@ -3,16 +3,23 @@ package com.imjustdoom.pluginsite.controller;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.imjustdoom.pluginsite.PluginSiteApplication;
-import com.imjustdoom.pluginsite.cache.ResourceNames;
+import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
+import com.imjustdoom.pluginsite.dtos.in.CreateUpdateRequest;
+import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
+import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
-import com.imjustdoom.pluginsite.model.ResourceFile;
 import com.imjustdoom.pluginsite.model.Update;
-import com.imjustdoom.pluginsite.util.AccountUtil;
-import com.imjustdoom.pluginsite.util.DateUtil;
+import com.imjustdoom.pluginsite.repositories.AccountRepository;
+import com.imjustdoom.pluginsite.repositories.ResourceRepository;
+import com.imjustdoom.pluginsite.repositories.UpdateRepository;
+import com.imjustdoom.pluginsite.service.LogoService;
 import com.imjustdoom.pluginsite.util.FileUtil;
-import com.imjustdoom.pluginsite.util.StringUtil;
+import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.model.ExtractedResult;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +38,16 @@ import java.nio.file.StandardCopyOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 @Controller
+@AllArgsConstructor
 public class ResourcesController {
+
+    private final LogoService logoService;
+    private final ResourceRepository resourceRepository;
+    private final AccountRepository accountRepository;
+    private final UpdateRepository updateRepository;
 
     /**
      * @param model
@@ -59,16 +69,17 @@ public class ResourcesController {
             default -> "";
         };
 
-        List<Resource> data = new ArrayList<>();
+        List<SimpleResourceDto> data = new ArrayList<>();
         List<String> searchList = new ArrayList<>();
         int resources, startRow, endRow, total, remainder;
 
         if (search != null && !search.equals("")) {
-            List<ExtractedResult> searchResults;
-            searchResults = FuzzySearch.extractSorted(search, ResourceNames.names);
-            for (ExtractedResult extractedResult : searchResults) {
+            List<BoundExtractedResult<Resource>> searchResults;
+            searchResults = FuzzySearch.extractSorted(search, resourceRepository.findAll(), resource -> resource.getName());
+            for (BoundExtractedResult<Resource> extractedResult : searchResults) {
                 if (extractedResult.getScore() > 50) {
                     searchList.add(extractedResult.getString());
+
 
                     PreparedStatement ps = PluginSiteApplication.getDB().getConn().prepareStatement(
                             "SELECT * FROM resources WHERE name=?");
@@ -76,14 +87,8 @@ public class ResourcesController {
                     ResultSet rs = ps.executeQuery();
                     rs.next();
 
-                    Resource resource = new Resource();
-                    resource.setName(rs.getString("name"));
-                    resource.setBlurb(rs.getString("blurb"));
-                    resource.setId(rs.getInt("id"));
-                    resource.setDownloads(rs.getInt("downloads"));
-                    resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timezone));
-                    resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timezone));
-                    data.add(resource);
+                    Resource resource = resourceRepository.getById(rs.getInt("id"));
+                    //data.add(resource);
                 }
             }
 
@@ -100,27 +105,19 @@ public class ResourcesController {
 
             }
         } else {
-            ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT COUNT(id) FROM resources");
-
-            rs.next();
-            resources = rs.getInt(1);
 
             startRow = Integer.parseInt(page) * 25 - 25;
             endRow = startRow + 25;
-            total = resources / 25;
-            remainder = resources % 25;
+            total = resourceRepository.findAll().size() / 25;
+            remainder = resourceRepository.findAll().size() % 25;
             if (remainder > 1) total++;
 
-            rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources %s LIMIT %s,25".formatted(orderBy, startRow));
-            while (rs.next()) {
-                Resource resource = new Resource();
-                resource.setName(rs.getString("name"));
-                resource.setBlurb(rs.getString("blurb"));
-                resource.setId(rs.getInt("id"));
-                resource.setDownloads(rs.getInt("downloads"));
-                resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timezone));
-                resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timezone));
-                data.add(resource);
+            Sort sort1 = Sort.by(sort).ascending();
+            Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
+
+            for(Resource resource : resourceRepository.findAll(pageable)) {
+                Integer downloads = updateRepository.getTotalDownloads(resource.getId());
+                data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
             }
         }
 
@@ -136,24 +133,11 @@ public class ResourcesController {
     @GetMapping("/resources/{id}")
     public String resources(@RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException, MalformedURLException {
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
-        if (!rs.next()) return "resource/404";
+        Optional<Resource> optionalResource = resourceRepository.findById(id);
 
-        Resource resource = new Resource();
+        if (optionalResource.isEmpty()) return "resource/404";
 
-        resource.setId(id);
-        resource.setName(rs.getString("name"));
-        resource.setDescription(StringUtil.markdownToHtml(rs.getString("description")));
-        resource.setBlurb(rs.getString("blurb"));
-        resource.setDonation(rs.getString("donation"));
-        resource.setSource(rs.getString("source"));
-        resource.setSupport(rs.getString("support"));
-        resource.setAuthorid(rs.getInt("authorid"));
-        resource.setDownload(rs.getString("download"));
-        resource.setCreated(DateUtil.formatDate(rs.getInt("creation"), timeZone));
-        resource.setUpdated(DateUtil.formatDate(rs.getInt("updated"), timeZone));
-        resource.setDownloads(rs.getInt("downloads"));
-        resource.setAuthor(AccountUtil.getAuthorFromId(resource.getAuthorid()));
+        Resource resource = resourceRepository.getById(id);
 
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
@@ -161,6 +145,7 @@ public class ResourcesController {
         model.addAttribute("editUrl", "/resources/edit/" + id);
         model.addAttribute("uploadUrl", "/resources/upload/" + id);
         model.addAttribute("authorid", authorid);
+        model.addAttribute("totalDownloads", updateRepository.getTotalDownloads(resource.getId()));
 
         switch (field.toLowerCase()) {
             case "updates":
@@ -171,38 +156,13 @@ public class ResourcesController {
                     default -> "";
                 };
 
-                rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=%s %s".formatted(id, orderBy));
-                List<Update> data = new ArrayList<>();
-                while (rs.next()) {
-                    Update update = new Update();
-                    update.setName(rs.getString("name"));
-                    update.setUploaded(DateUtil.formatDate(rs.getInt("uploaded"), timeZone));
-                    update.setFilename(rs.getString("filename"));
-                    update.setDescription(rs.getString("description"));
-                    update.setVersions(rs.getString("versions"));
-                    update.setFileId(rs.getInt("fileId"));
-                    update.setDownloads(rs.getInt("downloads"));
-                    update.setVersion(rs.getString("version"));
-                    if (!rs.getString("external").equals("")) {
-                        update.setDownload(rs.getString("external"));
-                    } else {
-                        update.setDownload(PluginSiteApplication.config.domain + "/files/" + id + "/download/" + update.getFileId());
-                    }
-                    data.add(update);
-                }
-                model.addAttribute("updates", data);
+                Sort sort1 = Sort.by(sort).descending();
+
+                model.addAttribute("updates", updateRepository.findAllByResourceId(id, sort1));
                 return "resource/updates";
             default:
                 return "resource/resource";
         }
-    }
-
-    @PostMapping("/resources/{id}")
-    public String resourcePost(@ModelAttribute Resource resource, @PathVariable("id") int id, Model model) {
-
-        model.addAttribute("resource", resource);
-
-        return "resource/resource";
     }
 
     @GetMapping("/resources/edit/{id}/update/{fileId}")
@@ -220,7 +180,6 @@ public class ResourcesController {
         if (!rs.next()) return "resource/404";
 
         Update update = new Update();
-        update.setFileId(fileId);
         update.setName(rs.getString("name"));
         update.setVersion(rs.getString("version"));
         update.setDescription(rs.getString("description"));
@@ -249,20 +208,12 @@ public class ResourcesController {
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
-        if (!rs.next()) return "resource/404";
+        Optional<Resource> optionalResource = resourceRepository.findById(id);
+        Resource resource = optionalResource.get();
 
-        int authorid = rs.getInt("authorid");
-        model.addAttribute("authorid", String.valueOf(authorid));
+        if (optionalResource.isEmpty()) return "resource/404";
 
-        Resource resource = new Resource();
-        resource.setId(id);
-        resource.setName(rs.getString("name"));
-        resource.setDescription(rs.getString("description"));
-        resource.setBlurb(rs.getString("blurb"));
-        resource.setDonation(rs.getString("donation"));
-        resource.setSource(rs.getString("source"));
-        resource.setSource(rs.getString("support"));
+        model.addAttribute("authorid", resource.getAuthor());
         model.addAttribute("resource", resource);
         model.addAttribute("url", "/resources/edit/" + id);
         return "resource/edit";
@@ -307,24 +258,22 @@ public class ResourcesController {
         return "redirect:/resources/%s".formatted(resource.getId());
     }
 
+    //TODO: Do sanity checks
     @PostMapping("/resources/create")
-    public RedirectView createSubmit(@ModelAttribute Resource resource, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
+    public RedirectView createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
 
-        System.out.println(resource.getSupport());
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT id FROM resources WHERE id=(SELECT MAX(id) FROM resources) GROUP BY id");
+        Optional<Account> optionalAccount = accountRepository.findById(Integer.valueOf(authorid));
+        if (optionalAccount.isEmpty()) throw new RuntimeException(optionalAccount.toString());
 
-        int id;
+        Account account = optionalAccount.get();
 
-        if (!rs.next()) id = 0;
-        else id = rs.getInt("id");
+        Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
+                resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
+                "", account, resourceRequest.getSupportLink());
 
-        id++;
+        resourceRepository.save(resource);
 
-        resource.setId(id);
-
-        long created = new Date().getTime() / 1000;
-        PluginSiteApplication.getDB().getStmt().executeUpdate("INSERT INTO resources (id, name, blurb, description, download, donation, source, support, creation, updated, downloads, authorid) " +
-                "VALUES(" + id + ", '" + resource.getName() + "', '" + resource.getBlurb() + "','" + resource.getDescription() + "', '', '" + resource.getDonation() + "', '" + resource.getSource() + "', '" + resource.getSupport() + "', " + created + ", " + created + ", 0, " + authorid + ")");
+        int id = resource.getId();
 
         if (!FileUtil.doesFileExist("./resources/logos/" + id)) {
             try {
@@ -340,103 +289,77 @@ public class ResourcesController {
             Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
         }
 
-        return new RedirectView("/resources/" + resource.getId());
+        return new RedirectView("/resources/" + id);
     }
 
     @GetMapping("/resources/create")
     public String create(Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
         model.addAttribute("username", username);
+        model.addAttribute("resource", new CreateResourceRequest());
         model.addAttribute("userId", userId);
-        model.addAttribute("resource", new Resource());
         return "resource/create";
     }
 
     @GetMapping("/resources/upload/{id}")
     public String uploadFile(@RequestParam(name = "error", required = false) String error, @CookieValue(value = "id", defaultValue = "") String userId, @PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
 
+        Optional<Resource> optionalResource = resourceRepository.findById(id);
+        Resource resource = optionalResource.get();
+
+        if (optionalResource.isEmpty()) return "resource/404";
+
+        model.addAttribute("resource", resource);
+        model.addAttribute("update", new CreateUpdateRequest());
+        model.addAttribute("url", "/resources/upload/" + id);
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
-        if (!rs.next()) return "resource/404";
 
-        int authorid = rs.getInt("authorid");
-        model.addAttribute("authorid", String.valueOf(authorid));
-
-        ResourceFile file = new ResourceFile();
-        file.setId(id);
-        model.addAttribute("resourceFile", file);
-        model.addAttribute("url", "/resources/upload/" + id);
         return "resource/upload";
     }
 
     @PostMapping("/resources/upload/{id}")
-    public String uploadFilePost(@RequestParam("file") MultipartFile file, @ModelAttribute ResourceFile resourceFile, @CookieValue(value = "id", defaultValue = "") String authorid) throws IOException, SQLException {
+    public String uploadFilePost(@PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest, @CookieValue(value = "id", defaultValue = "") String authorid) throws IOException, SQLException {
 
-        if (file.isEmpty() && resourceFile.getExternalDownload() == null) {
-            return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filesize";
+        if (file.isEmpty() && updateRequest.getExternalLink() == null) {
+            //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filesize";
         }
-        if (!file.getOriginalFilename().endsWith(".jar") && resourceFile.getExternalDownload() == null) {
-            return "redirect:/resources/upload/" + resourceFile.getId() + "/?error=filetype";
+        if (!file.getOriginalFilename().endsWith(".jar") && updateRequest.getExternalLink() == null) {
+            //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filetype";
         }
-
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT fileId FROM files WHERE fileId=(SELECT MAX(fileId) FROM files) GROUP BY fileId");
-
-        int fileId;
-
-        if (!rs.next()) fileId = 0;
-        else fileId = rs.getInt("fileId");
-
-        fileId++;
 
         JsonObject json = new JsonObject();
         JsonArray array = new JsonArray();
         array.add("1.17.1");
         json.add("versions", array);
 
-        String SQL, download;
+        Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(), updateRequest.getVersion(), "", updateRequest.getName(), json);
 
-        System.out.println(resourceFile.getExternalDownload());
+        update.setResource(resourceRepository.getById(id));
+        updateRepository.save(update);
 
-        long created = new Date().getTime() / 1000;
-        if (resourceFile.getExternalDownload() == null || resourceFile.getExternalDownload().equals("")) {
-            if (!FileUtil.doesFileExist("./resources/plugins/" + fileId)) {
+        if (updateRequest.getExternalLink() == null || updateRequest.getExternalLink().equals("")) {
+            if (!FileUtil.doesFileExist("./resources/plugins/" + update.getId())) {
                 try {
-                    Files.createDirectory(Paths.get("./resources/plugins/" + fileId));
+                    Files.createDirectory(Paths.get("./resources/plugins/" + update.getId()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            Path destinationFile = Path.of("./resources/plugins/" + fileId + "/" + file.getOriginalFilename()).normalize().toAbsolutePath();
+            Path destinationFile = Path.of("./resources/plugins/" + update.getId() + "/" + file.getOriginalFilename()).normalize().toAbsolutePath();
 
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
                         StandardCopyOption.REPLACE_EXISTING);
             }
-
-            SQL = "INSERT INTO files (id, fileId, name, version, filename, description, versions, uploaded, external, downloads)" +
-                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', %s, '%s', %s)"
-                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), resourceFile.getVersion(), file.getOriginalFilename(), resourceFile.getDescription(),
-                                    json, created, "", 0);
-
-            download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
-        } else {
-            SQL = "INSERT INTO files (id, fileId, name, version, filename, description, versions, uploaded, external, downloads)" +
-                    "VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', %s, '%s', %s)"
-                            .formatted(resourceFile.getId(), fileId, resourceFile.getName(), resourceFile.getVersion(), "", resourceFile.getDescription(),
-                                    json, created, resourceFile.getExternalDownload(), 0);
-            download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, resourceFile.getId(), fileId);
         }
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate(SQL);
+        String download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, update.getResource().getId(), update.getId());
+        resourceRepository.setDownload(id, download);
+        updateRepository.setDownload(update.getId(), download);
 
-        System.out.println(download);
-
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET download='%s', updated='%s' WHERE id='%s'"
-                .formatted(download, created, resourceFile.getId()));
-
-        return "redirect:/resources/%s".formatted(resourceFile.getId());
+        return "redirect:/resources/%s".formatted(id);
     }
 }

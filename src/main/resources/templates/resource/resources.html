@@ -18,8 +18,8 @@
                     <select id="sortby" onchange="changeSort()">
                         <option value="updated">Updated</option>
                         <option value="created">Created</option>
-                        <option value="downloads">Downloads</option>
-                        <option value="alphabetical">Alphabetical</option>
+                        <option value="download">Downloads</option>
+                        <option value="name">Alphabetical</option>
                     </select>
                 </div>
                 <div>
@@ -53,7 +53,7 @@
                             <div class="info-right">
                                 <p th:text="${'Created: ' + file.getCreated()}" class="blurb"></p>
                                 <p th:text="${'Updated: ' + file.getUpdated()}" class="blurb"></p>
-                                <p th:text="${'Downloads: ' + file.getDownloads()}" class="blurb"></p>
+                                <p th:text="${'Downloads: ' + file.getTotalDownloads()}" class="blurb"></p>
                             </div>
                         </div>
                         <!-- <hr> -->

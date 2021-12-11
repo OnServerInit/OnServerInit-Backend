@@ -1,6 +1,11 @@
 package com.imjustdoom.pluginsite.controller;
 
 import com.imjustdoom.pluginsite.PluginSiteApplication;
+import com.imjustdoom.pluginsite.model.Update;
+import com.imjustdoom.pluginsite.repositories.UpdateRepository;
+import com.imjustdoom.pluginsite.service.LogoService;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
@@ -15,46 +20,39 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 @Controller
+@AllArgsConstructor
 public class FileController {
+
+    private final LogoService logoService;
+    private final UpdateRepository updateRepository;
 
     @GetMapping("/logo/{id}")
     @ResponseBody
-    public HttpEntity<byte[]> serveLogo(@PathVariable("id") int id) throws IOException {
-
-        Path path = Paths.get("resources/logos/%s".formatted(id));
-        Resource file = new UrlResource(path.resolve("logo.png").toUri());
-
-        byte[] image = file.getInputStream().readAllBytes();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(image.length);
-
-        return new HttpEntity<byte[]>(image, headers);
+    public HttpEntity<byte[]> serveLogo(@PathVariable("id") int id) {
+        return logoService.serveLogo(id);
     }
 
     @GetMapping("/files/{id}/download/{fileId}")
     @ResponseBody
-    public ResponseEntity serveFile(@PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException, MalformedURLException {
+    public ResponseEntity serveFile(@PathVariable("id") int id, @PathVariable("fileId") int fileId) throws MalformedURLException {
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE id=%s AND fileId=%s".formatted(id, fileId));
-
-        if(!rs.next()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error. Can't find file on this plugin");
-
-        if(!rs.getString("external").equals("")) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", rs.getString("external"));
-            PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
-            return new ResponseEntity<String>(headers,HttpStatus.FOUND);
-        }
+        Optional<Update> optional = updateRepository.findById(fileId);
+        Update update = optional.get();
 
         Path path = Paths.get("resources/plugins/" + fileId + "/");
-        Resource file = new UrlResource(path.resolve(rs.getString("filename")).toUri());
+        Resource file = new UrlResource(path.resolve(update.getFilename()).toUri());
 
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
-        PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE files SET downloads=downloads + 1 WHERE fileId=%s".formatted(fileId));
+        updateRepository.addDownload(fileId);
+
+        /**if(!rs.getString("external").equals("")) {
+         HttpHeaders headers = new HttpHeaders();
+         headers.add("Location", rs.getString("external"));
+         PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
+         return new ResponseEntity<String>(headers,HttpStatus.FOUND);
+         }**/
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
