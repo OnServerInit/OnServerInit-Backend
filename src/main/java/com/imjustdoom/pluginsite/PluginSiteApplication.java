@@ -1,9 +1,7 @@
 package com.imjustdoom.pluginsite;
 
 import com.google.gson.Gson;
-import com.imjustdoom.pluginsite.cache.ResourceNames;
 import com.imjustdoom.pluginsite.config.Config;
-import com.imjustdoom.pluginsite.database.PluginDatabase;
 import com.imjustdoom.pluginsite.storage.StorageManager;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +19,6 @@ import java.sql.SQLException;
 @SpringBootApplication
 public class PluginSiteApplication extends SpringBootServletInitializer {
 
-    private static PluginDatabase db;
     private static StorageManager storageManager;
     public static Config config;
 
@@ -44,24 +41,12 @@ public class PluginSiteApplication extends SpringBootServletInitializer {
         String data = Files.readString(Path.of("config.json"));
         config = gson.fromJson(data, Config.class);
 
-        // Load Database
-        db = new PluginDatabase();
         storageManager = new StorageManager();
 
         // Load StorageManager
-        //db.init();
         storageManager.init();
 
         SpringApplication.run(PluginSiteApplication.class, args);
-
-        //ResultSet rs = getDB().getStmt().executeQuery("SELECT name FROM resources");
-        //while(rs.next()) {
-            //ResourceNames.names.add(rs.getString("name"));
-        //}
-    }
-
-    public static PluginDatabase getDB() {
-        return db;
     }
 
     public static StorageManager getStorageManager() {

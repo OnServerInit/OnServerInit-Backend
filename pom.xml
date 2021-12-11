@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.imjustdoom</groupId>
-    <artifactId>PluginSite</artifactId>
+    <artifactId>OnServerInit</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>PluginSite</name>
-    <description>PluginSite</description>
+    <name>OnServerInit</name>
+    <description>OnServerInit</description>
     <properties>
         <java.version>17</java.version>
     </properties>

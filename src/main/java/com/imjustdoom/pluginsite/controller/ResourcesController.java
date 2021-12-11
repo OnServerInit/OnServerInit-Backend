@@ -38,7 +38,10 @@ import java.nio.file.StandardCopyOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.TimeZone;
 
 @Controller
 @AllArgsConstructor
@@ -71,43 +74,29 @@ public class ResourcesController {
 
         List<SimpleResourceDto> data = new ArrayList<>();
         List<String> searchList = new ArrayList<>();
-        int resources, startRow, endRow, total, remainder;
+        int resources, total, remainder;
 
         if (search != null && !search.equals("")) {
             List<BoundExtractedResult<Resource>> searchResults;
-            searchResults = FuzzySearch.extractSorted(search, resourceRepository.findAll(), resource -> resource.getName());
+            searchResults = FuzzySearch.extractSorted(search, resourceRepository.findAll(), Resource::getName);
             for (BoundExtractedResult<Resource> extractedResult : searchResults) {
-                if (extractedResult.getScore() > 50) {
-                    searchList.add(extractedResult.getString());
+                if (extractedResult.getScore() < 30) continue;
+                searchList.add(extractedResult.getString());
 
+                Optional<Resource> optionalResource = resourceRepository.findByNameEqualsIgnoreCase(extractedResult.getString());
+                Resource resource = optionalResource.get();
 
-                    PreparedStatement ps = PluginSiteApplication.getDB().getConn().prepareStatement(
-                            "SELECT * FROM resources WHERE name=?");
-                    ps.setString(1, extractedResult.getString());
-                    ResultSet rs = ps.executeQuery();
-                    rs.next();
+                Integer downloads = updateRepository.getTotalDownloads(resource.getId());
+                data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
 
-                    Resource resource = resourceRepository.getById(rs.getInt("id"));
-                    //data.add(resource);
-                }
             }
 
             resources = searchList.size();
-            startRow = Integer.parseInt(page) * 25 - 25;
-            endRow = startRow + 25;
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
-
-            ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources %s LIMIT %s,25".formatted(orderBy, startRow));
-            while (rs.next()) {
-                if (search != null && !searchList.contains(rs.getString("name"))) continue;
-
-            }
         } else {
 
-            startRow = Integer.parseInt(page) * 25 - 25;
-            endRow = startRow + 25;
             total = resourceRepository.findAll().size() / 25;
             remainder = resourceRepository.findAll().size() % 25;
             if (remainder > 1) total++;
@@ -115,7 +104,7 @@ public class ResourcesController {
             Sort sort1 = Sort.by(sort).ascending();
             Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
 
-            for(Resource resource : resourceRepository.findAll(pageable)) {
+            for (Resource resource : resourceRepository.findAll(pageable)) {
                 Integer downloads = updateRepository.getTotalDownloads(resource.getId());
                 data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
             }
@@ -170,19 +159,19 @@ public class ResourcesController {
         model.addAttribute("username", username);
         model.addAttribute("userId", userId);
 
-        ResultSet rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM resources WHERE id=%s".formatted(id));
-        if (!rs.next()) return "resource/404";
+        Optional<Resource> optionalResource = resourceRepository.findById(id);
+        Resource resource = optionalResource.get();
+        if (optionalResource.isEmpty()) return "resource/404";
 
-        int authorid = rs.getInt("authorid");
-        model.addAttribute("authorid", String.valueOf(authorid));
+        Optional<Update> optionalUpdate = updateRepository.findById(fileId);
+        Update update = optionalUpdate.get();
+        if (optionalUpdate.isEmpty()) return "resource/404";
 
-        rs = PluginSiteApplication.getDB().getStmt().executeQuery("SELECT * FROM files WHERE fileId=%s".formatted(fileId));
-        if (!rs.next()) return "resource/404";
+        CreateUpdateRequest createUpdateRequest = new CreateUpdateRequest();
+        createUpdateRequest.setName(update.getName());
+        createUpdateRequest.setVersion(update.getVersion());
+        createUpdateRequest.setDescription(update.getDescription());
 
-        Update update = new Update();
-        update.setName(rs.getString("name"));
-        update.setVersion(rs.getString("version"));
-        update.setDescription(rs.getString("description"));
         model.addAttribute("update", update);
 
         return "resource/editUpdate";
@@ -190,13 +179,14 @@ public class ResourcesController {
 
     @PostMapping("/resources/edit/{id}/update/{fileId}")
     public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException {
-        PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
+
+        /**PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
                 "UPDATE files SET name=?, description=?, version=? WHERE fileId=?");
         preparedStatement.setString(1, update.getName());
         preparedStatement.setString(2, update.getDescription());
         preparedStatement.setString(3, update.getVersion());
         preparedStatement.setString(4, String.valueOf(fileId));
-        preparedStatement.executeUpdate();
+        preparedStatement.executeUpdate();**/
 
         return "redirect:/resources/%s".formatted(id);
     }
@@ -244,7 +234,7 @@ public class ResourcesController {
             }
         }
 
-        PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
+        /**PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
                 "UPDATE resources SET name=?, blurb=?, description=?, donation=?, source=?, support=? WHERE id=?;");
         preparedStatement.setString(1, resource.getName());
         preparedStatement.setString(2, resource.getBlurb());
@@ -253,7 +243,7 @@ public class ResourcesController {
         preparedStatement.setString(5, resource.getSource());
         preparedStatement.setString(6, resource.getSupport());
         preparedStatement.setString(7, String.valueOf(resource.getId()));
-        preparedStatement.executeUpdate();
+        preparedStatement.executeUpdate();**/
 
         return "redirect:/resources/%s".formatted(resource.getId());
     }

@@ -55,6 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
 
                 .and()
-                .formLogin();
+                .formLogin().loginPage("/login");
     }
 }

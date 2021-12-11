@@ -10,7 +10,8 @@
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
-            <form method="POST" th:action="${'/resources/edit/' + id + '/update/' + update.getFileId()}" th:object="${update}" action="#" th:if="${userId == authorid}" enctype="multipart/form-data">
+            <form method="POST" th:action="${'/resources/edit/' + id + '/update/' + update.getId()}" th:object="${update}"
+                  action="#" th:if="${userId == update.getResource().getAuthor().getId()}" enctype="multipart/form-data">
                 <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
                 <p>Version: <input type="text" th:field="*{version}" maxlength="128" required/></p>
                 <p>The description uses Markdown as formatting</p>
@@ -21,7 +22,7 @@
                 <td><input type="submit" value="Save Edit"/></td>
                 </p>
             </form>
-            <p th:unless="${userId == authorid}">You do not have permission to edit this plugin</p>
+            <p th:unless="${userId == update.getResource().getAuthor().getId()}">You do not have permission to edit this plugin</p>
         </div>
     </div>
     <div class="side-body-container">
