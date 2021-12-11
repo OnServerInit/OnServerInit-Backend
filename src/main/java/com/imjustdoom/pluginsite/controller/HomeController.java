@@ -12,9 +12,9 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class HomeController {
 
-    @GetMapping({"/", "/home"})
+    @GetMapping("/")
     public String home(Model model, Authentication authentication) {
-        model.addAttribute("username", ((Account) authentication.getPrincipal()).getUsername());
+        model.addAttribute("auth", authentication);
         return "home";
     }
 }

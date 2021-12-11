@@ -1,17 +1,13 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.dtos.in.CreateAccountRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.util.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +15,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -34,20 +26,14 @@ public class AccountController {
     private final AccountRepository accountRepository;
 
     @GetMapping("/signup")
-    public String signup(Model model, @CookieValue(value = "username", defaultValue = "") String username, @RequestParam(name = "error", required = false) String error) {
+    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Authentication auth) {
         model.addAttribute("account", new CreateAccountRequest());
-        model.addAttribute("username", username);
         model.addAttribute("error", error);
         return "account/signup";
     }
 
     @GetMapping("/logout")
-    public RedirectView logout(HttpServletResponse response, @CookieValue(value = "username", defaultValue = "") String username, Model model) {
-        model.addAttribute("username", username);
-        Cookie cookie = new Cookie("username", null);
-        response.addCookie(cookie);
-        cookie = new Cookie("id", null);
-        response.addCookie(cookie);
+    public RedirectView logout() {
         return new RedirectView("/");
     }
 

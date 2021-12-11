@@ -11,7 +11,7 @@
         <div class="main-body">
             <div class="inside-main-body">
                 <h1>Home</h1>
-                <p th:text="${username}"></p>
+                <p th:if="${auth != null}" th:text="${auth.getName()}"></p>
             </div>
         </div>
         <div class="side-body-container">

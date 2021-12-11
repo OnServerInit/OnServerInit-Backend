@@ -20,6 +20,7 @@ import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -52,15 +53,8 @@ public class ResourcesController {
     private final AccountRepository accountRepository;
     private final UpdateRepository updateRepository;
 
-    /**
-     * @param model
-     * @param timezone
-     * @param username
-     * @param userId
-     * @return
-     */
     @GetMapping("/resources")
-    public String resources(@RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model, TimeZone timezone, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
+    public String resources(Authentication auth, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
 
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
 
@@ -112,15 +106,14 @@ public class ResourcesController {
 
         model.addAttribute("total", total);
         model.addAttribute("files", data);
-        model.addAttribute("username", username);
-        model.addAttribute("userId", userId);
+        model.addAttribute("auth", auth);
         model.addAttribute("page", Integer.parseInt(page));
 
         return "resource/resources";
     }
 
     @GetMapping("/resources/{id}")
-    public String resources(@RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id") int id, @CookieValue(value = "id", defaultValue = "") String userId, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "username", defaultValue = "") String username, TimeZone timeZone) throws SQLException, MalformedURLException {
+    public String resources(Authentication auth, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id") int id, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
 
@@ -128,12 +121,10 @@ public class ResourcesController {
 
         Resource resource = resourceRepository.getById(id);
 
-        model.addAttribute("username", username);
-        model.addAttribute("userId", userId);
+        model.addAttribute("auth", auth);
         model.addAttribute("resource", resource);
         model.addAttribute("editUrl", "/resources/edit/" + id);
         model.addAttribute("uploadUrl", "/resources/upload/" + id);
-        model.addAttribute("authorid", authorid);
         model.addAttribute("totalDownloads", updateRepository.getTotalDownloads(resource.getId()));
 
         switch (field.toLowerCase()) {
@@ -155,12 +146,9 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/edit/{id}/update/{fileId}")
-    public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
-        model.addAttribute("username", username);
-        model.addAttribute("userId", userId);
+    public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Authentication auth) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
-        Resource resource = optionalResource.get();
         if (optionalResource.isEmpty()) return "resource/404";
 
         Optional<Update> optionalUpdate = updateRepository.findById(fileId);
@@ -173,12 +161,13 @@ public class ResourcesController {
         createUpdateRequest.setDescription(update.getDescription());
 
         model.addAttribute("update", update);
+        model.addAttribute("auth", auth);
 
         return "resource/editUpdate";
     }
 
     @PostMapping("/resources/edit/{id}/update/{fileId}")
-    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) throws SQLException {
+    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId, Authentication auth) {
 
         /**PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
                 "UPDATE files SET name=?, description=?, version=? WHERE fileId=?");
@@ -192,9 +181,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/edit/{id}")
-    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException {
-        model.addAttribute("username", username);
-        model.addAttribute("userId", userId);
+    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Authentication auth) {
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
 
@@ -206,11 +193,13 @@ public class ResourcesController {
         model.addAttribute("authorid", resource.getAuthor());
         model.addAttribute("resource", resource);
         model.addAttribute("url", "/resources/edit/" + id);
+        model.addAttribute("auth", auth);
+
         return "resource/edit";
     }
 
     @PostMapping("/resources/edit/{id}")
-    public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id) throws SQLException, IOException {
+    public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id) throws IOException {
 
         if (!file.isEmpty()) {
             if (!file.getContentType().contains("image")) {
@@ -283,15 +272,14 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/create")
-    public String create(Model model, @CookieValue(value = "username", defaultValue = "") String username, @CookieValue(value = "id", defaultValue = "") String userId) {
-        model.addAttribute("username", username);
+    public String create(Model model, Authentication auth) {
+        model.addAttribute("auth", auth);
         model.addAttribute("resource", new CreateResourceRequest());
-        model.addAttribute("userId", userId);
         return "resource/create";
     }
 
     @GetMapping("/resources/upload/{id}")
-    public String uploadFile(@RequestParam(name = "error", required = false) String error, @CookieValue(value = "id", defaultValue = "") String userId, @PathVariable("id") int id, Model model, @CookieValue(value = "username", defaultValue = "") String username) throws SQLException {
+    public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Authentication auth) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         Resource resource = optionalResource.get();
@@ -303,8 +291,7 @@ public class ResourcesController {
         model.addAttribute("url", "/resources/upload/" + id);
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
-        model.addAttribute("username", username);
-        model.addAttribute("userId", userId);
+        model.addAttribute("auth", auth);
 
         return "resource/upload";
     }
