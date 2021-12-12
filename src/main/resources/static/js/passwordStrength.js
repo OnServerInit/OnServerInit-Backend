@@ -1,22 +1,48 @@
 window.addEventListener('load', function () {
-
-    let timeout;
-
     let password = document.getElementById('password');
-    let strengthBadge = document.getElementById('strength-disp');
 
     let strengthContainer = document.getElementById('strength-container');
 
-    let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
-    let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))');
+    function scorePassword(pass){
+        var score = 0;
+        if(!pass){
+            return score;
+        }
 
-    function StrengthChecker(PasswordParameter){
-        if(PasswordParameter.length < 8){
+        // award every unique letter until 5 repetitions
+        var letters = new Object();
+        for(var i=0; i<pass.length; i++){
+            letters[pass[i]] = (letters[pass[i]] || 0) + 1;
+            score += 5.0 / letters[pass[i]];
+        }
+
+        // bonus points for mixing it up
+        var variations = {
+            digits: /\d/.test(pass),
+            lower: /[a-z]/.test(pass),
+            upper: /[A-Z]/.test(pass),
+            nonWords: /\W/.test(pass),
+        }
+
+        let variationCount = 0;
+        for (var check in variations) {
+            variationCount += (variations[check] === true) ? 1 : 0;
+        }
+        score += (variationCount - 1) * 10;
+
+        return parseInt(score);
+    }
+
+    function checkPasswordStrength(pass){
+        let score = scorePassword(pass);
+
+        if(pass.length < 8){
             return 'invalid';
         }
-        if (strongPassword.test(PasswordParameter)) {
+
+        if(score > 80){
             return 'strong';
-        } else if (mediumPassword.test(PasswordParameter)) {
+        } else if(score > 60){
             return 'medium';
         } else {
             return 'weak';
@@ -57,23 +83,8 @@ window.addEventListener('load', function () {
 
     }
 
-
     password.addEventListener('input', function () {
-        // strengthBadge.style.display = (password.value.length === 0) ? 'none': 'block';
-        var strength = StrengthChecker(password.value);
+        var strength = checkPasswordStrength(password.value);
         setStrength(strength);
     });
-    // password.addEventListener("input", () => {
-
-    //     strengthBadge.style.display = 'block'
-    //     clearTimeout(timeout);
-
-    //     timeout = setTimeout(() => StrengthChecker(password.value), 1000);
-
-    //     if (password.value.length !== 0) {
-    //         strengthBadge.style.display !== 'block'
-    //     } else {
-    //         strengthBadge.style.display = 'none'
-    //     }
-    // });
 });
