@@ -170,6 +170,12 @@ html {
 
 .footer-text {
     color: #dadada;
+    display: block;
+}
+
+.footer-text:hover{
+    text-decoration: none;
+    color: #dadada;
 }
 
 .footer .container{
