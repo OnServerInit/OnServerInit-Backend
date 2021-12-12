@@ -17,6 +17,9 @@ import com.imjustdoom.pluginsite.util.FileUtil;
 import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -120,6 +123,17 @@ public class ResourcesController {
         if (optionalResource.isEmpty()) return "resource/404";
 
         Resource resource = resourceRepository.getById(id);
+
+        String description = resource.getDescription();
+
+        description.replaceAll("script", "error style=\"display:none;\"");
+        Parser parser = Parser.builder().build();
+        Node document = parser.parse(description);
+        HtmlRenderer renderer = HtmlRenderer.builder().build();
+        String html = renderer.render(document);
+
+        resource.setDescription(html);
+
 
         model.addAttribute("auth", auth);
         model.addAttribute("resource", resource);
