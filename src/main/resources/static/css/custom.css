@@ -297,6 +297,23 @@ html {
     margin-left: 1rem;
 }
 
+.blog-container{
+
+}
+
+.blog{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 1rem;
+    background-color: #F3F4F6;
+    border-radius: 1rem;
+}
+
+.blog-timeuser{
+    display: flex;
+    flex-direction: row;
+}
+
 /* more */
 
 .text-box {
