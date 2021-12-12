@@ -40,7 +40,7 @@ public class AccountController {
     @PostMapping("/signup")
     public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest, HttpServletResponse response) {
 
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
         if(!pattern.matcher(accountRequest.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
 
         String emailAddress = accountRequest.getEmail();
