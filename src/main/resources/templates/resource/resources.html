@@ -13,17 +13,19 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
-                <div>
-                    Sort By:
-                    <select id="sortby" onchange="changeSort()">
-                        <option value="updated">Updated</option>
-                        <option value="created">Created</option>
-                        <option value="download">Downloads</option>
-                        <option value="name">Alphabetical</option>
-                    </select>
-                </div>
-                <div>
-                    <input type="text" id="search-input"><input type="button" value="Search" id="search-button" onclick="search()">
+                <div class="resource-top-controls">
+                    <div style="flex-grow: 1;">
+                        Sort By:
+                        <select id="sortby" onchange="changeSort()">
+                            <option value="updated">Updated</option>
+                            <option value="created">Created</option>
+                            <option value="download">Downloads</option>
+                            <option value="name">Alphabetical</option>
+                        </select>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="search-input"><input type="button" value="Search" id="search-button" onclick="search()">
+                    </div>
                 </div>
                 <div class="horizontal-center">
                     <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
