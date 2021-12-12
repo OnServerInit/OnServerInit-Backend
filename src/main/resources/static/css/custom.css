@@ -87,6 +87,10 @@ a:hover {
     color: #EF4444;
 }
 
+li{
+    margin-left: 2rem;
+}
+
 html {
     background-color: #F9FAFB;
 }
@@ -124,6 +128,10 @@ html {
     margin-right: 2rem;
     display: inline-block;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+.full-body{
+    margin-right: 0 !important;
 }
 
 .side-body-container{
@@ -276,6 +284,14 @@ html {
     color: #DC2626;
     font-weight: bold;
     word-wrap: break-word;
+}
+
+.modified-grey{
+    color: #838383;
+}
+
+.wall-section{
+    margin-top: 1rem;
 }
 
 .resource-controls{
