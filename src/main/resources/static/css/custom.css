@@ -87,6 +87,10 @@ a:hover {
     color: #EF4444;
 }
 
+ul li{
+    margin-left: 2rem;
+}
+
 html {
     background-color: #F9FAFB;
 }
@@ -126,6 +130,10 @@ html {
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
 }
 
+.full-body{
+    margin-right: 0 !important;
+}
+
 .side-body-container{
     width: 28%;
     min-width: 230px;
@@ -161,6 +169,12 @@ html {
 }
 
 .footer-text {
+    color: #dadada;
+    display: block;
+}
+
+.footer-text:hover{
+    text-decoration: none;
     color: #dadada;
 }
 
@@ -278,6 +292,14 @@ html {
     word-wrap: break-word;
 }
 
+.modified-grey{
+    color: #838383;
+}
+
+.wall-section{
+    margin-top: 1rem;
+}
+
 .resource-controls{
     display: flex;
     flex-direction: row;
@@ -312,6 +334,41 @@ html {
 .blog-timeuser{
     display: flex;
     flex-direction: row;
+}
+
+.resource-top-controls{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.search-container{
+    display: flex;
+    flex-direction: row;
+    border-radius: 7px;
+    overflow: hidden;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.search-container input[type="button"]{
+    outline: none;
+    border: none;
+    border-radius: 0;
+    padding: 5px 15px 5px 15px;
+    margin: 5px 0;
+    background: #EF4444;
+    color: #fff;
+    font-weight: 600;
+    margin: 0;
+}
+
+.search-container input[type="text"]{
+    flex-grow: 1;
+    border-radius: 0;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+    margin: 0;
 }
 
 /* more */

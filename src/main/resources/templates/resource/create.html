@@ -3,24 +3,44 @@
 <head>
     <title>Create Resource</title>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 <div class="content-container">
 <div lang="en" th:include="header :: header"></div>
 <div class="content">
-    <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body">
+    <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body" id="form">
         <div class="inside-main-body">
-            <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
-            <p>Blurb: <input type="text" th:field="*{blurb}" maxlength="256" required/></p>
-            <p>Donation Link (Optional): <input type="text" th:field="*{donationLink}" maxlength="2048"/></p>
-            <p>Source Code (Optional): <input type="text" th:field="*{sourceCodeLink}" maxlength="2048"/></p>
-            <p>Support (Optional): <input type="text" th:field="*{supportLink}" maxlength="2048"/></p>
-            <p>The description uses Markdown as formatting</p>
-            <label>
-                <textarea th:field="*{description}" required class="text-box"></textarea>
-            </label>
+            <div class="input">
+                <p>Name</p>
+                <input type="text" th:field="*{name}" maxlength="128" required/>
+            </div>
+            <div class="input">
+                <p>Blurb</p>
+                <input type="text" th:field="*{blurb}" maxlength="256" required/>
+            </div>
+            <div class="input">
+                <p>Donation Link (Optional)</p>
+                <input type="text" th:field="*{donationLink}" maxlength="2048"/>
+            </div>
+            <div class="input">
+                <p>Source Code (Optional)</p>
+                <input type="text" th:field="*{sourceCodeLink}" maxlength="2048"/>
+            </div>
+            <div class="input">
+                <p>Support (Optional)</p>
+                <input type="text" th:field="*{supportLink}" maxlength="2048"/>
+            </div>
+
+            <div class="input" style="width: 100% !important;">
+                <p>Description</p>
+                <label>
+                    <textarea class="text-box" id="description"></textarea>
+                </label>
+                <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
+            </div>
             <p>
-            <td><input type="submit" value="Submit"/></td>
+            <td><input type="submit" value="Submit" id="submit"/></td>
             </p>
         </div>
     </form>
@@ -39,5 +59,15 @@
 </div>
 <div lang="en" th:include="footer :: footer"></div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    const simplemde = new SimpleMDE({element: document.getElementById('description')});
+
+    //not sure this is how i should do this but i get an error without this when trying to create a resource
+    document.getElementById("submit").onclick = function () {
+        document.getElementById("hidden-description").value = simplemde.value();
+        console.log(simplemde.value());
+    };
+</script>
 </body>
 </html>

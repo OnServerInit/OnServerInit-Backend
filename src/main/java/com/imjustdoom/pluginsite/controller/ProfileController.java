@@ -34,8 +34,8 @@ public class ProfileController {
     private final UpdateRepository updateRepository;
 
     @GetMapping("/profile/{id}")
-    public String profile(@RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, @RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model, Authentication auth) {
-        model.addAttribute("auth", auth);
+    public String profile(@RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, @RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model, Account user) {
+        model.addAttribute("account", user);
         model.addAttribute("page", Integer.parseInt(page));
 
         Optional<Account> optionalAccount = accountRepository.findById(id);

@@ -48,10 +48,10 @@
                 <hr>
                 <br>
                 <div class="resource-controls">
-                    <a th:if="${authorid} == ${resource.getAuthor().getId()}" th:href="${editUrl}">
+                    <a th:if="${account.getId()} == ${resource.getAuthor().getId()}" th:href="${editUrl}">
                         <button>Edit Plugin</button>
                     </a>
-                    <a th:if="${authorid} == ${resource.getAuthor().getId()}" th:href="${uploadUrl}">
+                    <a th:if="${account.getId()} == ${resource.getAuthor().getId()}" th:href="${uploadUrl}">
                         <button>Upload</button>
                     </a>
                     <a th:if="${resource.getDownload()} != ''" th:href="${resource.getDownload()}">

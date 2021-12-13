@@ -1,11 +1,16 @@
 package com.imjustdoom.pluginsite.controller;
 
+import com.imjustdoom.pluginsite.config.resovlers.AccountArgumentResolver;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Blog;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.BlogRepository;
 import lombok.AllArgsConstructor;
+import com.imjustdoom.pluginsite.service.AccountService;
+import lombok.AllArgsConstructor;
+import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;

@@ -12,14 +12,14 @@
         <div class="inside-main-body">
             <p th:if="${error == 'notfound'}">No account found with those credentials</p>
             <p th:if="${error == 'incorrectpassword'}">Incorrect password</p>
-            <form method="POST" th:action="@{/login}" th:object="${account}" action="#">
+            <form method="POST" th:action="@{/login}" th:object="${createAccount}" action="#">
                 <div class="input">
                     <p>Name</p>
                     <input type="text" th:field="*{username}" maxlength="16" required/>
                 </div>
 
                 <div class="input">
-                    <p>Name</p>
+                    <p>Password</p>
                     <input type="password" th:field="*{password}" maxlength="64" required/>
                 </div>
 

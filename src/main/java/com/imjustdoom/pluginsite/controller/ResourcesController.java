@@ -17,6 +17,9 @@ import com.imjustdoom.pluginsite.util.FileUtil;
 import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -54,7 +57,7 @@ public class ResourcesController {
     private final UpdateRepository updateRepository;
 
     @GetMapping("/resources")
-    public String resources(Authentication auth, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
+    public String resources(Account account, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
 
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
 
@@ -106,14 +109,14 @@ public class ResourcesController {
 
         model.addAttribute("total", total);
         model.addAttribute("files", data);
-        model.addAttribute("auth", auth);
+        model.addAttribute("account", account);
         model.addAttribute("page", Integer.parseInt(page));
 
         return "resource/resources";
     }
 
     @GetMapping("/resources/{id}")
-    public String resources(Authentication auth, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id") int id, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
+    public String resources(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id") int id, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
 
@@ -121,7 +124,17 @@ public class ResourcesController {
 
         Resource resource = resourceRepository.getById(id);
 
-        model.addAttribute("auth", auth);
+        String description = resource.getDescription();
+
+        description.replaceAll("script", "error style=\"display:none;\"");
+        Parser parser = Parser.builder().build();
+        Node document = parser.parse(description);
+        HtmlRenderer renderer = HtmlRenderer.builder().build();
+        String html = renderer.render(document);
+
+        resource.setDescription(html);
+
+        model.addAttribute("account", account);
         model.addAttribute("resource", resource);
         model.addAttribute("editUrl", "/resources/edit/" + id);
         model.addAttribute("uploadUrl", "/resources/upload/" + id);
@@ -146,7 +159,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/edit/{id}/update/{fileId}")
-    public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Authentication auth) {
+    public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Account account) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         if (optionalResource.isEmpty()) return "resource/404";
@@ -161,7 +174,7 @@ public class ResourcesController {
         createUpdateRequest.setDescription(update.getDescription());
 
         model.addAttribute("update", update);
-        model.addAttribute("auth", auth);
+        model.addAttribute("account", account);
 
         return "resource/editUpdate";
     }
@@ -181,7 +194,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/edit/{id}")
-    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Authentication auth) {
+    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account) {
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
 
@@ -193,7 +206,7 @@ public class ResourcesController {
         model.addAttribute("authorid", resource.getAuthor());
         model.addAttribute("resource", resource);
         model.addAttribute("url", "/resources/edit/" + id);
-        model.addAttribute("auth", auth);
+        model.addAttribute("account", account);
 
         return "resource/edit";
     }
@@ -239,12 +252,7 @@ public class ResourcesController {
 
     //TODO: Do sanity checks
     @PostMapping("/resources/create")
-    public RedirectView createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, @CookieValue(value = "id", defaultValue = "") String authorid, @CookieValue(value = "id", defaultValue = "") String userId) throws SQLException, IOException {
-
-        Optional<Account> optionalAccount = accountRepository.findById(Integer.valueOf(authorid));
-        if (optionalAccount.isEmpty()) throw new RuntimeException(optionalAccount.toString());
-
-        Account account = optionalAccount.get();
+    public RedirectView createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) throws IOException {
 
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
                 resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
@@ -272,14 +280,14 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/create")
-    public String create(Model model, Authentication auth) {
-        model.addAttribute("auth", auth);
+    public String create(Model model, Account account) {
+        model.addAttribute("account", account);
         model.addAttribute("resource", new CreateResourceRequest());
         return "resource/create";
     }
 
     @GetMapping("/resources/upload/{id}")
-    public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Authentication auth) {
+    public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         Resource resource = optionalResource.get();
@@ -291,13 +299,13 @@ public class ResourcesController {
         model.addAttribute("url", "/resources/upload/" + id);
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
-        model.addAttribute("auth", auth);
+        model.addAttribute("account", account);
 
         return "resource/upload";
     }
 
     @PostMapping("/resources/upload/{id}")
-    public String uploadFilePost(@PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest, @CookieValue(value = "id", defaultValue = "") String authorid) throws IOException, SQLException {
+    public String uploadFilePost(@PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException, SQLException {
 
         if (file.isEmpty() && updateRequest.getExternalLink() == null) {
             //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filesize";

@@ -12,7 +12,7 @@
         <div class="main-body">
             <div class="inside-main-body">
                 <form method="POST" th:action="${url}" th:object="${update}" enctype="multipart/form-data"
-                      action="#" th:if="${userId} == ${resource.getAuthor().getId()}">
+                      action="#" th:if="${account.getId()} == ${resource.getAuthor().getId()}">
                     <p th:if="${error == 'filesize'}"
                        th:text="'File size is too large or is empty, the max size is ' + ${maxUploadSize}"></p>
                     <p th:if="${error == 'filetype'}"
@@ -46,7 +46,7 @@
                     <td><input type="submit" value="Submit"/></td>
                     </p>
                 </form>
-                <p th:unless="${userId} == ${resource.getAuthor().getId()}">You do not have permission to edit this plugin</p>
+                <p th:unless="${account.getId()} == ${resource.getAuthor().getId()}">You do not have permission to edit this plugin</p>
             </div>
         </div>
         <div class="side-body-container">
