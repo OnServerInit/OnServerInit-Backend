@@ -354,6 +354,15 @@ html {
     margin: 0;
 }
 
+.button{
+    border-radius: 3px;
+    padding: 5px 15px 5px 15px;
+    margin: 5px 0;
+    background: #EF4444;
+    color: #fff;
+    font-weight: 600;
+}
+
 /* more */
 
 .text-box {
