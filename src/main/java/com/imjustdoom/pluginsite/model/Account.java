@@ -22,7 +22,7 @@ public class Account implements UserDetails {
         this.email = email;
         this.password = password;
         this.joined = LocalDateTime.now();
-        this.role = "USER";
+        this.role = "ROLE_USER";
     }
 
     @Id
