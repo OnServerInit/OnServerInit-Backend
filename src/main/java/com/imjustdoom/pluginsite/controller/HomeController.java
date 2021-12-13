@@ -31,7 +31,7 @@ public class HomeController {
     private final AccountRepository accountRepository;
 
     @GetMapping("/")
-    public String home(Model model, Authentication authentication) {
+    public String home(Model model, Account account) {
         for(Blog blog : blogRepository.findAll()) {
             int authorId = blog.getAuthorId();
             Account author = accountRepository.findById(authorId).get();
@@ -50,7 +50,7 @@ public class HomeController {
             blog.setPost(renderer.render(document));
         }
 
-        model.addAttribute("auth", authentication);
+        model.addAttribute("account", account);
         model.addAttribute("blogs", blogRepository.findAll());
         return "home";
     }
