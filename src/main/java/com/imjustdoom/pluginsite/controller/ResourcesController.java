@@ -115,9 +115,14 @@ public class ResourcesController {
         return "resource/resources";
     }
 
-    @GetMapping("/resources/{id}")
-    public String resources(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id") int id, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
-
+    @GetMapping("/resources/{id_s}")
+    public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
+        int id = 0;
+        try{
+            id = Integer.parseInt(id_s);
+        }catch (NumberFormatException e){
+            return "resource/404";
+        }
         Optional<Resource> optionalResource = resourceRepository.findById(id);
 
         if (optionalResource.isEmpty()) return "resource/404";
