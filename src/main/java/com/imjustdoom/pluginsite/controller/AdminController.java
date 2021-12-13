@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @AllArgsConstructor
 public class AdminController {
 
-    @GetMapping("admin")
+    @GetMapping("/admin")
     public String admin() {
         return "admin/admin";
     }

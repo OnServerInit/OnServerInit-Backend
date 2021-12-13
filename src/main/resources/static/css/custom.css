@@ -87,6 +87,37 @@ a:hover {
     color: #EF4444;
 }
 
+.a-button{
+    height: 25px;
+    width: 25px;
+    text-align: center;
+    vertical-align: middle;
+    /* color: #DC2626; */
+    color: white;
+    /* background-color: #EF4444; */
+    border-radius: 3px;
+    padding: 5px 15px 5px 15px;
+    flex-grow: 1;
+}
+
+.a-button:not(:first-child){
+    margin-left: 1rem;
+}
+
+.a-button:hover{
+    background-color: #EF4444;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.redirect-confirm{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+}
+
 .no-ml{
     margin-left: 0 !important;
 }

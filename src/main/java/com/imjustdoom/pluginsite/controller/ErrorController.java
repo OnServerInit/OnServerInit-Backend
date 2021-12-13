@@ -7,10 +7,10 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @ControllerAdvice
 public class ErrorController {
     /* idk what an Exception error is */
-    @ExceptionHandler(Exception.class)
-    public String handleException() {
+//    @ExceptionHandler(Exception.class)
+//    public String handleException() {
 //        return "error/error";
-    }
+//    }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handle404() {
