@@ -38,3 +38,5 @@ window.addEventListener('load', function () {
     console.log(getQueryVariable("sort"));
     document.getElementById("sortby").value = getQueryVariable("sort").toLowerCase();
 });
+
+// test
