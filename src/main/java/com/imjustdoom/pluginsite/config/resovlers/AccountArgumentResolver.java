@@ -22,12 +22,12 @@ public class AccountArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         if (SecurityContextHolder.getContext().getAuthentication() == null
                 || !(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof Account))
             return null;
 
-        Account account = this.accountRepository.getById(((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
+        Account account = accountRepository.getById(((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
         return account;
     }
 }

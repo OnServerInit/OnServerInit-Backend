@@ -14,7 +14,7 @@
             <p th:if="${error == 'logotype'}">Please upload an image instead</p>
             <p th:if="${error == 'logosize'}">Please upload an image with the same height and width</p>
             <p th:if="${error == 'filesize'}" th:text="'Image size is too large' + ${maxUploadSize}"></p>
-            <form method="POST" th:action="${url}" th:object="${resource}" action="#" th:if="${userId != authorid}" enctype="multipart/form-data">
+            <form method="POST" th:action="${url}" th:object="${resource}" action="#" th:if="${account.getId() != resource.getAuthor().getId()}" enctype="multipart/form-data">
                 <!-- <p><img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">Logo: <input type="file" name="logo" accept="image/*" id="logo"></p> -->
                 <div style="display: flex;">
                     <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
@@ -47,14 +47,15 @@
                 <div class="input" style="width: 100% !important;">
                     <p>Description</p>
                     <label>
-                        <textarea th:field="*{description}" required class="text-box" id="description"></textarea>
+                        <textarea class="text-box" id="description"></textarea>
+                        <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
                     </label>
                 </div>
                 <p>
                 <td><input type="submit" value="Save Edit"/></td>
                 </p>
             </form>
-            <p th:unless="${userId != authorid}">You do not have permission to edit this plugin</p>
+            <p th:unless="${account.getId() != resource.getAuthor().getId()}">You do not have permission to edit this plugin</p>
         </div>
     </div>
     <div class="side-body-container">
@@ -69,6 +70,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     var simplemde = new SimpleMDE({element: document.getElementById('description')});
+
+    //not sure this is how i should do this but i get an error without this when trying to create a resource
+    document.getElementById("submit").onclick = function () {
+        document.getElementById("hidden-description").value = simplemde.value();
+        console.log(simplemde.value());
+    };
 </script>
 </div>
 </body>

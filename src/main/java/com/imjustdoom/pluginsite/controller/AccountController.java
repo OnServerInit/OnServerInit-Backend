@@ -26,8 +26,9 @@ public class AccountController {
     private final AccountRepository accountRepository;
 
     @GetMapping("/signup")
-    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Authentication auth) {
-        model.addAttribute("account", new CreateAccountRequest());
+    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Account account) {
+        model.addAttribute("createAccount", new CreateAccountRequest());
+        model.addAttribute("account", account);
         model.addAttribute("error", error);
         return "account/signup";
     }
@@ -58,11 +59,6 @@ public class AccountController {
         Account account = new Account(accountRequest.getUsername(), emailAddress, passwordEncoder.encode(accountRequest.getPassword()));
         accountRepository.save(account);
 
-        Cookie ck = new Cookie("username", account.getUsername());
-        response.addCookie(ck);
-        ck = new Cookie("id", String.valueOf(account.getId()));
-        response.addCookie(ck);
-
         return "redirect:/profile/" + account.getId();
     }
 
@@ -80,10 +76,6 @@ public class AccountController {
         if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) {
             Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(accountRequest.getUsername());
             if(BCrypt.checkpw(accountRequest.getPassword(), account.get().getPassword())) {
-                Cookie ck = new Cookie("username", accountRequest.getUsername());
-                response.addCookie(ck);
-                ck = new Cookie("id", String.valueOf(account.get().getId()));
-                response.addCookie(ck);
 
                 return "redirect:/profile/" + account.get().getId();
             }
