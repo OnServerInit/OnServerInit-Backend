@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
@@ -26,7 +27,7 @@ public class AccountController {
     private final AccountRepository accountRepository;
 
     @GetMapping("/signup")
-    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Account account) {
+    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Account account, WebRequest request) {
         model.addAttribute("createAccount", new CreateAccountRequest());
         model.addAttribute("account", account);
         model.addAttribute("error", error);
@@ -39,7 +40,7 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest, HttpServletResponse response) {
+    public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest, WebRequest request) {
 
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
         if(!pattern.matcher(accountRequest.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
@@ -63,15 +64,15 @@ public class AccountController {
     }
 
     @GetMapping("/login")
-    public String login(Model model, @CookieValue(value = "username", defaultValue = "") String username, @RequestParam(name = "error", required = false) String error) {
+    public String login(Model model, @RequestParam(name = "error", required = false) String error, Account account) {
         model.addAttribute("error", error);
-        model.addAttribute("account", new CreateAccountRequest());
-        model.addAttribute("username", username);
+        model.addAttribute("createAccount", new CreateAccountRequest());
+        model.addAttribute("account", account);
         return "account/login";
     }
 
     @PostMapping("/login")
-    public String loginSubmit(@ModelAttribute CreateAccountRequest accountRequest, HttpServletResponse response) {
+    public String loginSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
 
         if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) {
             Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(accountRequest.getUsername());
