@@ -8,5 +8,9 @@ public interface LogoService {
 
     void updateLogo(int id);
 
+    boolean logoExists(int id);
+
     HttpEntity<byte[]> serveLogo(int id);
+
+    HttpEntity<byte[]> serveDefaultLogo();
 }

@@ -44,7 +44,7 @@
                 </div>
                 <ul class="plugin-list">
                     <!-- <hr> -->
-                    <li th:each="file : ${files}">
+                    <li th:each="file : ${files}" class="no-ml">
                         <div class="plugin-box">
                             <div class="info-left"><img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo">
                             </div>

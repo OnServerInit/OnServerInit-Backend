@@ -87,8 +87,8 @@ a:hover {
     color: #EF4444;
 }
 
-ul li{
-    margin-left: 2rem;
+.no-ml{
+    margin-left: 0 !important;
 }
 
 html {

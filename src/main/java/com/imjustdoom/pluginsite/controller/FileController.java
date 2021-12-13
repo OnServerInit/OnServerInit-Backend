@@ -29,7 +29,11 @@ public class FileController {
     @GetMapping("/logo/{id}")
     @ResponseBody
     public HttpEntity<byte[]> serveLogo(@PathVariable("id") int id) {
-        return logoService.serveLogo(id);
+        if(logoService.logoExists(id)){
+            return logoService.serveLogo(id);
+        }else{
+            return logoService.serveDefaultLogo();
+        }
     }
 
     @GetMapping("/files/{id}/download/{fileId}")

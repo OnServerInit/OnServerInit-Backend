@@ -27,9 +27,33 @@ public class LogoServiceImpl implements LogoService {
     }
 
     @Override
+    public boolean logoExists(int id) {
+        return (Paths.get("resources/logos/%s".formatted(id)).toFile().exists()) ? true : false;
+    }
+
+    @Override
     public HttpEntity<byte[]> serveLogo(int id) {
         try {
             Path path = Paths.get("resources/logos/%s".formatted(id));
+            Resource file = new UrlResource(path.resolve("logo.png").toUri());
+
+            byte[] image = file.getInputStream().readAllBytes();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+            headers.setContentLength(image.length);
+
+            return new HttpEntity<>(image, headers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public HttpEntity<byte[]> serveDefaultLogo(){
+        try {
+            Path path = Paths.get("resources/logos/default");
             Resource file = new UrlResource(path.resolve("logo.png").toUri());
 
             byte[] image = file.getInputStream().readAllBytes();
