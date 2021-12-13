@@ -18,7 +18,7 @@
             <p th:if="${error == 'passwordtaken'}">That password is taken (haha just kidding, this error actually isn't possible normally)</p>
             <p th:if="${error == 'invalidcharacter'}">You have a character that is not allowed in your username</p>
 
-            <form method="POST" th:action="@{/signup}" th:object="${account}" action="#">
+            <form method="POST" th:action="@{/signup}" th:object="${createAccount}" action="#">
                 <p id="invalid-name"></p>
                 <div class="input">
                     <p>Name</p>

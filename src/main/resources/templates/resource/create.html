@@ -9,7 +9,7 @@
 <div class="content-container">
 <div lang="en" th:include="header :: header"></div>
 <div class="content">
-    <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body">
+    <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body" id="form">
         <div class="inside-main-body">
             <div class="input">
                 <p>Name</p>
@@ -35,11 +35,12 @@
             <div class="input" style="width: 100% !important;">
                 <p>Description</p>
                 <label>
-                    <textarea th:field="*{description}" required class="text-box" id="description"></textarea>
+                    <textarea class="text-box" id="description"></textarea>
                 </label>
+                <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
             </div>
             <p>
-            <td><input type="submit" value="Submit"/></td>
+            <td><input type="submit" value="Submit" id="submit"/></td>
             </p>
         </div>
     </form>
@@ -60,7 +61,13 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    var simplemde = new SimpleMDE({element: document.getElementById('description')});
+    const simplemde = new SimpleMDE({element: document.getElementById('description')});
+
+    //not sure this is how i should do this but i get an error without this when trying to create a resource
+    document.getElementById("submit").onclick = function () {
+        document.getElementById("hidden-description").value = simplemde.value();
+        console.log(simplemde.value());
+    };
 </script>
 </body>
 </html>

@@ -4,12 +4,12 @@
         <div class="container header-body">
             <a th:href="@{/}"><button>Home</button></a>
             <a th:href="@{/resources}" class="align-left"><button>Resources</button></a>
-            <a th:if="${auth != null}" th:href="@{/resources/create}" class="align-left"><button>Create Resource</button></a>
+            <a th:if="${account != null}" th:href="@{/resources/create}" class="align-left"><button>Create Resource</button></a>
             <a href="https://discord.gg/Qw8N9J9zEc" class="align-left"><button>Discord</button></a>
-            <a th:href="@{/signup}" th:if="${auth == null}" class="align-right"><button>Sign Up</button></a>
-            <a th:href="@{/login}" th:if="${auth == null}" class="align-right"><button>Login</button></a>
-            <a th:href="'/profile/' + ${userId}" th:if="${auth != null}" th:utext="'<button>' + ${auth.getName()} + '</button>'" class="align-right"></a>
-            <a th:href="@{/logout}" th:if="${auth != null}" class="align-right"><button>Logout</button></a>
+            <a th:href="@{/signup}" th:if="${account == null}" class="align-right"><button>Sign Up</button></a>
+            <a th:href="@{/login}" th:if="${account == null}" class="align-right"><button>Login</button></a>
+            <a th:if="${account != null}" th:href="'/profile/' + ${account.getId()}" th:utext="'<button>' + ${account.getUsername()} + '</button>'" class="align-right"></a>
+            <a th:href="@{/logout}" th:if="${account != null}" class="align-right"><button>Logout</button></a>
         </div>
     </header>
 </div>
