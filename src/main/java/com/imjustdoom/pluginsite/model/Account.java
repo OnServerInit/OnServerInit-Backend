@@ -3,10 +3,12 @@ package com.imjustdoom.pluginsite.model;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class Account implements UserDetails {
         this.email = email;
         this.password = password;
         this.joined = LocalDateTime.now();
+        this.role = "USER";
     }
 
     @Id
@@ -43,13 +46,20 @@ public class Account implements UserDetails {
 
     private int totalDownloads;
 
+    @Column(nullable = false)
+    private String role;
+
     public Account() {
 
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        List<GrantedAuthority> list = new ArrayList<>();
+
+        list.add(new SimpleGrantedAuthority(getRole()));
+
+        return list;
     }
 
     @Override
