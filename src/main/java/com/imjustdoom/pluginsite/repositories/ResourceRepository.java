@@ -20,6 +20,12 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     @Query("UPDATE Resource resource SET resource.download = ?2 WHERE resource.id = ?1")
     void setDownload(int id, String download);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Resource resource SET resource.name = ?2, resource.blurb = ?3, resource.description = ?4, " +
+            "resource.donation = ?5, resource.source = ?6, resource.support = ?7 WHERE resource.id = ?1")
+    void setInfo(int id, String name, String blurb, String description, String donation, String source, String support);
+
     List<Resource> findAllByAuthorId(int authorId, Pageable pageable);
 
     Optional<Resource> findByNameEqualsIgnoreCase(String name);
