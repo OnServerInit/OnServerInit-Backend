@@ -135,7 +135,9 @@ public class ResourcesController {
         model.addAttribute("resource", resource);
         model.addAttribute("editUrl", "/resources/edit/" + id);
         model.addAttribute("uploadUrl", "/resources/upload/" + id);
-        model.addAttribute("totalDownloads", updateRepository.getTotalDownloads(resource.getId()));
+
+        Integer totalDownloads = updateRepository.getTotalDownloads(resource.getId());
+        model.addAttribute("totalDownloads", totalDownloads == null ? 0 : totalDownloads);
 
         switch (field.toLowerCase()) {
             case "updates":
