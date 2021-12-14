@@ -126,6 +126,10 @@ html {
     background-color: #F9FAFB;
 }
 
+ul li {
+    margin-left: 2rem;
+}
+
 /*
     custom classes
 */
