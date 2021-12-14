@@ -61,14 +61,6 @@ public class ResourcesController {
 
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
 
-        String orderBy = switch (sort) {
-            case "created" -> "ORDER BY creation DESC";
-            case "updated" -> "ORDER BY updated DESC";
-            case "downloads" -> "ORDER BY downloads DESC";
-            case "alphabetical" -> "ORDER BY name ASC";
-            default -> "";
-        };
-
         List<SimpleResourceDto> data = new ArrayList<>();
         List<String> searchList = new ArrayList<>();
         int resources, total, remainder;
@@ -147,13 +139,6 @@ public class ResourcesController {
 
         switch (field.toLowerCase()) {
             case "updates":
-                String orderBy = switch (sort) {
-                    case "uploaded" -> "ORDER BY uploaded DESC";
-                    case "downloads" -> "ORDER BY downloads DESC";
-                    case "alphabetical" -> "ORDER BY name ASC";
-                    default -> "";
-                };
-
                 Sort sort1 = Sort.by(sort).descending();
 
                 model.addAttribute("updates", updateRepository.findAllByResourceId(id, sort1));

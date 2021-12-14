@@ -1,29 +1,24 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
-import com.imjustdoom.pluginsite.model.Update;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
-import com.imjustdoom.pluginsite.util.DateUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
@@ -52,20 +47,10 @@ public class ProfileController {
                 Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
                 List<Resource> resources = resourceRepository.findAllByAuthorId(id, pageable);
 
-                System.out.println(resources.size());
                 List<SimpleResourceDto> data = new ArrayList<>();
                 int total = resources.size() / 25;
                 int remainder = resources.size() % 25;
                 if (remainder > 1) total++;
-                System.out.println(total);
-
-                String orderBy = switch (sort) {
-                    case "created" -> "ORDER BY creation DESC";
-                    case "updated" -> "ORDER BY updated DESC";
-                    case "downloads" -> "ORDER BY downloads DESC";
-                    case "alphabetical" -> "ORDER BY name ASC";
-                    default -> "";
-                };
 
                 for(Resource resource : resources) {
                     Integer downloads = updateRepository.getTotalDownloads(resource.getId());
