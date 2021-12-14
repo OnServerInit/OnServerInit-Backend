@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roles</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="content-container">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body">
+            <div class="inside-main-body">
+                <div class="search-container">
+                    <form method="post" th:action="@{/admin/roles}">
+                        <input type="text" id="username" name="username" placeholder="Username" th:value="${username}">
+                        <select id="role" name="role" th:value="${role}">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <input type="submit" value="Set Role" id="search-button">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div lang="en" th:include="footer :: footer"></div>
+</div>
+</body>
+</html>
