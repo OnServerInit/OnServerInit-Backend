@@ -160,11 +160,6 @@ public class ResourcesController {
         Update update = optionalUpdate.get();
         if (optionalUpdate.isEmpty()) return "error/404";
 
-        CreateUpdateRequest createUpdateRequest = new CreateUpdateRequest();
-        createUpdateRequest.setName(update.getName());
-        createUpdateRequest.setVersion(update.getVersion());
-        createUpdateRequest.setDescription(update.getDescription());
-
         model.addAttribute("update", update);
         model.addAttribute("account", account);
 
@@ -173,6 +168,9 @@ public class ResourcesController {
 
     @PostMapping("/resources/edit/{id}/update/{fileId}")
     public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) {
+
+        System.out.println(update.getDescription());
+        //TODO: fix description not updating
 
         updateRepository.setInfo(update.getId(), update.getName(), update.getDescription(), update.getVersion());
 

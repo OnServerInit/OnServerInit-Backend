@@ -49,8 +49,6 @@ public class AccountController {
         String regexPattern = "^(.+)@(\\S+)$";
         boolean validEmail = StringUtil.patternMatches(emailAddress, regexPattern);
 
-        //TODO: check if account exists
-
         if (!validEmail) return "redirect:/signup?error=invalidemail";
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(accountRequest.getUsername())) return "redirect:/signup?error=usernametaken";
