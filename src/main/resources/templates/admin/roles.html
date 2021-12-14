@@ -12,8 +12,11 @@
             <div class="inside-main-body">
                 <div class="search-container">
                     <form method="post" th:action="@{/admin/roles}">
-                        <input type="text" id="username" name="username" th:value="${username}">
-                        <input type="text" id="role" name="role" th:value="${role}">
+                        <input type="text" id="username" name="username" placeholder="Username" th:value="${username}">
+                        <select id="role" name="role" th:value="${role}">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
                         <input type="submit" value="Set Role" id="search-button">
                     </form>
                 </div>

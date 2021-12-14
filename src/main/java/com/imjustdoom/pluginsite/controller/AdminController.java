@@ -35,6 +35,7 @@ public class AdminController {
 
         Optional<Account> optionalAccount = accountRepository.findByUsernameEqualsIgnoreCase(username);
         if(optionalAccount.isEmpty()) return;
+        role = role.toUpperCase();
         optionalAccount.get().setRole("ROLE_" + role);
         accountRepository.setRoleById(optionalAccount.get().getId(), "ROLE_" + role);
     }
