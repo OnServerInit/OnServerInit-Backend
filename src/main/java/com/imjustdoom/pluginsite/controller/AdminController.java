@@ -24,8 +24,6 @@ public class AdminController {
     @GetMapping("/admin/roles")
     public String roles(Model model, Account account) {
         model.addAttribute("account", account);
-        model.addAttribute("username", "");
-        model.addAttribute("role", "");
         return "admin/roles";
     }
 
