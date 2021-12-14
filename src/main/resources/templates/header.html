@@ -2,14 +2,67 @@
 <div th:fragment="header" class="header">
     <header class="header">
         <div class="container header-body">
-            <a th:href="@{/}"><button>Home</button></a>
-            <a th:href="@{/resources}" class="align-left"><button>Resources</button></a>
-            <a th:if="${account != null}" th:href="@{/resources/create}" class="align-left"><button>Create Resource</button></a>
-            <a href="https://discord.gg/Qw8N9J9zEc" class="align-left"><button>Discord</button></a>
-            <a th:href="@{/signup}" th:if="${account == null}" class="align-right"><button>Sign Up</button></a>
-            <a th:href="@{/login}" th:if="${account == null}" class="align-right"><button>Login</button></a>
-            <a th:if="${account != null}" th:href="'/profile/' + ${account.getId()}" th:utext="'<button>' + ${account.getUsername()} + '</button>'" class="align-right"></a>
-            <a th:href="@{/logout}" th:if="${account != null}" class="align-right"><button>Logout</button></a>
+            <div style="flex-grow: 1;">
+                <a th:href="@{/}"><button>Home</button></a>
+                <a th:href="@{/resources}" class="align-left"><button>Resources</button></a>
+                <a th:if="${account != null}" th:href="@{/resources/create}" class="align-left"><button>Create Resource</button></a>
+                <a href="https://discord.gg/Qw8N9J9zEc" class="align-left"><button>Discord</button></a>
+            </div>
+
+            <div>
+                <a th:href="@{/signup}" th:if="${account == null}" class="align-right"><button>Sign Up</button></a>
+                <a th:href="@{/login}" th:if="${account == null}" class="align-right"><button>Login</button></a>
+                <a th:href="@{/logout}" th:if="${account != null}" class="align-right"><button>Logout</button></a>
+                <a th:if="${account != null}" th:href="'/profile/' + ${account.getId()}" th:utext="'<button>' + ${account.getUsername()} + '</button>'" class="align-right account" id="account-username"></a>
+                
+                <div class="alerts-dropdown" id="alert-dropdown">
+                    <div class="alerts-inner-body">
+                        <div class="alerts">
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                            <div class="alert">
+                                <p>
+                                    <a href="">[Username]</a> updated the resource <a href="" style="font-weight: normal;">[Resource Name]</a>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <script th:src="@{/js/header.js}"></script>
     </header>
 </div>
