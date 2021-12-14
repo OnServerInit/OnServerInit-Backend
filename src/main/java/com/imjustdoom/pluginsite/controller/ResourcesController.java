@@ -121,11 +121,11 @@ public class ResourcesController {
         try{
             id = Integer.parseInt(id_s);
         }catch (NumberFormatException e){
-            return "resource/404";
+            return "error/404";
         }
         Optional<Resource> optionalResource = resourceRepository.findById(id);
 
-        if (optionalResource.isEmpty()) return "resource/404";
+        if (optionalResource.isEmpty()) return "error/404";
 
         Resource resource = resourceRepository.getById(id);
 
@@ -167,11 +167,11 @@ public class ResourcesController {
     public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Account account) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
-        if (optionalResource.isEmpty()) return "resource/404";
+        if (optionalResource.isEmpty()) return "error/404";
 
         Optional<Update> optionalUpdate = updateRepository.findById(fileId);
         Update update = optionalUpdate.get();
-        if (optionalUpdate.isEmpty()) return "resource/404";
+        if (optionalUpdate.isEmpty()) return "error/404";
 
         CreateUpdateRequest createUpdateRequest = new CreateUpdateRequest();
         createUpdateRequest.setName(update.getName());
@@ -206,7 +206,7 @@ public class ResourcesController {
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         Resource resource = optionalResource.get();
 
-        if (optionalResource.isEmpty()) return "resource/404";
+        if (optionalResource.isEmpty()) return "error/404";
 
         model.addAttribute("authorid", resource.getAuthor());
         model.addAttribute("resource", resource);
@@ -297,7 +297,7 @@ public class ResourcesController {
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         Resource resource = optionalResource.get();
 
-        if (optionalResource.isEmpty()) return "resource/404";
+        if (optionalResource.isEmpty()) return "error/404";
 
         model.addAttribute("resource", resource);
         model.addAttribute("update", new CreateUpdateRequest());

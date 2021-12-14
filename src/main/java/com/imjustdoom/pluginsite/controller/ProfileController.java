@@ -40,7 +40,7 @@ public class ProfileController {
 
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
-        if(optionalAccount.isEmpty()) return "resource/404";
+        if(optionalAccount.isEmpty()) return "error/404";
 
         Account account = accountRepository.getById(id);
 
