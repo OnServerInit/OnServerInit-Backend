@@ -29,4 +29,9 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
 
     @Query("SELECT SUM(updates.downloads) FROM Update updates WHERE updates.resource.id = ?1")
     Integer getTotalDownloads(int id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Update updates SET updates.name = ?2, updates.description = ?3, updates.version = ?4 WHERE updates.id = ?1")
+    void setInfo(int id, String name, String description, String version);
 }

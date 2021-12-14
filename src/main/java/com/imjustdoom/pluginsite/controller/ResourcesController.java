@@ -160,11 +160,6 @@ public class ResourcesController {
         Update update = optionalUpdate.get();
         if (optionalUpdate.isEmpty()) return "error/404";
 
-        CreateUpdateRequest createUpdateRequest = new CreateUpdateRequest();
-        createUpdateRequest.setName(update.getName());
-        createUpdateRequest.setVersion(update.getVersion());
-        createUpdateRequest.setDescription(update.getDescription());
-
         model.addAttribute("update", update);
         model.addAttribute("account", account);
 
@@ -172,15 +167,12 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/edit/{id}/update/{fileId}")
-    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId, Authentication auth) {
+    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) {
 
-        /**PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
-                "UPDATE files SET name=?, description=?, version=? WHERE fileId=?");
-        preparedStatement.setString(1, update.getName());
-        preparedStatement.setString(2, update.getDescription());
-        preparedStatement.setString(3, update.getVersion());
-        preparedStatement.setString(4, String.valueOf(fileId));
-        preparedStatement.executeUpdate();**/
+        System.out.println(update.getDescription());
+        //TODO: fix description not updating
+
+        updateRepository.setInfo(update.getId(), update.getName(), update.getDescription(), update.getVersion());
 
         return "redirect:/resources/%s".formatted(id);
     }
@@ -228,16 +220,8 @@ public class ResourcesController {
             }
         }
 
-        /**PreparedStatement preparedStatement = PluginSiteApplication.getDB().getConn().prepareStatement(
-                "UPDATE resources SET name=?, blurb=?, description=?, donation=?, source=?, support=? WHERE id=?;");
-        preparedStatement.setString(1, resource.getName());
-        preparedStatement.setString(2, resource.getBlurb());
-        preparedStatement.setString(3, resource.getDescription());
-        preparedStatement.setString(4, resource.getDonation());
-        preparedStatement.setString(5, resource.getSource());
-        preparedStatement.setString(6, resource.getSupport());
-        preparedStatement.setString(7, String.valueOf(resource.getId()));
-        preparedStatement.executeUpdate();**/
+        resourceRepository.setInfo(resource.getId(), resource.getName(), resource.getBlurb(), resource.getDescription(),
+                resource.getDonation(), resource.getSource(), resource.getSupport());
 
         return "redirect:/resources/%s".formatted(resource.getId());
     }
