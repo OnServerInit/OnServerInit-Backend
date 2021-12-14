@@ -246,6 +246,67 @@ ul li {
     margin: 0 auto;
     padding-bottom: 3px;
     padding-top: 3px;
+    display: flex;
+    position: relative;
+}
+
+.header-body > div{
+    display: flex;
+    align-items: center;
+}
+
+.account{
+    border-radius: 5rem;
+    border: 1px solid #ffffff;
+    padding-right: 0;
+
+    padding-bottom: 2px;
+    padding-top: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.alerts-dropdown{
+    position: absolute;
+    right: 0;
+}
+
+.alerts-inner-body{
+    /* margin-top: 1rem; */
+    background-color: rgb(226, 226, 226);
+    /* border-radius: 15px; */
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    /* box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); */
+    border-top: 2px solid #EF4444;
+    box-shadow: 3px 3px 3px -3px rgb(0 0 0 / 0.2), 3px 3px 3px -3px rgb(0 0 0 / 0.2), -3px 3px 3px -3px rgb(0 0 0 / 0.2);
+    /* height: 30px; */
+    width: 15rem;
+    max-height: 18rem;
+    padding: 0.5rem;
+    overflow-y: scroll;
+}
+
+.alerts{
+    display: flex;
+    flex-direction: column;
+}
+
+.alert{
+    padding: 0.3rem;
+    background-color: #ffffff;
+    border-radius: 7px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.alert:not(:first-child){
+    margin-top: 0.5rem;
+}
+
+.alert p{
+    word-break: normal;
+    word-wrap: normal;
 }
 
 /* plugins list */
