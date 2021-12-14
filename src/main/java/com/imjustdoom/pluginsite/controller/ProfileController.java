@@ -35,9 +35,15 @@ public class ProfileController {
 
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
-        if(optionalAccount.isEmpty()) return "error/404";
+        if (optionalAccount.isEmpty()) return "error/404";
 
         Account account = accountRepository.getById(id);
+
+        int totalDownloads = 0;
+        for (Resource resource : account.getResources()) {
+            totalDownloads += updateRepository.getTotalDownloads(resource.getId()) == null ? 0 : updateRepository.getTotalDownloads(resource.getId());
+        }
+        model.addAttribute("totalDownloads", totalDownloads);
 
         switch (field.toLowerCase()) {
             case "resources":
@@ -52,7 +58,7 @@ public class ProfileController {
                 int remainder = resources.size() % 25;
                 if (remainder > 1) total++;
 
-                for(Resource resource : resources) {
+                for (Resource resource : resources) {
                     Integer downloads = updateRepository.getTotalDownloads(resource.getId());
                     data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
                 }
