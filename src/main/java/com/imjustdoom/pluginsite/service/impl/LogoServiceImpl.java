@@ -28,7 +28,7 @@ public class LogoServiceImpl implements LogoService {
 
     @Override
     public boolean logoExists(int id) {
-        return (Paths.get("resources/logos/%s".formatted(id)).toFile().exists()) ? true : false;
+        return Paths.get("resources/logos/%s".formatted(id)).toFile().exists();
     }
 
     @Override

@@ -133,8 +133,8 @@ public class ResourcesController {
 
         model.addAttribute("account", account);
         model.addAttribute("resource", resource);
-        model.addAttribute("editUrl", "/resources/edit/" + id);
-        model.addAttribute("uploadUrl", "/resources/upload/" + id);
+        model.addAttribute("editUrl", "/resources/%s/edit".formatted(id));
+        model.addAttribute("uploadUrl", "/resources/%s/upload/".formatted(id));
 
         Integer totalDownloads = updateRepository.getTotalDownloads(resource.getId());
         model.addAttribute("totalDownloads", totalDownloads == null ? 0 : totalDownloads);
@@ -150,15 +150,15 @@ public class ResourcesController {
         }
     }
 
-    @GetMapping("/resources/edit/{id}/update/{fileId}")
+    @GetMapping("/resources/{id}/edit/update/{fileId}")
     public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Account account) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         if (optionalResource.isEmpty()) return "error/404";
 
         Optional<Update> optionalUpdate = updateRepository.findById(fileId);
-        Update update = optionalUpdate.get();
         if (optionalUpdate.isEmpty()) return "error/404";
+        Update update = optionalUpdate.get();
 
         model.addAttribute("update", update);
         model.addAttribute("account", account);
@@ -166,7 +166,7 @@ public class ResourcesController {
         return "resource/editUpdate";
     }
 
-    @PostMapping("/resources/edit/{id}/update/{fileId}")
+    @PostMapping("/resources/{id}/edit/update/{fileId}")
     public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) {
 
         System.out.println(update.getDescription());
@@ -177,7 +177,7 @@ public class ResourcesController {
         return "redirect:/resources/%s".formatted(id);
     }
 
-    @GetMapping("/resources/edit/{id}")
+    @GetMapping("/resources/{id}/edit")
     public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account) {
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
@@ -195,7 +195,7 @@ public class ResourcesController {
         return "resource/edit";
     }
 
-    @PostMapping("/resources/edit/{id}")
+    @PostMapping("/resources/{id}/edit")
     public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id) throws IOException {
 
         if (!file.isEmpty()) {
@@ -262,7 +262,7 @@ public class ResourcesController {
         return "resource/create";
     }
 
-    @GetMapping("/resources/upload/{id}")
+    @GetMapping("/resources/{id}/upload")
     public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
@@ -272,7 +272,7 @@ public class ResourcesController {
 
         model.addAttribute("resource", resource);
         model.addAttribute("update", new CreateUpdateRequest());
-        model.addAttribute("url", "/resources/upload/" + id);
+        model.addAttribute("url", "/resources/%s/upload/".formatted(id));
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
         model.addAttribute("account", account);
@@ -280,7 +280,7 @@ public class ResourcesController {
         return "resource/upload";
     }
 
-    @PostMapping("/resources/upload/{id}")
+    @PostMapping("/resources/{id}/upload")
     public String uploadFilePost(@PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException, SQLException {
 
         if (file.isEmpty() && updateRequest.getExternalLink() == null) {
