@@ -26,6 +26,10 @@ tr:nth-child(even) {
     /* vertical-align: baseline;*/
 }
 
+*, *:before, *:after{
+    box-sizing: border-box;
+}
+
 button, input[type="submit"], input[type="reset"] {
     background: none;
     color: inherit;
@@ -539,4 +543,124 @@ ul li {
 
 .bar-section:not(:first-child){
     margin-left: 0.6rem;
+}
+
+.plugin-list > li{
+    margin-left: 0;
+}
+
+/* mobile */
+
+@media (hover: none){
+    .header-body{
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .header-body > div{
+        width: 100%;
+        justify-content: center;
+    }
+
+    .account{
+        border: none;
+    }
+
+    .content{
+        width: 100%;
+        flex-wrap: wrap;
+        display: block;
+    }
+
+    .footer .container{
+        width: 100%;
+    }
+
+    .main-body{
+        width: 100%;
+        margin-right: 0;
+        flex-grow: 0;
+        border-radius: 0;
+    }
+
+    .side-body-container{
+        width: 100%;
+        margin-top: 2.5rem;
+    }
+
+    .side-body{
+        border-radius: 0;
+    }
+
+    .side-body-info-text{
+        font-size: 30px;
+    }
+
+    *{
+        font-size: 113%;
+    }
+
+    select, option{
+        font-size: 100%;
+    }
+
+    .title{
+        font-size: 3.5rem;
+    }
+
+    .blurb{
+        font-size: 1.5rem;
+    }
+
+    .logo{
+        height: 100%;
+        width: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    .info-left:first-child{
+        width: max-content;
+    }
+
+    .resource-top-controls{
+        flex-wrap: wrap;
+    }
+    .resource-top-controls > div{
+        width: 100%;
+    }
+
+    .page-number{
+        height: 70px;
+        width: 70px;
+        text-align: center;
+    }
+
+
+    .input{
+        width: 100%;
+    }
+
+    input[type="text"], input[type="password"], input[type="email"]{
+        border: 3px solid #ccc;
+        border-radius: 15px;
+        width: 100%;
+    }
+    
+    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus{
+        outline: none;
+        border: 1px solid #aaa;
+        box-shadow: 0 0 5px #aaa;
+    }
+    
+    input[type="submit"]{
+        padding: 15px 25px 15px 25px;
+        margin: 5px 0;
+        border-radius: 15px;
+        width: 100%;
+        font-size: 50px;
+    }
+    
+    input[type="submit"]:not(:first-child){
+        margin-left: 0;
+    }
 }
