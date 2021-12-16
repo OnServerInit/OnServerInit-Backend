@@ -281,7 +281,7 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/{id}/upload")
-    public String uploadFilePost(@PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException, SQLException {
+    public String uploadFilePost(@RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException, SQLException {
 
         if (file.isEmpty() && updateRequest.getExternalLink() == null) {
             //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filesize";
@@ -290,12 +290,17 @@ public class ResourcesController {
             //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filetype";
         }
 
-        JsonObject json = new JsonObject();
-        JsonArray array = new JsonArray();
-        array.add("1.17.1");
-        json.add("versions", array);
+        JsonObject versions = new JsonObject();
+        JsonArray versionsArray = new JsonArray();
+        for(String s : versionBoxes) versionsArray.add(s);
+        versions.add("versions", versionsArray);
 
-        Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(), updateRequest.getVersion(), "", updateRequest.getName(), json);
+        JsonObject software = new JsonObject();
+        JsonArray softwareArray = new JsonArray();
+        for(String s : softwareBoxes) softwareArray.add(s);
+        software.add("versions", softwareArray);
+
+        Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(), updateRequest.getVersion(), "", updateRequest.getName(), versions, software);
 
         update.setResource(resourceRepository.getById(id));
         updateRepository.save(update);
