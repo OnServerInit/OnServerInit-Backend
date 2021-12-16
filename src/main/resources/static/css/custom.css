@@ -122,6 +122,11 @@ a:hover {
     margin-top: 1rem;
 }
 
+.redirect-confirm > a{
+    height: auto;
+    width: auto;
+}
+
 .no-ml{
     margin-left: 0 !important;
 }
@@ -552,6 +557,16 @@ ul li {
 /* mobile */
 
 @media (hover: none){
+
+    h1{
+        font-size: 70px;
+    }
+
+    h2, span{
+        font-size: 50px;
+    }
+
+
     .header-body{
         width: 100%;
         flex-wrap: wrap;
@@ -574,6 +589,7 @@ ul li {
 
     .footer .container{
         width: 100%;
+        padding: 1rem;
     }
 
     .main-body{
@@ -652,7 +668,12 @@ ul li {
         box-shadow: 0 0 5px #aaa;
     }
     
-    input[type="submit"]{
+
+    .resource-controls{flex-wrap: wrap;}
+
+    .resource-controls a:not(:first-child){margin-left: 0;}
+
+    .resource-controls a, input[type="submit"]{
         padding: 15px 25px 15px 25px;
         margin: 5px 0;
         border-radius: 15px;
@@ -661,6 +682,28 @@ ul li {
     }
     
     input[type="submit"]:not(:first-child){
+        margin-left: 0;
+    }
+
+
+    table > tbody > tr > td:nth-child(3){
+        display: none;
+    }
+
+    .redirect-confirm{
+        flex-wrap: wrap;
+    }
+
+    .redirect-confirm > a{
+        padding: 15px 25px 15px 25px;
+        margin-top: 15px;
+        border-radius: 15px;
+        margin-left: 0;
+        width: 100%;
+        font-size: 50px;
+    }
+
+    .a-button:not(:first-child){
         margin-left: 0;
     }
 }
