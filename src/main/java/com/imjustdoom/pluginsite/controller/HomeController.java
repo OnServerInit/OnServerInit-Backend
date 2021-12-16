@@ -17,7 +17,10 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
@@ -47,7 +50,10 @@ public class HomeController {
         }
 
         model.addAttribute("account", account);
-        model.addAttribute("blogs", blogRepository.findAll());
+
+        List<Blog> blogs = blogRepository.findAll();
+        Collections.reverse(blogs);
+        model.addAttribute("blogs", blogs);
         return "home";
     }
 }
