@@ -28,18 +28,82 @@
                     </label>
                     <div>
                         <p>Bare minimum Software Needed:</p>
-                        <p><input type="checkbox"> Minestom</p>
+                        <p><input type="checkbox" value="minestom" th:name="softwareCheckbox"> Minestom</p>
                         <details>
                             <summary>Bukkit</summary>
-                            <p><input type="checkbox"> Bukkit</p>
-                            <p><input type="checkbox"> Spigot</p>
-                            <p><input type="checkbox"> Paper</p>
-                            <p><input type="checkbox"> Purpur</p>
+                            <ul>
+                                <li><input type="checkbox" value="bukkit" th:name="softwareCheckbox"> Bukkit</li>
+                                <li><input type="checkbox" value="spigot" th:name="softwareCheckbox"> Spigot</li>
+                                <li><input type="checkbox" value="paper" th:name="softwareCheckbox"> Paper</li>
+                                <li><input type="checkbox" value="purpur" th:name="softwareCheckbox"> Purpur</li>
+                            </ul>
                         </details>
-                        <p><input type="checkbox"> Sponge</p>
-                        <p><input type="checkbox"> Krypton</p>
-                        <p><input type="checkbox"> hMod</p>
-                        <p><input type="checkbox"> Cuberite</p>
+                        <p><input type="checkbox" value="sponge" th:name="softwareCheckbox"> Sponge</p>
+                        <p><input type="checkbox" value="krypton" th:name="softwareCheckbox"> Krypton</p>
+                        <p><input type="checkbox" value="hmod" th:name="softwareCheckbox"> hMod</p>
+                        <p><input type="checkbox" value="cuberite" th:name="softwareCheckbox"> Cuberite</p>
+                    </div>
+                    <div>
+                        <p>Compatible Versions:</p>
+                        <details>
+                            <summary><input type="checkbox" th:name="versionCheckbox"> 1.18.X</summary>
+                            <ul>
+                                <li><input type="checkbox" value="1.18.1" th:name="versionCheckbox"> 1.18.1</li>
+                                <li><input type="checkbox" value="1.18" th:name="versionCheckbox"> 1.18</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><input type="checkbox" th:name="versionCheckbox"> 1.17.X</summary>
+                            <ul>
+                                <li><input type="checkbox" value="1.17.1" th:name="versionCheckbox"> 1.17.1</li>
+                                <li><input type="checkbox" value="1.17" th:name="versionCheckbox"> 1.17</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><input type="checkbox" th:name="versionCheckbox"> 1.16.X</summary>
+                            <ul>
+                                <li><input type="checkbox" value="1.16.5" th:name="versionCheckbox"> 1.16.5</li>
+                                <li><input type="checkbox" value="1.16.4" th:name="versionCheckbox"> 1.16.4</li>
+                                <li><input type="checkbox" value="1.16.3" th:name="versionCheckbox"> 1.16.3</li>
+                                <li><input type="checkbox" value="1.16.2" th:name="versionCheckbox"> 1.16.2</li>
+                                <li><input type="checkbox" value="1.16.1" th:name="versionCheckbox"> 1.16.1</li>
+                                <li><input type="checkbox" value="1.16" th:name="versionCheckbox"> 1.16</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><input type="checkbox" th:name="versionCheckbox"> 1.15.X</summary>
+                            <ul>
+                                <li><input type="checkbox" value="1.15.2" th:name="versionCheckbox"> 1.15.2</li>
+                                <li><input type="checkbox" value="1.15.1" th:name="versionCheckbox"> 1.15.1</li>
+                                <li><input type="checkbox" value="1.15" th:name="versionCheckbox"> 1.15</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><input type="checkbox" th:name="versionCheckbox"> 1.14.X</summary>
+                            <ul>
+                                <li><input type="checkbox" value="1.14.4" th:name="versionCheckbox"> 1.14.4</li>
+                                <li><input type="checkbox" value="1.14.3" th:name="versionCheckbox"> 1.14.3</li>
+                                <li><input type="checkbox" value="1.14.2" th:name="versionCheckbox"> 1.14.2</li>
+                                <li><input type="checkbox" value="1.14.1" th:name="versionCheckbox"> 1.14.1</li>
+                                <li><input type="checkbox" value="1.14" th:name="versionCheckbox"> 1.14</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><input type="checkbox" th:name="versionCheckbox"> 1.13.X</summary>
+                            <ul>
+                                <li><input type="checkbox" value="1.13.2" th:name="versionCheckbox"> 1.13.2</li>
+                                <li><input type="checkbox" value="1.13.1" th:name="versionCheckbox"> 1.13.1</li>
+                                <li><input type="checkbox" value="1.13" th:name="versionCheckbox"> 1.13</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><input type="checkbox" th:name="versionCheckbox"> 1.12.X</summary>
+                            <ul>
+                                <li><input type="checkbox" value="1.12.2" th:name="versionCheckbox"> 1.12.2</li>
+                                <li><input type="checkbox" value="1.12.1" th:name="versionCheckbox"> 1.12.1</li>
+                                <li><input type="checkbox" value="1.12" th:name="versionCheckbox"> 1.12</li>
+                            </ul>
+                        </details>
                     </div>
                     <br>
                     <p>

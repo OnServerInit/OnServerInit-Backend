@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "update_table")
 public class Update {
 
-    public Update(String description, String filename, String version, String download, String name, JsonObject json) {
+    public Update(String description, String filename, String version, String download, String name, JsonObject versions, JsonObject software) {
         this.downloads = 0;
         this.description = description;
         this.filename = filename;
@@ -21,7 +21,8 @@ public class Update {
         this.download = download;
         this.name = name;
         this.uploaded = LocalDateTime.now();
-        this.versions = "";
+        this.versions = versions.toString();
+        this.software = software.toString();
     }
 
     @Id
@@ -36,6 +37,9 @@ public class Update {
 
     @Column(nullable = false)
     private String versions;
+
+    @Column(nullable = false)
+    private String software;
 
     @Column(nullable = false)
     private String download;
