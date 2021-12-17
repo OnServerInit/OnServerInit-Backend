@@ -1,7 +1,9 @@
 package com.imjustdoom.pluginsite.controller;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
 import com.imjustdoom.pluginsite.dtos.in.CreateUpdateRequest;
@@ -143,7 +145,34 @@ public class ResourcesController {
             case "updates":
                 Sort sort1 = Sort.by(sort).descending();
 
-                model.addAttribute("updates", updateRepository.findAllByResourceId(id, sort1));
+                // TODO: improve getting the versions and software. 100% not the best way to do this
+                List<Update> data = updateRepository.findAllByResourceId(id, sort1);
+                List<List<String>> versions = new ArrayList<>();
+                List<String> versionLists = new ArrayList<>();
+                for(Update update : data) {
+                    JsonObject jsonObject = JsonParser.parseString(update.getVersions()).getAsJsonObject();
+                    List<String> versionList = new ArrayList<>();
+
+                    versionList.add(jsonObject.get("versions").getAsJsonArray().get(0).getAsString());
+                    boolean first = true;
+                    StringBuilder versionString = new StringBuilder();
+                    String splitter = "";
+                    for(JsonElement v:jsonObject.get("versions").getAsJsonArray()) {
+                        if(first) {
+                            first = false;
+                            continue;
+                        }
+                        versionString.append(splitter);
+                        splitter = ", ";
+                        versionString.append(v.getAsString());
+                    }
+                    versionLists.add(versionString.toString());
+                    versions.add(versionList);
+                }
+
+                model.addAttribute("versions", versions);
+                model.addAttribute("versionLists", versionLists);
+                model.addAttribute("updates", data);
                 return "resource/updates";
             default:
                 return "resource/resource";

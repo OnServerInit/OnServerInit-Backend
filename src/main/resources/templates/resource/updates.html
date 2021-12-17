@@ -41,13 +41,18 @@
                         <td>Name</td>
                         <td>Version</td>
                         <td>Uploaded</td>
+                        <td>Versions</td>
                         <td>Downloads</td>
                         <td>Actions</td>
                     </tr>
-                    <tr th:each="update : ${updates}">
+                    <tr th:each="update, iter : ${updates}">
                         <td th:text="${update.getName()}"></td>
                         <td th:text="${update.getVersion()}"></td>
                         <td th:text="${update.getUploaded()}"></td>
+                        <td th:inline="text" class="tooltip">
+                            [[${versions.get(iter.index).get(0)}]]
+                            <span th:if="${versionLists.get(iter.index)} != ''" class="tooltiptext" th:text="${versionLists.get(iter.index)}"></span>
+                        </td>
                         <td th:text="${update.getDownloads()}"></td>
                         <td>
                             <a th:href="${update.getDownload()}"><button>Download</button></a>
