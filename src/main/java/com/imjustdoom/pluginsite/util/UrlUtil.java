@@ -5,8 +5,8 @@ import com.imjustdoom.pluginsite.PluginSiteApplication;
 import java.util.regex.Pattern;
 
 public class UrlUtil {
-    private static String domain = (PluginSiteApplication.config.domain.endsWith("/")) ? PluginSiteApplication.config.domain.substring(0, PluginSiteApplication.config.domain.length() - 1) : PluginSiteApplication.config.domain;
-    private static String domain_redirect = domain + "/redirect?url=http";
+    private static final String domain = (PluginSiteApplication.config.domain.endsWith("/")) ? PluginSiteApplication.config.domain.substring(0, PluginSiteApplication.config.domain.length() - 1) : PluginSiteApplication.config.domain;
+    private static final String domain_redirect = domain + "/redirect?url=http";
     public static String encode(String text){
         String url = text.replaceAll("/", "%2F");
         url = url.replaceAll("http", domain_redirect);
