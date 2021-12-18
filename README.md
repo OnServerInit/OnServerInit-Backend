@@ -6,6 +6,8 @@ I aim to create a site for people to upload their Minecraft plugins for all diff
 
 Current name is OnServerInit but not final
 
-You can view a demo of thw site here (Usually on the latest update) http://168.138.14.84:25503/
+You can view a demo of the site here (Usually on the latest update) http://168.138.14.84:25503/
 
 Trello board https://trello.com/b/nZ9TzBKC/onserverinit
+
+Discord invite: https://discord.gg/Qw8N9J9zEc
