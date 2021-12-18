@@ -34,15 +34,15 @@
                             <td>Reporter</td>
                             <td>Reported Object</td>
                             <td>Reason</td>
-                            <td>Report</td>
                             <td>Date</td>
+                            <td>Reviewed</td>
                         </tr>
                         <tr th:each="report : ${reports}">
                             <td th:text="${report.getReporter().getUsername()}"></td>
                             <td><a th:href="${'/' + report.getReportingObject() + '/' + report.getReportingId()}" th:text="${report.getReportingObject()}"></a></td>
                             <td th:text="${report.getReason()}"></td>
-                            <td th:text="${report.getReport()}"></td>
                             <td th:text="${report.getReportedDate()}"></td>
+                            <td><a th:href="${'/admin/report/' + report.getId()}" th:text="${report.getActionTaken()}"></a></td>
                         </tr>
                     </table>
                 </div>

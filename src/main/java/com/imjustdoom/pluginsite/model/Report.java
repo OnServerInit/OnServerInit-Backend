@@ -21,6 +21,7 @@ public class Report {
         this.report = report;
         this.reason = reason;
         this.reportedDate = LocalDateTime.now();
+        this.actionTaken = "none";
     }
 
     @Id
@@ -44,4 +45,7 @@ public class Report {
 
     @Column(nullable = false)
     private LocalDateTime reportedDate;
+
+    @Column(nullable = false)
+    private String actionTaken;
 }

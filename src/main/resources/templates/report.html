@@ -12,6 +12,7 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <p th:if="${status == 'success'}">Report successful</p>
                 <form method="POST" th:action="@{/report}" th:object="${report}">
                     Report A:
                     <select name="reportingObject" id="reportingObject" th:field="*{reportingObject}">
