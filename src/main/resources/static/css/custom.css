@@ -508,6 +508,70 @@ ul li {
 
 /* more */
 
+.centered{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Teams stuff */
+
+.team-rank{
+    margin-top: 2rem;
+}
+
+.rank-members{
+    display: flex;
+}
+
+.member{
+    height: 300px;
+    width: 225px;
+    border-radius: 15px;
+    background-color: #F3F4F6;
+    position: relative;
+    text-align: center;
+    margin-top: 1rem;
+    overflow: hidden;
+}
+
+.member:not(:first-child){
+    margin-left: 1rem;
+}
+
+.member:hover img{
+    outline: 10px solid #DC2626;
+}
+
+.member:hover .dev-bg{
+    margin-top: -90px;
+}
+
+.member img{
+    width: 75px;
+    height: 75px;
+    background-color: #D1D5DB;
+    border-radius: 100px;
+    margin-left: auto;
+    margin-bottom: 15px;
+    outline: 0px solid #DC2626;
+    transition: all 0.5s ease;
+}
+
+.dev-bg{
+    margin-top: -100px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    width: 200%;
+    height: 200px;
+    border-radius: 0 0 100% 100%;
+    background-color: #EF4444;
+    transition: all 0.5s ease;
+}
+
+/* End Teams Stuff */
+
 .stars > svg{
     width: 24px;
     height: 24px;

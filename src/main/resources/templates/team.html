@@ -2,9 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Our Team</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
 </head>
 <body>
-
+    <div class="content-container">
+        <div lang="en" th:include="header :: header"></div>
+        <div class="content">
+            <div class="main-body">
+                <div class="inside-main-body">
+                    <h1>Our Team</h1>
+                    <div class="team-rank">
+                        <h2>Developers</h2>
+                        <div class="rank-members">
+                            <div class="member">
+                                <div class="dev-bg"></div>
+                                <div class="centered">
+                                    <img src="https://cdn.discordapp.com/avatars/474482013886480385/e543f843de646d28313d5fdd63cbf813.webp?size=1024" alt="">
+                                    <h3>JustDoom</h3>
+                                    <p>Backend</p>
+                                </div>
+                            </div>
+                            
+                            <div class="member">
+                                <div class="dev-bg"></div>
+                                <div class="centered">
+                                    <img src="https://cdn.discordapp.com/avatars/335291927609999371/f4174fbba324ed200cdb175bd41be2dd.webp?size=1024" alt="">
+                                    <h3>Cyric</h3>
+                                    <p>Frontend</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="team-rank">
+                        <h2>Contributors</h2>
+                        <div class="rank-members">
+                            <div class="member">
+                                <div class="centered">
+                                    <img src="https://cdn.discordapp.com/avatars/474482013886480385/e543f843de646d28313d5fdd63cbf813.webp?size=1024" alt="">
+                                    <h3>A random contributer</h3>
+                                    <p>Contributed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="side-body-container">
+                <div class="side-body">
+                    <div class="inside-main-body">
+                        <div lang="en" th:include="sponsor :: sponsor"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div lang="en" th:include="footer :: footer"></div>
+    </div>
 </body>
 </html>
