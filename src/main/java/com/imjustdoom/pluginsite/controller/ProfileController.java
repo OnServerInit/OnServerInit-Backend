@@ -29,21 +29,22 @@ public class ProfileController {
     private final UpdateRepository updateRepository;
 
     @GetMapping("/profile/{id}")
-    public String profile(@RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, @RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model, Account user) {
-        model.addAttribute("account", user);
+    public String profile(Account account, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, @RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model) {
+        model.addAttribute("account", account);
         model.addAttribute("page", Integer.parseInt(page));
 
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
         if (optionalAccount.isEmpty()) return "error/404";
 
-        Account account = accountRepository.getById(id);
+        Account profile = accountRepository.getById(id);
 
         int totalDownloads = 0;
-        for (Resource resource : account.getResources()) {
+        for (Resource resource : profile.getResources()) {
             totalDownloads += updateRepository.getTotalDownloads(resource.getId()) == null ? 0 : updateRepository.getTotalDownloads(resource.getId());
         }
         model.addAttribute("totalDownloads", totalDownloads);
+        model.addAttribute("user", profile);
 
         switch (field.toLowerCase()) {
             case "resources":
@@ -65,10 +66,8 @@ public class ProfileController {
 
                 model.addAttribute("total", total);
                 model.addAttribute("files", data);
-                model.addAttribute("account", account);
                 return "profile/resources";
             default:
-                model.addAttribute("account", account);
                 return "profile/profile";
         }
     }

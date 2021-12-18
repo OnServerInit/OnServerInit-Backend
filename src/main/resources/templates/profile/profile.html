@@ -10,14 +10,14 @@
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
-            <form method="GET" th:action="'/profile/' + ${account.getId()}" th:object="${account}"
+            <form method="GET" th:action="'/profile/' + ${user.getId()}" th:object="${user}"
                   enctype="multipart/form-data" action="#">
                 <p>
                     <input type="submit" name="field" value="Overview">
                     <input type="submit" name="field" value="Resources">
                 </p>
             </form>
-            <p th:text="'Name: ' + ${account.getUsername()}"></p>
+            <p th:text="'Name: ' + ${user.getUsername()}"></p>
         </div>
     </div>
     <div class="side-body-container">
@@ -29,7 +29,7 @@
         <div class="side-body slight-margin">
             <div class="inside-main-body">
                 <p th:text="'Total Downloads: ' + ${totalDownloads}"></p>
-                <p th:text="'Joined: ' + ${account.getJoined()}"></p>
+                <p th:text="'Joined: ' + ${user.getJoined()}"></p>
             </div>
         </div>
     </div>
