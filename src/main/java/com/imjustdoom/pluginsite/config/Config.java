@@ -12,4 +12,6 @@ public class Config {
     public String database;
     public String maxUploadSize;
     public String domain;
+    public int maxCreationsPerHour;
+    public int maxUpdatesPerHour;
 }
