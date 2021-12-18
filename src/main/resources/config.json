@@ -5,5 +5,7 @@
   "port": "3306",
   "database": "resources",
   "maxUploadSize": "10MB",
-  "domain": "http://localhost:8080"
+  "domain": "http://localhost:8080",
+  "maxCreationsPerHour": 10,
+  "maxUpdatesPerHour": 10
 }

@@ -1,7 +1,7 @@
 package com.imjustdoom.pluginsite.repositories;
 
-import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
+import lombok.Getter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,6 +25,9 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     @Query("UPDATE Resource resource SET resource.name = ?2, resource.blurb = ?3, resource.description = ?4, " +
             "resource.donation = ?5, resource.source = ?6, resource.support = ?7 WHERE resource.id = ?1")
     void setInfo(int id, String name, String blurb, String description, String donation, String source, String support);
+
+    @Query("SELECT COUNT(r) FROM Resource r WHERE r.created > CURDATE() - HOUR(1) AND r.author.id = ?1")
+    int getLastHour(int authorId);
 
     List<Resource> findAllByAuthorId(int authorId, Pageable pageable);
 

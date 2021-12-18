@@ -259,6 +259,9 @@ public class ResourcesController {
     //TODO: Do sanity checks
     @PostMapping("/resources/create")
     public RedirectView createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) throws IOException {
+        if(resourceRepository.getLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour){
+            // error
+        }
 
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
                 resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
