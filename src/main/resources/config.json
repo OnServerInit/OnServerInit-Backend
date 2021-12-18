@@ -6,6 +6,6 @@
   "database": "resources",
   "maxUploadSize": "10MB",
   "domain": "http://localhost:8080",
-  "maxCreationsPerHour": 10,
+  "maxCreationsPerHour": 1,
   "maxUpdatesPerHour": 10
 }

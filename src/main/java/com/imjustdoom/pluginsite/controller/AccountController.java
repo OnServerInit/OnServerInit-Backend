@@ -1,5 +1,6 @@
 package com.imjustdoom.pluginsite.controller;
 
+import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.dtos.in.CreateAccountRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
@@ -40,7 +41,7 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest, WebRequest request) {
+    public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
 
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
         if(!pattern.matcher(accountRequest.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
@@ -82,5 +83,34 @@ public class AccountController {
         }
 
         return "redirect:/login?error=notfound";
+    }
+
+    @GetMapping("/account/details")
+    public String accountDetails(Model model, Account account, @RequestParam(name = "error", required = false) String error) {
+        model.addAttribute("account", account);
+        model.addAttribute("url", PluginSiteApplication.config.domain);
+        model.addAttribute("error", error);
+        return "account/details";
+    }
+
+    @PostMapping("/account/details")
+    public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
+
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
+        if(!pattern.matcher(username).matches()) return "redirect:/account/details?error=invalidcharacter";
+
+        String regexPattern = "^(.+)@(\\S+)$";
+        boolean validEmail = StringUtil.patternMatches(email, regexPattern);
+
+        if (!validEmail) return "redirect:/account/details?error=invalidemail";
+
+        if (accountRepository.existsByUsernameEqualsIgnoreCase(username)) return "redirect:/account/details?error=usernametaken";
+
+        if (accountRepository.existsByEmailEqualsIgnoreCase(email)) return "redirect:/account/details?error=emailtaken";
+
+        accountRepository.setUsernameById(account.getId(), username);
+        accountRepository.setEmailById(account.getId(), email);
+        accountRepository.setPasswordById(account.getId(), passwordEncoder.encode(password));
+        return "redirect:/profile/" + account.getId();
     }
 }
