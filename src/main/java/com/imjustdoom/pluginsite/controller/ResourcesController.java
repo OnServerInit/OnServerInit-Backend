@@ -287,7 +287,7 @@ public class ResourcesController {
             Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
         }
 
-        return "redirect:/resources/" + id;
+        return "redirect:/resources/%s".formatted(id);
     }
 
     @GetMapping("/resources/create")
