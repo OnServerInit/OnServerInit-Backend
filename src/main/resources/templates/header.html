@@ -14,8 +14,11 @@
                 <a th:href="@{/signup}" th:if="${account == null}" class="align-right"><button>Sign Up</button></a>
                 <a th:href="@{/login}" th:if="${account == null}" class="align-right"><button>Login</button></a>
                 <a th:href="@{/logout}" th:if="${account != null}" class="align-right"><button>Logout</button></a>
-                <a th:if="${account != null}" th:href="'/profile/' + ${account.getId()}" th:utext="'<button>' + ${account.getUsername()} + '</button>'" class="align-right account" id="account-username"></a>
-                
+                <a th:if="${account != null}" th:href="'/profile/' + ${account.getId()}" th:utext="'<button>' + ${account.getUsername()} + '</button>'" class="align-right"></a>
+
+
+                <a id="alert" class="alert-header"> Alerts</a>
+
                 <div class="alerts-dropdown" id="alert-dropdown">
                     <div class="alerts-inner-body">
                         <div class="alerts">

@@ -1,4 +1,4 @@
-var account = document.getElementById('account-username');
+var account = document.getElementById('alert');
 var alerts_container = document.getElementById('alert-dropdown');
 
 alerts_container.style.display = 'none';

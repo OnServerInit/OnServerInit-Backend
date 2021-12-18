@@ -259,12 +259,12 @@ ul li {
     position: relative;
 }
 
-.header-body > div{
+.header-body > div {
     display: flex;
     align-items: center;
 }
 
-.account{
+.alert-header {
     border-radius: 5rem;
     border: 1px solid #ffffff;
     padding-right: 0;
