@@ -4,6 +4,7 @@ import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Report;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.ReportRepository;
+import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -38,7 +39,7 @@ public class AdminController {
     public String report(Model model, Account account, @PathVariable("id") int id) {
 
         Report report = reportRepository.findById(id).get();
-        String description = report.getReport();
+        String description = UrlUtil.encode(report.getReport());
 
         description.replaceAll("script", "error style=\"display:none;\"");
         Parser parser = Parser.builder().build();

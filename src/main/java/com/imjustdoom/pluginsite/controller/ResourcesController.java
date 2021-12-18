@@ -16,6 +16,7 @@ import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
 import com.imjustdoom.pluginsite.util.FileUtil;
+import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
@@ -125,7 +126,7 @@ public class ResourcesController {
 
         Resource resource = resourceRepository.getById(id);
 
-        String description = resource.getDescription();
+        String description = UrlUtil.encode(resource.getDescription());
 
         description.replaceAll("script", "error style=\"display:none;\"");
         Parser parser = Parser.builder().build();
