@@ -8,55 +8,80 @@
 <div class="content-container">
     <div lang="en" th:include="header :: header"></div>
     <div class="content">
-        <div class="main-body">
-            <div class="inside-main-body">
-                <div class="info-left">
-                    <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
-                </div>
-                <div class="info-left">
-                    <p th:text="${resource.getName()}"></p>
-                    <p th:text="${resource.getBlurb()}" class="blurb"></p>
+        <div class="main-body-container">
+            <div class="main-body">
+                <div class="inside-main-body">
+                    <div class="info-left">
+                        <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
+                    </div>
+                    <div class="info-left">
+                        <p th:text="${resource.getName()}"></p>
+                        <p th:text="${resource.getBlurb()}" class="blurb"></p>
+                        <br>
+                    </div>
                     <br>
+                    <div style="clear: both;">
+                        <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
+                              enctype="multipart/form-data" action="#">
+                            <p>
+                                <input type="submit" name="field" value="Overview">
+                                <input type="submit" name="field" value="Updates">
+                            </p>
+                        </form>
+                    </div>
+                    <br>
+                    <hr th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
+                    <br th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
+    
+                    <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
+                                                                  th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
+                    </p>
+                    <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
+                                                                th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
+                    <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
+                                                                 th:text="'Support: ' + ${resource.getSupport()}"></a></p>
+                    <br th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
+    
+                    <hr>
+                    <br>
+                    <div th:utext="${resource.getDescription()}"></div>
+                    <br>
+                    <hr>
+                    <br>
+                    <div class="resource-controls">
+                        <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}" th:href="${editUrl}">
+                            <button>Edit Plugin</button>
+                        </a>
+                        <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}" th:href="${uploadUrl}">
+                            <button>Upload</button>
+                        </a>
+                        <a th:if="${resource.getDownload() != ''}" th:href="${resource.getDownload()}">
+                            <button>Download</button>
+                        </a>
+                    </div>
                 </div>
-                <br>
-                <div style="clear: both;">
-                    <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
-                          enctype="multipart/form-data" action="#">
-                        <p>
-                            <input type="submit" name="field" value="Overview">
-                            <input type="submit" name="field" value="Updates">
-                        </p>
-                    </form>
+            </div>
+
+            <div class="main-body">
+                <div class="inside-main-body">
+                    <h1 class="body-title">Create Review</h1>
+                    <div class="stars" id="stars">
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/><path d="M0,0h24v24H0V0z" fill="none"/></g><g><path d="M12,17.27l4.15,2.51c0.76,0.46,1.69-0.22,1.49-1.08l-1.1-4.72l3.67-3.18c0.67-0.58,0.31-1.68-0.57-1.75l-4.83-0.41 l-1.89-4.46c-0.34-0.81-1.5-0.81-1.84,0L9.19,8.63L4.36,9.04c-0.88,0.07-1.24,1.17-0.57,1.75l3.67,3.18l-1.1,4.72 c-0.2,0.86,0.73,1.54,1.49,1.08L12,17.27z"/></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/><path d="M0,0h24v24H0V0z" fill="none"/></g><g><path d="M12,17.27l4.15,2.51c0.76,0.46,1.69-0.22,1.49-1.08l-1.1-4.72l3.67-3.18c0.67-0.58,0.31-1.68-0.57-1.75l-4.83-0.41 l-1.89-4.46c-0.34-0.81-1.5-0.81-1.84,0L9.19,8.63L4.36,9.04c-0.88,0.07-1.24,1.17-0.57,1.75l3.67,3.18l-1.1,4.72 c-0.2,0.86,0.73,1.54,1.49,1.08L12,17.27z"/></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/><path d="M0,0h24v24H0V0z" fill="none"/></g><g><path d="M12,17.27l4.15,2.51c0.76,0.46,1.69-0.22,1.49-1.08l-1.1-4.72l3.67-3.18c0.67-0.58,0.31-1.68-0.57-1.75l-4.83-0.41 l-1.89-4.46c-0.34-0.81-1.5-0.81-1.84,0L9.19,8.63L4.36,9.04c-0.88,0.07-1.24,1.17-0.57,1.75l3.67,3.18l-1.1,4.72 c-0.2,0.86,0.73,1.54,1.49,1.08L12,17.27z"/></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/><path d="M0,0h24v24H0V0z" fill="none"/></g><g><path d="M12,17.27l4.15,2.51c0.76,0.46,1.69-0.22,1.49-1.08l-1.1-4.72l3.67-3.18c0.67-0.58,0.31-1.68-0.57-1.75l-4.83-0.41 l-1.89-4.46c-0.34-0.81-1.5-0.81-1.84,0L9.19,8.63L4.36,9.04c-0.88,0.07-1.24,1.17-0.57,1.75l3.67,3.18l-1.1,4.72 c-0.2,0.86,0.73,1.54,1.49,1.08L12,17.27z"/></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/><path d="M0,0h24v24H0V0z" fill="none"/></g><g><path d="M12,17.27l4.15,2.51c0.76,0.46,1.69-0.22,1.49-1.08l-1.1-4.72l3.67-3.18c0.67-0.58,0.31-1.68-0.57-1.75l-4.83-0.41 l-1.89-4.46c-0.34-0.81-1.5-0.81-1.84,0L9.19,8.63L4.36,9.04c-0.88,0.07-1.24,1.17-0.57,1.75l3.67,3.18l-1.1,4.72 c-0.2,0.86,0.73,1.54,1.49,1.08L12,17.27z"/></g></svg>
+                    </div>
+                    <div id="review-body">
+                        <textarea rows="3" cols="" class="review-text" placeholder="Write your review here"></textarea>
+                        <div><input type="submit" value="Leave Review"></div>
+                    </div>
                 </div>
-                <br>
-                <hr th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
-                <br th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
+            </div>
 
-                <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
-                                                              th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
-                </p>
-                <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
-                                                            th:text="'Source Code: ' + ${resource.getSource()}"></a></p>
-                <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
-                                                             th:text="'Support: ' + ${resource.getSupport()}"></a></p>
-                <br th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
-
-                <hr>
-                <br>
-                <div th:utext="${resource.getDescription()}"></div>
-                <br>
-                <hr>
-                <br>
-                <div class="resource-controls">
-                    <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}" th:href="${editUrl}">
-                        <button>Edit Plugin</button>
-                    </a>
-                    <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}" th:href="${uploadUrl}">
-                        <button>Upload</button>
-                    </a>
-                    <a th:if="${resource.getDownload() != ''}" th:href="${resource.getDownload()}">
-                        <button>Download</button>
-                    </a>
+            <div class="main-body">
+                <div class="inside-main-body">
+                    <h1 class="body-title">Reviews</h1>
                 </div>
             </div>
         </div>
@@ -77,7 +102,8 @@
 
         </div>
     </div>
-    <br>
+
+    <script th:src="@{/js/starController.js}"></script>
     <div lang="en" th:include="footer :: footer"></div>
 </div>
 </body>

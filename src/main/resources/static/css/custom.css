@@ -174,8 +174,22 @@ ul li {
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
 }
 
+.main-body:not(:first-child){
+    margin-top: 1rem;
+}
+
+.main-body-container > .main-body{
+    flex-grow: 0;
+}
+
 .full-body{
     margin-right: 0 !important;
+}
+
+.main-body-container{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .side-body-container{
@@ -397,6 +411,13 @@ ul li {
     word-wrap: break-word;
 }
 
+.body-title{
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    word-wrap: break-word;
+}
+
 .modified-grey{
     color: #838383;
 }
@@ -486,6 +507,22 @@ ul li {
 }
 
 /* more */
+
+.stars > svg{
+    width: 24px;
+    height: 24px;
+}
+
+.review-text{
+    font-size: 14px;
+    background-color: #F3F4F6;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    padding: 0.5rem;
+    width: 100%;
+    word-wrap: break-word;
+}
 
 .tooltip {
     position: relative;
@@ -648,6 +685,10 @@ ul li {
         font-size: 3.5rem;
     }
 
+    .body-title{
+        font-size: 75px;
+    }
+
     .blurb {
         font-size: 1.5rem;
     }
@@ -730,5 +771,23 @@ ul li {
 
     .a-button:not(:first-child){
         margin-left: 0;
+    }
+
+    a{
+        text-align: center;
+    }
+
+    a.footer-text{
+        text-align: left;
+    }
+
+    /* review stuff */
+    .review-text{
+        font-size: 40px;
+    }
+
+    .stars > svg{
+        width: 50px;
+        height: 50px;
     }
 }
