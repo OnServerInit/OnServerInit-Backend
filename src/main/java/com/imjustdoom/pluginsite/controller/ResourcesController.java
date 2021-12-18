@@ -86,6 +86,8 @@ public class ResourcesController {
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
+
+            model.addAttribute("results", resources);
         } else {
 
             total = resourceRepository.findAll().size() / 25;
