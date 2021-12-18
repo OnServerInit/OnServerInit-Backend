@@ -4,10 +4,9 @@ import com.imjustdoom.pluginsite.model.Account;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class TermsController {
+public class OtherController {
 
     @GetMapping("/privacy")
     public String privacy(Account account, Model model) {
@@ -25,5 +24,11 @@ public class TermsController {
     public String contact(Account account, Model model) {
         model.addAttribute("account", account);
         return "terms/contact";
+    }
+
+    @GetMapping("/team")
+    public String team(Account account, Model model) {
+        model.addAttribute("account", account);
+        return "team";
     }
 }
