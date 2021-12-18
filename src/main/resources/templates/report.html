@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+<div class="content-container">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body">
+            <div class="inside-main-body">
+                <form method="POST" th:action="@{/report}" th:object="${report}">
+                    Report A:
+                    <select name="reportingObject" id="reportingObject" th:field="*{reportingObject}">
+                        <option value="resources">Resource</option>
+                        <option value="profile">Account</option>
+                        <option value="review">Review</option>
+                    </select>
+                    ID: <input type="text" id="id" name="id" th:field="*{reportingId}">
+                    Reason:
+                    <select name="reason" id="reason" th:field="*{reason}">
+                        <option value="explicit">Explicit</option>
+                        <option value="malicious">Malicious</option>
+                        <option value="spam">Spam/Unwanted</option>
+                        <option value="threats">Threats</option>
+                        <option value="copy">Duplication/Copy</option>
+                        <option value="missclassification">Miss-classification</option>
+                    </select>
+                    Report:
+                    <div class="input" style="width: 100% !important;">
+                        <p>Description</p>
+                        <label>
+                            <textarea class="text-box" id="description"></textarea>
+                        </label>
+                        <textarea hidden id="report" name="report" th:field="*{report}"></textarea>
+                    </div>
+                    <td><input type="submit" id="submit" value="Submit Report"></td>
+                </form>
+            </div>
+        </div>
+        <div class="side-body-container">
+            <div class="side-body">
+                <div class="inside-main-body">
+                    <div lang="en" th:include="sponsor :: sponsor"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div lang="en" th:include="footer :: footer"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    const simplemde = new SimpleMDE({element: document.getElementById('description')});
+
+    //not sure this is how i should do this but i get an error without this when trying to create a resource
+    document.getElementById("submit").onclick = function () {
+        document.getElementById("report").value = simplemde.value();
+        console.log(simplemde.value());
+    };
+</script>
+</body>
+</html>
