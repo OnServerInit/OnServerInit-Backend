@@ -3,84 +3,91 @@
 <head>
     <title>Edit Resource</title>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css"
+          integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
 <body>
 <div class="content-container">
-<div lang="en" th:include="header :: header"></div>
-<div class="content">
-    <div class="main-body">
-        <div class="inside-main-body">
-            <p th:if="${error == 'logotype'}">Please upload an image instead</p>
-            <p th:if="${error == 'logosize'}">Please upload an image with the same height and width</p>
-            <p th:if="${error == 'filesize'}" th:text="'Image size is too large' + ${maxUploadSize}"></p>
-            <form method="POST" th:action="${url}" th:object="${resource}" action="#" th:if="${account.getId() == resource.getAuthor().getId()}" enctype="multipart/form-data">
-                <!-- <p><img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">Logo: <input type="file" name="logo" accept="image/*" id="logo"></p> -->
-                <div style="display: flex;">
-                    <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
-                    <div class="input">
-                        <p>Logo</p>
-                        <input type="file" name="logo" accept="image/*" id="logo">
-                    </div>
-                </div>
-                <div class="input">
-                    <p>Name</p>
-                    <input type="text" th:field="*{name}" maxlength="128" required/>
-                </div>
-                <div class="input">
-                    <p>Blurb</p>
-                    <input type="text" th:field="*{blurb}" maxlength="256" required/>
-                </div>
-                <div class="input">
-                    <p>Donation Link (Optional)</p>
-                    <input type="text" th:field="*{donation}" maxlength="2048"/>
-                </div>
-                <div class="input">
-                    <p>Source Code (Optional)</p>
-                    <input type="text" th:field="*{source}" maxlength="2048"/>
-                </div>
-                <div class="input">
-                    <p>Support (Optional)</p>
-                    <input type="text" th:field="*{support}" maxlength="2048"/>
-                </div>
-
-                <div class="input" style="width: 100% !important;">
-                    <p>Description</p>
-                    <label>
-                        <textarea class="text-box" id="description"></textarea>
-                        <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
-                    </label>
-                </div>
-                <p>
-                <td><input type="submit" value="Save Edit"/>
-                <a th:href="${url.replace('edit', '')}"><button class="button">Cancel</button></a></td>
-                </p>
-            </form>
-            <p th:unless="${account.getId() == resource.getAuthor().getId()}">You do not have permission to edit this plugin</p>
-        </div>
-    </div>
-    <div class="side-body-container">
-        <div class="side-body">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body">
             <div class="inside-main-body">
-                <div lang="en" th:include="sponsor :: sponsor"></div>
+                <p th:if="${error == 'logotype'}">Please upload an image instead</p>
+                <p th:if="${error == 'logosize'}">Please upload an image with the same height and width</p>
+                <p th:if="${error == 'filesize'}" th:text="'Image size is too large' + ${maxUploadSize}"></p>
+                <form method="POST" th:action="${url}" th:object="${resource}" action="#"
+                      th:if="${account.getId() == resource.getAuthor().getId()}" enctype="multipart/form-data">
+                    <!-- <p><img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">Logo: <input type="file" name="logo" accept="image/*" id="logo"></p> -->
+                    <div style="display: flex;">
+                        <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
+                        <div class="input">
+                            <p>Logo</p>
+                            <input type="file" name="logo" accept="image/*" id="logo">
+                        </div>
+                    </div>
+                    <div class="input">
+                        <p>Name</p>
+                        <input type="text" th:field="*{name}" maxlength="128" required/>
+                    </div>
+                    <div class="input">
+                        <p>Blurb</p>
+                        <input type="text" th:field="*{blurb}" maxlength="256" required/>
+                    </div>
+                    <div class="input">
+                        <p>Donation Link (Optional)</p>
+                        <input type="text" th:field="*{donation}" maxlength="2048"/>
+                    </div>
+                    <div class="input">
+                        <p>Source Code (Optional)</p>
+                        <input type="text" th:field="*{source}" maxlength="2048"/>
+                    </div>
+                    <div class="input">
+                        <p>Support (Optional)</p>
+                        <input type="text" th:field="*{support}" maxlength="2048"/>
+                    </div>
+
+                    <div class="input" style="width: 100% !important;">
+                        <p>Description</p>
+                        <label>
+                            <textarea class="text-box" id="description"></textarea>
+                            <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
+                        </label>
+                    </div>
+                    <p>
+                    <td><input type="submit" id="submit" value="Save Edit"/>
+                        <a th:href="${url.replace('edit', '')}">
+                            <button class="button">Cancel</button>
+                        </a></td>
+                    </p>
+                </form>
+                <p th:unless="${account.getId() == resource.getAuthor().getId()}">You do not have permission to edit
+                    this plugin</p>
+            </div>
+        </div>
+        <div class="side-body-container">
+            <div class="side-body">
+                <div class="inside-main-body">
+                    <div lang="en" th:include="sponsor :: sponsor"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div lang="en" th:include="footer :: footer"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-    const description = document.getElementById('hidden-description').value;
-    console.log(description);
-    var simplemde = new SimpleMDE({element: document.getElementById('description')});
-    simplemde.value(description);
+    <div lang="en" th:include="footer :: footer"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"
+            integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        window.addEventListener('load', function () {
+            const description = document.getElementById('hidden-description').value;
+            const simplemde = new SimpleMDE({element: document.getElementById('description')});
+            simplemde.value(description);
 
-    //not sure this is how i should do this but i get an error without this when trying to create a resource
-    document.getElementById("submit").onclick = function () {
-        document.getElementById("hidden-description").value = simplemde.value();
-        console.log(simplemde.value());
-    };
-</script>
+            document.getElementById("submit").onclick = function () {
+                document.getElementById("hidden-description").value = simplemde.value();
+            };
+        });
+    </script>
 </div>
 </body>
 </html>

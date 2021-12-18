@@ -5,6 +5,9 @@
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
     <script th:src="@{/js/resourceDownload.js}"></script>
     <script th:src="@{/js/selectVersion.js}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css"
+          integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
 <body>
 <div class="content-container">
@@ -12,7 +15,8 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
-                <p th:if="${error == 'uploadlimit'}" th:text="${'Please wait. You have uploaded ' + limit + ' files in the last hour'}"></p>
+                <p th:if="${error == 'uploadlimit'}"
+                   th:text="${'Please wait. You have uploaded ' + limit + ' files in the last hour'}"></p>
                 <form method="POST" th:action="${url}" th:object="${update}" enctype="multipart/form-data"
                       action="#" th:if="${account.getId()} == ${resource.getAuthor().getId()}">
                     <p th:if="${error == 'filesize'}"
@@ -110,11 +114,14 @@
                     </div>
                     <br>
                     <p>
-                    <td><input type="submit" value="Submit"/>
-                    <a th:href="${mainUrl}"><button class="button">Cancel</button></a></td>
+                    <td><input type="submit" id="submit" value="Submit"/>
+                        <a th:href="${mainUrl}">
+                            <button class="button">Cancel</button>
+                        </a></td>
                     </p>
                 </form>
-                <p th:unless="${account.getId()} == ${resource.getAuthor().getId()}">You do not have permission to edit this plugin</p>
+                <p th:unless="${account.getId()} == ${resource.getAuthor().getId()}">You do not have permission to edit
+                    this plugin</p>
             </div>
         </div>
         <div class="side-body-container">
@@ -126,6 +133,18 @@
         </div>
     </div>
     <div lang="en" th:include="footer :: footer"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"
+            integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var simplemde = new SimpleMDE({element: document.getElementById('description')});
+        simplemde.value(document.getElementById('hidden-description').value);
+
+        //not sure this is how i should do this but i get an error without this when trying to create a resource
+        document.getElementById("submit").onclick = function () {
+            document.getElementById("hidden-description").value = simplemde.value();
+        };
+    </script>
 </div>
 </body>
 </html>

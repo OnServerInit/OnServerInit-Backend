@@ -1,7 +1,6 @@
 package com.imjustdoom.pluginsite.repositories;
 
 import com.imjustdoom.pluginsite.model.Resource;
-import lombok.Getter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -51,7 +50,7 @@ public class LogoServiceImpl implements LogoService {
     }
 
     @Override
-    public HttpEntity<byte[]> serveDefaultLogo(){
+    public HttpEntity<byte[]> serveDefaultLogo() {
         try {
             Path path = Paths.get("resources/logos/default");
             Resource file = new UrlResource(path.resolve("logo.png").toUri());

@@ -8,57 +8,58 @@
 </head>
 <body>
 <div class="content-container">
-<div lang="en" th:include="header :: header"></div>
-<div class="content">
-    <div class="main-body">
-        <div class="inside-main-body">
-            <p th:if="${error == 'invalidemail'}">Invalid Email</p>
-            <p th:if="${error == 'emailtaken'}">Email is taken</p>
-            <p th:if="${error == 'usernametaken'}">Username is taken</p>
-            <p th:if="${error == 'passwordtaken'}">That password is taken (haha just kidding, this error actually isn't possible normally)</p>
-            <p th:if="${error == 'invalidcharacter'}">You have a character that is not allowed in your username</p>
-
-            <form method="POST" th:action="@{/signup}" th:object="${createAccount}" action="#">
-                <p id="invalid-name"></p>
-                <div class="input">
-                    <p>Name</p>
-                    <input type="text" th:field="*{username}" maxlength="16" required id="username"/>
-                </div>
-
-                <p id="invalid-email"></p>
-                <div class="input">
-                    <p>Email</p>
-                    <input type="text" th:field="*{email}" maxlength="320" required id="email"/>
-                </div>
-
-                <div class="input">
-                    <p>Password</p>
-                    <input type="password" th:field="*{password}" maxlength="64" required id="password"/>
-                    <div id="strength-container">
-                        <div class="bar-section"></div>
-                        <div class="bar-section"></div>
-                        <div class="bar-section"></div>
-                    </div>
-                </div>
-
-                <!-- <span id="strength-disp" class="password-strength"></span> -->
-                <br>
-
-                <div>
-                    <td><input type="submit" value="Signup"/></td>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="side-body-container">
-        <div class="side-body">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body">
             <div class="inside-main-body">
-                <div lang="en" th:include="sponsor :: sponsor"></div>
+                <p th:if="${error == 'invalidemail'}">Invalid Email</p>
+                <p th:if="${error == 'emailtaken'}">Email is taken</p>
+                <p th:if="${error == 'usernametaken'}">Username is taken</p>
+                <p th:if="${error == 'passwordtaken'}">That password is taken (haha just kidding, this error actually
+                    isn't possible normally)</p>
+                <p th:if="${error == 'invalidcharacter'}">You have a character that is not allowed in your username</p>
+
+                <form method="POST" th:action="@{/signup}" th:object="${createAccount}" action="#">
+                    <p id="invalid-name"></p>
+                    <div class="input">
+                        <p>Name</p>
+                        <input type="text" th:field="*{username}" maxlength="16" required id="username"/>
+                    </div>
+
+                    <p id="invalid-email"></p>
+                    <div class="input">
+                        <p>Email</p>
+                        <input type="text" th:field="*{email}" maxlength="320" required id="email"/>
+                    </div>
+
+                    <div class="input">
+                        <p>Password</p>
+                        <input type="password" th:field="*{password}" maxlength="64" required id="password"/>
+                        <div id="strength-container">
+                            <div class="bar-section"></div>
+                            <div class="bar-section"></div>
+                            <div class="bar-section"></div>
+                        </div>
+                    </div>
+
+                    <!-- <span id="strength-disp" class="password-strength"></span> -->
+                    <br>
+
+                    <div>
+                        <td><input type="submit" value="Signup"/></td>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="side-body-container">
+            <div class="side-body">
+                <div class="inside-main-body">
+                    <div lang="en" th:include="sponsor :: sponsor"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div lang="en" th:include="footer :: footer"></div>
+    <div lang="en" th:include="footer :: footer"></div>
 </div>
 </body>
 </html>

@@ -7,6 +7,7 @@ public class FileUtil {
 
     /**
      * Checks if a file exists
+     *
      * @param filename - Name of the file/directory
      * @return - Returns if the file/directory exists
      */

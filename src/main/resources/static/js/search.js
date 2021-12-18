@@ -6,9 +6,9 @@ function search() {
     let value = encodeURIComponent(search);
 
     const kvp = document.location.search.substr(1).split('&');
-    let i=0;
+    let i = 0;
 
-    for(; i<kvp.length; i++){
+    for (; i < kvp.length; i++) {
         if (kvp[i].startsWith(key + '=')) {
             let pair = kvp[i].split('=');
             pair[1] = value;
@@ -17,8 +17,8 @@ function search() {
         }
     }
 
-    if(i >= kvp.length){
-        kvp[kvp.length] = [key,value].join('=');
+    if (i >= kvp.length) {
+        kvp[kvp.length] = [key, value].join('=');
     }
     document.location.search = kvp.join('&');
 }

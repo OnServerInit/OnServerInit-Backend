@@ -22,8 +22,8 @@ window.addEventListener('load', function () {
 
 function checkEmail() {
     const e = document.getElementById("email");
-    let email =  e.value;
-    if(!email.toString().match( "^(.+)@(\\S+)$")) {
+    let email = e.value;
+    if (!email.toString().match("^(.+)@(\\S+)$")) {
         document.getElementById("invalid-email").innerHTML = "Invalid character";
     } else {
         document.getElementById("invalid-email").innerHTML = "";
@@ -33,8 +33,8 @@ function checkEmail() {
 function checkUsername() {
     console.log(2);
     const e = document.getElementById("username");
-    let email =  e.value;
-    if(!email.toString().match( "^[a-zA-Z0-9]*$")) {
+    let email = e.value;
+    if (!email.toString().match("^[a-zA-Z0-9]*$")) {
         console.log("bad");
         document.getElementById("invalid-name").innerHTML = "Invalid character";
     } else {

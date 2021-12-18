@@ -29,9 +29,9 @@ public class FileController {
     @GetMapping("/logo/{id}")
     @ResponseBody
     public HttpEntity<byte[]> serveLogo(@PathVariable("id") int id) {
-        if(logoService.logoExists(id)){
+        if (logoService.logoExists(id)) {
             return logoService.serveLogo(id);
-        }else{
+        } else {
             return logoService.serveDefaultLogo();
         }
     }

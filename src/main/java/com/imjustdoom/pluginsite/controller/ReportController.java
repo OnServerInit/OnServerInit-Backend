@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @AllArgsConstructor
@@ -18,16 +19,18 @@ public class ReportController {
     private final ReportRepository reportRepository;
 
     @GetMapping("/report")
-    public String report(Account account, Model model) {
+    public String report(Account account, Model model, @RequestParam(name = "status", required = false) String status) {
         model.addAttribute("report", new CreateReportRequest());
         model.addAttribute("account", account);
+        model.addAttribute("status", status);
         return "report";
     }
 
     @PostMapping("/report")
-    public void sendReport(Account account, @ModelAttribute CreateReportRequest reportRequest) {
+    public String sendReport(Account account, @ModelAttribute CreateReportRequest reportRequest) {
         Report report = new Report(account, reportRequest.getReportingObject(), reportRequest.getReportingId(),
                 reportRequest.getReport(), reportRequest.getReason());
         reportRepository.save(report);
+        return "redirect:/report?status=success";
     }
 }

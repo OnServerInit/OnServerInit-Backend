@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const inputs = Array.from(
         document.querySelectorAll('input[id=file], input[id=externalDownload]')
     );

@@ -3,48 +3,58 @@
 <head>
     <title>Edit Resource</title>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css"
+          integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
 <body>
 <div class="content-container">
-<div lang="en" th:include="header :: header"></div>
-<div class="content">
-    <div class="main-body">
-        <div class="inside-main-body">
-            <form method="POST" th:action="${'/resources/' + id + '/edit/update/' + update.getId()}" th:object="${update}"
-                  action="#" th:if="${account.getId() == update.getResource().getAuthor().getId()}" enctype="multipart/form-data">
-                <div class="input">
-                    <p>Name</p>
-                    <input type="text" th:field="*{name}" maxlength="128" required/>
-                </div>
-                <div class="input">
-                    <p>Version</p>
-                    <input type="text" th:field="*{version}" maxlength="128" required/>
-                </div>
-                <div class="input" style="width: 100% !important;">
-                    <p>Description</p>
-                    <label>
-                        <textarea class="text-box" id="description"></textarea>
-                        <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
-                    </label>
-                </div>
-                <p>
-                <td><input type="submit" value="Save Edit"/>
-                <a th:href="${url}"><button class="button">Cancel</button></a></td>
-                </p>
-            </form>
-            <p th:unless="${account.getId() == update.getResource().getAuthor().getId()}">You do not have permission to edit this plugin</p>
-        </div>
-    </div>
-    <div class="side-body-container">
-        <div class="side-body">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body">
             <div class="inside-main-body">
-                <div lang="en" th:include="sponsor :: sponsor"></div>
+                <form method="POST" th:action="${'/resources/' + id + '/edit/update/' + update.getId()}"
+                      th:object="${update}"
+                      action="#" th:if="${account.getId() == update.getResource().getAuthor().getId()}"
+                      enctype="multipart/form-data">
+                    <div class="input">
+                        <p>Name</p>
+                        <input type="text" th:field="*{name}" maxlength="128" required/>
+                    </div>
+                    <div class="input">
+                        <p>Version</p>
+                        <input type="text" th:field="*{version}" maxlength="128" required/>
+                    </div>
+                    <div class="input" style="width: 100% !important;">
+                        <p>Description</p>
+                        <label>
+                            <textarea class="text-box" id="description"></textarea>
+                            <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
+                        </label>
+                    </div>
+                    <p>
+                    <td><input type="submit" id="submit" value="Save Edit"/>
+                        <a th:href="${url}">
+                            <button class="button">Cancel</button>
+                        </a></td>
+                    </p>
+                </form>
+                <p th:unless="${account.getId() == update.getResource().getAuthor().getId()}">You do not have permission
+                    to edit this plugin</p>
+            </div>
+        </div>
+        <div class="side-body-container">
+            <div class="side-body">
+                <div class="inside-main-body">
+                    <div lang="en" th:include="sponsor :: sponsor"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div lang="en" th:include="footer :: footer"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <div lang="en" th:include="footer :: footer"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"
+            integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         var simplemde = new SimpleMDE({element: document.getElementById('description')});
         simplemde.value(document.getElementById('hidden-description').value);

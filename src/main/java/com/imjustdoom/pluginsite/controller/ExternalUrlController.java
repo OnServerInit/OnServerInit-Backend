@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class ExternalUrlController {
     @GetMapping("/redirect")
-    public String redirect(Model model, HttpServletResponse response, @RequestParam(name = "url", required = false, value = "") String url, Account account){
+    public String redirect(Model model, HttpServletResponse response, @RequestParam(name = "url", required = false, value = "") String url, Account account) {
         // do you know how to remove the url from the parameters?
 
         url.replaceAll("%2F", "/");

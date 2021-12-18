@@ -24,7 +24,8 @@
                         </select>
                     </div>
                     <div class="search-container">
-                        <input type="text" id="search-input"><input type="button" value="Search" id="search-button" onclick="search()">
+                        <input type="text" id="search-input"><input type="button" value="Search" id="search-button"
+                                                                    onclick="search()">
                     </div>
                 </div>
                 <p th:if="${results != null}" th:text="${results + ' Results'}"></p>

@@ -5,21 +5,15 @@ import com.imjustdoom.pluginsite.model.Blog;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.BlogRepository;
 import lombok.AllArgsConstructor;
-import com.imjustdoom.pluginsite.service.AccountService;
-import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -31,7 +25,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, Account account) {
-        for(Blog blog : blogRepository.findAll()) {
+        for (Blog blog : blogRepository.findAll()) {
             int authorId = blog.getAuthorId();
             Account author = accountRepository.findById(authorId).get();
             blog.setAuthorName(author.getUsername());

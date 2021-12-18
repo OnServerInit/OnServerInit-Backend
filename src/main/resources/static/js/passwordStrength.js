@@ -3,15 +3,15 @@ window.addEventListener('load', function () {
 
     let strengthContainer = document.getElementById('strength-container');
 
-    function scorePassword(pass){
+    function scorePassword(pass) {
         var score = 0;
-        if(!pass){
+        if (!pass) {
             return score;
         }
 
         // award every unique letter until 5 repetitions
         var letters = new Object();
-        for(var i=0; i<pass.length; i++){
+        for (var i = 0; i < pass.length; i++) {
             letters[pass[i]] = (letters[pass[i]] || 0) + 1;
             score += 5.0 / letters[pass[i]];
         }
@@ -33,23 +33,23 @@ window.addEventListener('load', function () {
         return parseInt(score);
     }
 
-    function checkPasswordStrength(pass){
+    function checkPasswordStrength(pass) {
         let score = scorePassword(pass);
 
-        if(pass.length < 8){
+        if (pass.length < 8) {
             return 'invalid';
         }
 
-        if(score > 80){
+        if (score > 80) {
             return 'strong';
-        } else if(score > 60){
+        } else if (score > 60) {
             return 'medium';
         } else {
             return 'weak';
         }
     }
 
-    function setStrength(strength){
+    function setStrength(strength) {
         var default_color = strengthContainer.style.backgroundColor;
         var bars = document.getElementById('strength-container').children;
         console.log(bars);
@@ -59,7 +59,7 @@ window.addEventListener('load', function () {
                 bars[1].style.backgroundColor = default_color;
                 bars[2].style.backgroundColor = default_color;
                 break;
-            
+
             case 'medium':
                 bars[0].style.backgroundColor = '#ff9900';
                 bars[1].style.backgroundColor = '#ff9900';
