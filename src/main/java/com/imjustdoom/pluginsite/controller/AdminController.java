@@ -11,7 +11,10 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
@@ -71,7 +74,7 @@ public class AdminController {
         model.addAttribute("account", account);
 
         Optional<Account> optionalAccount = accountRepository.findByUsernameEqualsIgnoreCase(username);
-        if(optionalAccount.isEmpty()) return;
+        if (optionalAccount.isEmpty()) return;
         role = role.toUpperCase();
         optionalAccount.get().setRole("ROLE_" + role);
         accountRepository.setRoleById(optionalAccount.get().getId(), "ROLE_" + role);

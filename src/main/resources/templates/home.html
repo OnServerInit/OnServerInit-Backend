@@ -11,14 +11,15 @@
         <div class="main-body">
             <div class="inside-main-body">
                 <h1>Home</h1>
-<!--                <p th:if="${auth != null}" th:text="${auth.getName()}"></p>-->
+                <!--                <p th:if="${auth != null}" th:text="${auth.getName()}"></p>-->
                 <div class="blog-container">
                     <div class="blog" th:each="blog: ${blogs}">
                         <h2 th:text="${blog.name}"></h2>
                         <div class="blog-timeuser">
                             <p th:text="${blog.dateString}"></p>
                             <p style="margin-left: 5px"> • </p>
-                            <a style="margin-left: 5px" th:href="'/profile/' + ${blog.authorId}" th:text="${blog.authorName}"></a>
+                            <a style="margin-left: 5px" th:href="'/profile/' + ${blog.authorId}"
+                               th:text="${blog.authorName}"></a>
                         </div>
                         <div th:utext="${blog.post}"></div>
                     </div>

@@ -1,6 +1,5 @@
 package com.imjustdoom.pluginsite.repositories;
 
-import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.model.Update;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface UpdateRepository extends JpaRepository<Update, Integer> {

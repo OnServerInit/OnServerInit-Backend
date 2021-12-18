@@ -16,21 +16,25 @@
                 <p th:if="${error == 'invalidemail'}">Invalid Email</p>
                 <p th:if="${error == 'emailtaken'}">Email is taken</p>
                 <p th:if="${error == 'usernametaken'}">Username is taken</p>
-                <p th:if="${error == 'passwordtaken'}">That password is taken (haha just kidding, this error actually isn't possible normally)</p>
+                <p th:if="${error == 'passwordtaken'}">That password is taken (haha just kidding, this error actually
+                    isn't possible normally)</p>
                 <p th:if="${error == 'invalidcharacter'}">You have a character that is not allowed in your username</p>
                 <form method="POST" th:action="@{/account/details}">
                     <p id="invalid-name"></p>
                     <div class="input">
                         <p>Username:</p>
-                        <input type="text" th:value="${account.getUsername()}" id="username" name="username" maxlength="16" required>
+                        <input type="text" th:value="${account.getUsername()}" id="username" name="username"
+                               maxlength="16" required>
                     </div>
                     <p id="invalid-email"></p>
                     <div class="input">
-                        Email: <input type="text" th:value="${account.getEmail()}" maxlength="320" required id="email" name="email">
+                        Email: <input type="text" th:value="${account.getEmail()}" maxlength="320" required id="email"
+                                      name="email">
                     </div>
                     <div class="input">
                         <p>Password:</p>
-                        <input type="password" value="ThisIsAVeryNicePasswordRightHere:)" maxlength="64" id="password" name="password">
+                        <input type="password" value="ThisIsAVeryNicePasswordRightHere:)" maxlength="64" id="password"
+                               name="password">
                         <div id="strength-container">
                             <div class="bar-section"></div>
                             <div class="bar-section"></div>
@@ -39,7 +43,9 @@
                     </div>
                     <td>
                         <input type="submit" value="Save Changes"/>
-                        <a th:href="${url}"><button class="button">Cancel</button></a>
+                        <a th:href="${url}">
+                            <button class="button">Cancel</button>
+                        </a>
                     </td>
                 </form>
             </div>

@@ -34,8 +34,10 @@
         <div class="side-body-container">
             <div class="side-body">
                 <div class="inside-main-body">
-                    <p>Reporter: <a th:href="${'/profile/' + report.getReporter().getId()}" th:text="${report.getReporter().getUsername()}"></a></p>
-                    <p>Reported: <a th:href="${'/' + report.getReportingObject() + '/' + report.getReportingId()}" th:text="${report.getReportingObject()}"></a></p>
+                    <p>Reporter: <a th:href="${'/profile/' + report.getReporter().getId()}"
+                                    th:text="${report.getReporter().getUsername()}"></a></p>
+                    <p>Reported: <a th:href="${'/' + report.getReportingObject() + '/' + report.getReportingId()}"
+                                    th:text="${report.getReportingObject()}"></a></p>
                     <p>Reason: [[${report.getReason()}]]</p>
                 </div>
             </div>

@@ -26,12 +26,10 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -42,13 +40,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 
 @Controller
 @AllArgsConstructor
@@ -115,9 +110,9 @@ public class ResourcesController {
     @GetMapping("/resources/{id_s}")
     public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
         int id = 0;
-        try{
+        try {
             id = Integer.parseInt(id_s);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return "error/404";
         }
         Optional<Resource> optionalResource = resourceRepository.findById(id);
@@ -152,7 +147,7 @@ public class ResourcesController {
                 List<Update> data = updateRepository.findAllByResourceId(id, sort1);
                 List<List<String>> versions = new ArrayList<>();
                 List<String> versionLists = new ArrayList<>();
-                for(Update update : data) {
+                for (Update update : data) {
                     JsonObject jsonObject = JsonParser.parseString(update.getVersions()).getAsJsonObject();
                     List<String> versionList = new ArrayList<>();
 
@@ -160,8 +155,8 @@ public class ResourcesController {
                     boolean first = true;
                     StringBuilder versionString = new StringBuilder();
                     String splitter = "";
-                    for(JsonElement v:jsonObject.get("versions").getAsJsonArray()) {
-                        if(first) {
+                    for (JsonElement v : jsonObject.get("versions").getAsJsonArray()) {
+                        if (first) {
                             first = false;
                             continue;
                         }
@@ -193,7 +188,7 @@ public class ResourcesController {
         Update update = optionalUpdate.get();
 
         model.addAttribute("update", update);
-        model.addAttribute("url" , PluginSiteApplication.config.domain + "/resources/" + id);
+        model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/" + id);
         model.addAttribute("account", account);
 
         return "resource/editUpdate";
@@ -262,11 +257,12 @@ public class ResourcesController {
     //TODO: Do sanity checks
     @PostMapping("/resources/create")
     public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) throws IOException {
-        if(resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour){
+        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour) {
             return "redirect:/resources/create?error=createlimit";
         }
 
-        if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName())) return "redirect:/resources/create?error=nametaken";
+        if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName()))
+            return "redirect:/resources/create?error=nametaken";
 
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
                 resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
@@ -326,7 +322,7 @@ public class ResourcesController {
     @PostMapping("/resources/{id}/upload")
     public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException {
 
-        if(updateRepository.getUpdatesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxUpdatesPerHour){
+        if (updateRepository.getUpdatesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxUpdatesPerHour) {
             return "redirect:/resources/%s/upload?error=uploadlimit".formatted(id);
         }
 
@@ -339,12 +335,12 @@ public class ResourcesController {
 
         JsonObject versions = new JsonObject();
         JsonArray versionsArray = new JsonArray();
-        for(String s : versionBoxes) versionsArray.add(s);
+        for (String s : versionBoxes) versionsArray.add(s);
         versions.add("versions", versionsArray);
 
         JsonObject software = new JsonObject();
         JsonArray softwareArray = new JsonArray();
-        for(String s : softwareBoxes) softwareArray.add(s);
+        for (String s : softwareBoxes) softwareArray.add(s);
         software.add("versions", softwareArray);
 
         Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(), updateRequest.getVersion(), "", updateRequest.getName(), versions, software);

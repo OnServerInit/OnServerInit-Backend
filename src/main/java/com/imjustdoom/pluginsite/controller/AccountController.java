@@ -6,17 +6,17 @@ import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.util.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -44,7 +44,7 @@ public class AccountController {
     public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
 
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
-        if(!pattern.matcher(accountRequest.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
+        if (!pattern.matcher(accountRequest.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
 
         String emailAddress = accountRequest.getEmail();
         String regexPattern = "^(.+)@(\\S+)$";
@@ -52,7 +52,8 @@ public class AccountController {
 
         if (!validEmail) return "redirect:/signup?error=invalidemail";
 
-        if (accountRepository.existsByUsernameEqualsIgnoreCase(accountRequest.getUsername())) return "redirect:/signup?error=usernametaken";
+        if (accountRepository.existsByUsernameEqualsIgnoreCase(accountRequest.getUsername()))
+            return "redirect:/signup?error=usernametaken";
 
         if (accountRepository.existsByEmailEqualsIgnoreCase(emailAddress)) return "redirect:/signup?error=emailtaken";
 
@@ -75,7 +76,7 @@ public class AccountController {
 
         if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) {
             Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(accountRequest.getUsername());
-            if(BCrypt.checkpw(accountRequest.getPassword(), account.get().getPassword())) {
+            if (BCrypt.checkpw(accountRequest.getPassword(), account.get().getPassword())) {
 
                 return "redirect:/profile/" + account.get().getId();
             }
@@ -97,14 +98,15 @@ public class AccountController {
     public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
 
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
-        if(!pattern.matcher(username).matches()) return "redirect:/account/details?error=invalidcharacter";
+        if (!pattern.matcher(username).matches()) return "redirect:/account/details?error=invalidcharacter";
 
         String regexPattern = "^(.+)@(\\S+)$";
         boolean validEmail = StringUtil.patternMatches(email, regexPattern);
 
         if (!validEmail) return "redirect:/account/details?error=invalidemail";
 
-        if (accountRepository.existsByUsernameEqualsIgnoreCase(username)) return "redirect:/account/details?error=usernametaken";
+        if (accountRepository.existsByUsernameEqualsIgnoreCase(username))
+            return "redirect:/account/details?error=usernametaken";
 
         if (accountRepository.existsByEmailEqualsIgnoreCase(email)) return "redirect:/account/details?error=emailtaken";
 

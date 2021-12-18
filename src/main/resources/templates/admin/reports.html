@@ -22,7 +22,8 @@
                         </select>
                     </div>
                     <div class="search-container">
-                        <input type="text" id="search-input"><input type="button" value="Search" id="search-button" onclick="search()">
+                        <input type="text" id="search-input"><input type="button" value="Search" id="search-button"
+                                                                    onclick="search()">
                     </div>
                 </div>
 
@@ -39,10 +40,12 @@
                         </tr>
                         <tr th:each="report : ${reports}">
                             <td th:text="${report.getReporter().getUsername()}"></td>
-                            <td><a th:href="${'/' + report.getReportingObject() + '/' + report.getReportingId()}" th:text="${report.getReportingObject()}"></a></td>
+                            <td><a th:href="${'/' + report.getReportingObject() + '/' + report.getReportingId()}"
+                                   th:text="${report.getReportingObject()}"></a></td>
                             <td th:text="${report.getReason()}"></td>
                             <td th:text="${report.getReportedDate()}"></td>
-                            <td><a th:href="${'/admin/report/' + report.getId()}" th:text="${report.getActionTaken()}"></a></td>
+                            <td><a th:href="${'/admin/report/' + report.getId()}"
+                                   th:text="${report.getActionTaken()}"></a></td>
                         </tr>
                     </table>
                 </div>

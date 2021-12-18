@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>WARNING!</title>
+    <title>WARNING!</title>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
 </head>
 <body>
-    <div class="content-container">
-        <div lang="en" th:include="header :: header"></div>
-        <div class="content">
-            <div class="main-body full-body">
-                <div class="inside-main-body">
-                    <h1>WARNING!</h1>
-                    <h2 id="warning"></h2>
-                    <div class="redirect-confirm">
-                        <a href="/" class="a-button" style="background-color: #F3F4F6; color: #EF4444;">No</a>
-                        <a href="" id="yes" class="a-button" style="background-color: #EF4444;">Yep!</a>
-                    </div>
+<div class="content-container">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body full-body">
+            <div class="inside-main-body">
+                <h1>WARNING!</h1>
+                <h2 id="warning"></h2>
+                <div class="redirect-confirm">
+                    <a href="/" class="a-button" style="background-color: #F3F4F6; color: #EF4444;">No</a>
+                    <a href="" id="yes" class="a-button" style="background-color: #EF4444;">Yep!</a>
                 </div>
             </div>
         </div>
-        <div lang="en" th:include="footer :: footer"></div>
     </div>
-    <script th:src="@{/js/redirect.js}"></script>
+    <div lang="en" th:include="footer :: footer"></div>
+</div>
+<script th:src="@{/js/redirect.js}"></script>
 </body>
 </html>
