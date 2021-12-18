@@ -40,7 +40,8 @@
                 <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
             </div>
             <p>
-            <td><input type="submit" value="Submit" id="submit"/></td>
+            <td><input type="submit" value="Submit" id="submit"/>
+            <a th:href="${url}"><button class="button">Cancel</button></a></td>
             </p>
         </div>
     </form>

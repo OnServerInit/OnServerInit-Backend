@@ -52,7 +52,8 @@
                     </label>
                 </div>
                 <p>
-                <td><input type="submit" value="Save Edit"/></td>
+                <td><input type="submit" value="Save Edit"/>
+                <a th:href="${url.replace('edit', '')}"><button class="button">Cancel</button></a></td>
                 </p>
             </form>
             <p th:unless="${account.getId() == resource.getAuthor().getId()}">You do not have permission to edit this plugin</p>

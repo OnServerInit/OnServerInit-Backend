@@ -11,7 +11,7 @@
 <div class="content">
     <div class="main-body">
         <div class="inside-main-body">
-            <form method="POST" th:action="${'/resources/edit/' + id + '/update/' + update.getId()}" th:object="${update}"
+            <form method="POST" th:action="${'/resources/' + id + '/edit/update/' + update.getId()}" th:object="${update}"
                   action="#" th:if="${account.getId() == update.getResource().getAuthor().getId()}" enctype="multipart/form-data">
                 <div class="input">
                     <p>Name</p>
@@ -29,7 +29,8 @@
                     </label>
                 </div>
                 <p>
-                <td><input type="submit" value="Save Edit"/></td>
+                <td><input type="submit" value="Save Edit"/>
+                <a th:href="${url}"><button class="button">Cancel</button></a></td>
                 </p>
             </form>
             <p th:unless="${account.getId() == update.getResource().getAuthor().getId()}">You do not have permission to edit this plugin</p>

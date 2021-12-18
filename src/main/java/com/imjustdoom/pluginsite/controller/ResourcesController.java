@@ -190,6 +190,7 @@ public class ResourcesController {
         Update update = optionalUpdate.get();
 
         model.addAttribute("update", update);
+        model.addAttribute("url" , PluginSiteApplication.config.domain + "/resources/" + id);
         model.addAttribute("account", account);
 
         return "resource/editUpdate";
@@ -218,7 +219,7 @@ public class ResourcesController {
 
         model.addAttribute("authorid", resource.getAuthor());
         model.addAttribute("resource", resource);
-        model.addAttribute("url", "/resources/edit/" + id);
+        model.addAttribute("url", "/resources/" + id + "/edit");
         model.addAttribute("account", account);
 
         return "resource/edit";
@@ -288,6 +289,7 @@ public class ResourcesController {
     public String create(Model model, Account account) {
         model.addAttribute("account", account);
         model.addAttribute("resource", new CreateResourceRequest());
+        model.addAttribute("url", PluginSiteApplication.config.domain + "/resources");
         return "resource/create";
     }
 
@@ -302,6 +304,7 @@ public class ResourcesController {
         model.addAttribute("resource", resource);
         model.addAttribute("update", new CreateUpdateRequest());
         model.addAttribute("url", "/resources/%s/upload/".formatted(id));
+        model.addAttribute("mainUrl", PluginSiteApplication.config.domain + "/resources/%s".formatted(id));
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
         model.addAttribute("account", account);
