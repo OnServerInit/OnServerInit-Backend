@@ -263,6 +263,8 @@ public class ResourcesController {
             return "redirect:/resources/create?error=createlimit";
         }
 
+        if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName())) return "redirect:/resources/create?error=nametaken";
+
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
                 resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
                 "", account, resourceRequest.getSupportLink());

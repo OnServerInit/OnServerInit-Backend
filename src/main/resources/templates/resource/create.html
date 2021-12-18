@@ -11,6 +11,7 @@
 <div class="content">
     <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body" id="form">
         <div class="inside-main-body">
+            <p th:if="${error == 'nametaken'}">That resource name is taken, please use another name. If you are the owner of the original plugin please contact support</p>
             <p th:if="${error == 'createlimit'}" th:text="${'Please wait. You have created ' + limit + ' resources in the last hour'}"></p>
             <div class="input">
                 <p>Name</p>

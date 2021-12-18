@@ -15,6 +15,8 @@ import java.util.Optional;
 @Repository
 public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
+    boolean existsByNameEqualsIgnoreCase(String name);
+
     @Modifying
     @Transactional
     @Query("UPDATE Resource resource SET resource.download = ?2 WHERE resource.id = ?1")
