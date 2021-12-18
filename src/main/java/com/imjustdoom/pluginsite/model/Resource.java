@@ -57,7 +57,6 @@ public class Resource {
     private String download;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    //@Column(nullable = false)
     private Account author;
 
     @Column(nullable = false)

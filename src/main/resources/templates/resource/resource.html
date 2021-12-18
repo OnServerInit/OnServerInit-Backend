@@ -58,6 +58,8 @@
                         <a th:if="${resource.getDownload() != ''}" th:href="${resource.getDownload()}">
                             <button>Download</button>
                         </a>
+                        <!-- Make this a new box that appears over the resource page -->
+                        <a href="/report"><button>Report</button></a>
                     </div>
                 </div>
             </div>
@@ -83,6 +85,11 @@
                 <div class="inside-main-body">
                     <h1 class="body-title">Reviews</h1>
                 </div>
+                <!-- <div class="resource-controls">
+                    <a th:if="${account != null && account.getRole() == 'ROLE_ADMIN'}" th:href="${editUrl}">
+                        <button>Put Under Review</button>
+                    </a>
+                </div>-->
             </div>
         </div>
         <div class="side-body-container">

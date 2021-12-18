@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Page</title>
+    <title>Template Page</title>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -11,22 +11,18 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
-                <div>
-                    Account Stuff
-                </div>
-                <div>
-                    Resource Stuff
-                </div>
-                <div>
-                    Review Stuff
-                </div>
+                Hello There
             </div>
         </div>
         <div class="side-body-container">
             <div class="side-body">
                 <div class="inside-main-body">
-                    <p>Banned Users:</p>
-                    <p>Removed Resources:</p>
+                    <div lang="en" th:include="sponsor :: sponsor"></div>
+                </div>
+            </div>
+            <div class="side-body slight-margin">
+                <div class="inside-main-body">
+                    Some text
                 </div>
             </div>
         </div>

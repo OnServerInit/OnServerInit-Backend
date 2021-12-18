@@ -32,6 +32,9 @@ public class Account implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
     private List<Resource> resources;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "reporter")
+    private List<Report> reports;
+
     @Column(nullable = false, unique = true)
     private String username;
 
