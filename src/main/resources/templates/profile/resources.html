@@ -51,13 +51,15 @@
                 </a>
                 <a th:if="${page > 2}" class="page-button" th:text="${page - 2}" onclick="changePage(-2)"></a>
                 <a th:if="${page > 1}" class="page-button" th:text="${page - 1}" onclick="changePage(-1)"></a>
-                <span th:text="${page}"></span>
-                <a th:if="${page < total}" class="page-button" th:text="${page + 1}" onclick="changePage(1)"></a>
-                <a th:if="${page + 1 < total}" class="page-button" th:text="${page + 2}" onclick="changePage(2)"></a>
+                <span th:text="${page}" class="page-number"></span>
+                <a th:if="${page < total}" class="page-button" th:text="${page + 1}"
+                   onclick="changePage(1)"></a>
+                <a th:if="${page + 1 < total}" class="page-button" th:text="${page + 2}"
+                   onclick="changePage(2)"></a>
                 <a th:if="${page < total}" th:href="'/resources?page=' + ${page + 1}" class="page-button">
                     <button>></button>
                 </a>
-                </div>
+            </div>
             </ul>
         </div>
     </div>

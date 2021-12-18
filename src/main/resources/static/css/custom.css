@@ -509,6 +509,7 @@ ul li {
 
 .tooltip:hover .tooltiptext {
     visibility: visible;
+}
 
 .text-box {
     width: 100%;
