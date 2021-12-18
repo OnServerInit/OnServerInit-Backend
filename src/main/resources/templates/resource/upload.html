@@ -12,6 +12,7 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <p th:if="${error == 'uploadlimit'}" th:text="${'Please wait. You have uploaded ' + limit + ' files in the last hour'}"></p>
                 <form method="POST" th:action="${url}" th:object="${update}" enctype="multipart/form-data"
                       action="#" th:if="${account.getId()} == ${resource.getAuthor().getId()}">
                     <p th:if="${error == 'filesize'}"

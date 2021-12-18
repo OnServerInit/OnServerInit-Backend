@@ -258,9 +258,9 @@ public class ResourcesController {
 
     //TODO: Do sanity checks
     @PostMapping("/resources/create")
-    public RedirectView createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) throws IOException {
-        if(resourceRepository.getLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour){
-            // error
+    public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) throws IOException {
+        if(resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour){
+            return "redirect:/resources/create?error=createlimit";
         }
 
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
@@ -285,11 +285,13 @@ public class ResourcesController {
             Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
         }
 
-        return new RedirectView("/resources/" + id);
+        return "redirect:/resources/" + id;
     }
 
     @GetMapping("/resources/create")
-    public String create(Model model, Account account) {
+    public String create(Model model, Account account, @RequestParam(name = "error", required = false) String error) {
+        model.addAttribute("error", error);
+        model.addAttribute("limit", PluginSiteApplication.config.maxCreationsPerHour);
         model.addAttribute("account", account);
         model.addAttribute("resource", new CreateResourceRequest());
         model.addAttribute("url", PluginSiteApplication.config.domain + "/resources");
@@ -311,12 +313,17 @@ public class ResourcesController {
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
         model.addAttribute("account", account);
+        model.addAttribute("limit", PluginSiteApplication.config.maxUpdatesPerHour);
 
         return "resource/upload";
     }
 
     @PostMapping("/resources/{id}/upload")
-    public String uploadFilePost(@RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException, SQLException {
+    public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException {
+
+        if(updateRepository.getUpdatesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxUpdatesPerHour){
+            return "redirect:/resources/%s/upload?error=uploadlimit".formatted(id);
+        }
 
         if (file.isEmpty() && updateRequest.getExternalLink() == null) {
             //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filesize";

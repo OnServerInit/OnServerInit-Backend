@@ -34,4 +34,7 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
     @Transactional
     @Query("UPDATE Update updates SET updates.name = ?2, updates.description = ?3, updates.version = ?4 WHERE updates.id = ?1")
     void setInfo(int id, String name, String description, String version);
+
+    @Query("SELECT COUNT(updates) FROM Update updates WHERE updates.uploaded > CURDATE() - HOUR(1) AND updates.resource.author.id = ?1")
+    int getUpdatesCreateLastHour(int authorId);
 }

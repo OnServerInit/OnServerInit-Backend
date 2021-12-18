@@ -26,8 +26,8 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
             "resource.donation = ?5, resource.source = ?6, resource.support = ?7 WHERE resource.id = ?1")
     void setInfo(int id, String name, String blurb, String description, String donation, String source, String support);
 
-    @Query("SELECT COUNT(r) FROM Resource r WHERE r.created > CURDATE() - HOUR(1) AND r.author.id = ?1")
-    int getLastHour(int authorId);
+    @Query("SELECT COUNT(resource) FROM Resource resource WHERE resource.created > CURDATE() - HOUR(1) AND resource.author.id = ?1")
+    int getResourcesCreateLastHour(int authorId);
 
     List<Resource> findAllByAuthorId(int authorId, Pageable pageable);
 
