@@ -52,7 +52,7 @@
                     </label>
                 </div>
                 <p>
-                <td><input type="submit" value="Save Edit"/>
+                <td><input type="submit" id="submit" value="Save Edit"/>
                 <a th:href="${url.replace('edit', '')}"><button class="button">Cancel</button></a></td>
                 </p>
             </form>
@@ -70,16 +70,15 @@
 <div lang="en" th:include="footer :: footer"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    const description = document.getElementById('hidden-description').value;
-    console.log(description);
-    var simplemde = new SimpleMDE({element: document.getElementById('description')});
-    simplemde.value(description);
+    window.addEventListener('load', function () {
+        const description = document.getElementById('hidden-description').value;
+        const simplemde = new SimpleMDE({element: document.getElementById('description')});
+        simplemde.value(description);
 
-    //not sure this is how i should do this but i get an error without this when trying to create a resource
-    document.getElementById("submit").onclick = function () {
-        document.getElementById("hidden-description").value = simplemde.value();
-        console.log(simplemde.value());
-    };
+        document.getElementById("submit").onclick = function () {
+            document.getElementById("hidden-description").value = simplemde.value();
+        };
+    });
 </script>
 </div>
 </body>

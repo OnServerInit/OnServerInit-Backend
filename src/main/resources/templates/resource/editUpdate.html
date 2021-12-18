@@ -29,7 +29,7 @@
                     </label>
                 </div>
                 <p>
-                <td><input type="submit" value="Save Edit"/>
+                <td><input type="submit" id="submit" value="Save Edit"/>
                 <a th:href="${url}"><button class="button">Cancel</button></a></td>
                 </p>
             </form>
@@ -44,7 +44,8 @@
         </div>
     </div>
 </div>
-<div lang="en" th:include="footer :: footer"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div lang="en" th:include="footer :: footer"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js" integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         var simplemde = new SimpleMDE({element: document.getElementById('description')});
         simplemde.value(document.getElementById('hidden-description').value);
