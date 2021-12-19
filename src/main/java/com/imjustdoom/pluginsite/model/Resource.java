@@ -63,6 +63,4 @@ public class Resource {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<Update> updates;
-
-
 }

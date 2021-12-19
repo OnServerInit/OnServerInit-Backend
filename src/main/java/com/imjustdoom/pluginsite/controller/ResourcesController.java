@@ -184,12 +184,12 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/{id}/edit/update/{fileId}")
-    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) {
+    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) {
 
         System.out.println(update.getId());
 
         //TODO: fix description not updating
-        updateRepository.setInfo(update.getId(), update.getName(), update.getDescription(), update.getVersion());
+        updateRepository.setInfo(fileId, update.getName(), update.getDescription(), update.getVersion());
 
         return "redirect:/resources/%s".formatted(id);
     }
@@ -311,11 +311,11 @@ public class ResourcesController {
         JsonObject software = new JsonObject();
         JsonArray softwareArray = new JsonArray();
         for (String s : softwareBoxes) softwareArray.add(s);
-        software.add("versions", softwareArray);
+        software.add("software", softwareArray);
 
-        Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(), updateRequest.getVersion(), "", updateRequest.getName(), versions, software);
-
-        update.setResource(resourceRepository.getById(id));
+        Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(),
+                updateRequest.getVersion(), "", updateRequest.getName(), versions, software,
+                resourceRepository.findById(id).get());
         updateRepository.save(update);
 
         if (updateRequest.getExternalLink() == null || updateRequest.getExternalLink().equals("")) {
