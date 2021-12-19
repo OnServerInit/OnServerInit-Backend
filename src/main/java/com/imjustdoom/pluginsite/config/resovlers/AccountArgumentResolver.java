@@ -27,7 +27,6 @@ public class AccountArgumentResolver implements HandlerMethodArgumentResolver {
                 || !(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof Account))
             return null;
 
-        Account account = accountRepository.getById(((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
-        return account;
+        return accountRepository.getById(((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
     }
 }

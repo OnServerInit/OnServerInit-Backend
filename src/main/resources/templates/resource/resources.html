@@ -5,6 +5,7 @@
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
     <script th:src="@{/js/sortby.js}"></script>
     <script th:src="@{/js/pageChanger.js}"></script>
+    <script th:src="@{/js/changeCategory.js}"></script>
     <script th:src="@{/js/search.js}"></script>
 </head>
 <body>
@@ -74,17 +75,17 @@
             </div>
             <div class="side-body slight-margin">
                 <div class="inside-main-body">
-                    <p><button>All Categories</button></p>
-                    <p><button>Chat</button></p>
-                    <p><button>Misc</button></p>
-                    <p><button>Fun</button></p>
-                    <p><button>World Management</button></p>
-                    <p><button>Economy</button></p>
-                    <p><button>API</button></p>
-                    <p><button>Tools/Utilities</button></p>
-                    <p><button>Mechanics</button></p>
-                    <p><button>Skript</button></p>
-                    <p><button>Server Software</button></p>
+                    <p><button onclick="changeCategory('all')">All Categories</button></p>
+                    <p><button onclick="changeCategory('chat')">Chat</button></p>
+                    <p><button onclick="changeCategory('misc')">Misc</button></p>
+                    <p><button onclick="changeCategory('fun')">Fun</button></p>
+                    <p><button onclick="changeCategory('world')">World Management</button></p>
+                    <p><button onclick="changeCategory('economy')">Economy</button></p>
+                    <p><button onclick="changeCategory('library')">Library/API</button></p>
+                    <p><button onclick="changeCategory('tools')">Tools/Utilities</button></p>
+                    <p><button onclick="changeCategory('mechanics')">Mechanics</button></p>
+                    <p><button onclick="changeCategory('skript')">Skript</button></p>
+                    <p><button onclick="changeCategory('software')">Server Software</button></p>
                 </div>
             </div>
         </div>

@@ -62,7 +62,7 @@ public class Resource {
     @Column(nullable = false)
     private String support;
 
-    @Column
+    @Column(nullable = false)
     private String category;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")

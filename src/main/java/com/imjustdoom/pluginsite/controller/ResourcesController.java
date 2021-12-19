@@ -64,8 +64,6 @@ public class ResourcesController {
 
         int resources, total, remainder;
 
-        System.out.println(category);
-
         if (search != null && !search.equals("")) {
 
             Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25);
