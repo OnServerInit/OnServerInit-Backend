@@ -30,7 +30,7 @@ public class ResourceServiceImpl implements ResourceService {
     public Resource createResource(CreateResourceRequest resourceRequest, Account account) {
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
                 resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
-                "", account, resourceRequest.getSupportLink());
+                "", account, resourceRequest.getSupportLink(), resourceRequest.getCategory());
 
         resourceRepository.save(resource);
 

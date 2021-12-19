@@ -46,6 +46,21 @@
                     </label>
                     <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
                 </div>
+                <div>
+                    Category:
+                    <select required th:field="*{category}">
+                        <option value="chat">Chat</option>
+                        <option value="misc">Misc</option>
+                        <option value="fun">Fun</option>
+                        <option value="world">World Management</option>
+                        <option value="economy">Economy</option>
+                        <option value="library">Library/API</option>
+                        <option value="tools">Tools/Utilities</option>
+                        <option value="mechanics">Mechanics</option>
+                        <option value="skript">Skript</option>
+                        <option value="software">Server Software</option>
+                    </select>
+                </div>
                 <p>
                 <td><input type="submit" value="Submit" id="submit"/>
                     <a th:href="${url}">

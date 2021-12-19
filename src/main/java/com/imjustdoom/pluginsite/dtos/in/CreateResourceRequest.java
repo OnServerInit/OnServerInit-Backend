@@ -15,4 +15,5 @@ public class CreateResourceRequest {
     private String sourceCodeLink;
     private String supportLink;
     private String description;
+    private String category;
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Resource {
 
-    public Resource(String name, String description, String blurb, String donation, String source, String download, Account author, String support) {
+    public Resource(String name, String description, String blurb, String donation, String source, String download, Account author, String support, String category) {
         this.name = name;
         this.description = description;
         this.blurb = blurb;
@@ -25,6 +25,7 @@ public class Resource {
         this.support = support;
         this.created = LocalDateTime.now();
         this.updated = LocalDateTime.now();
+        this.category = category;
     }
 
     @Id
@@ -60,6 +61,9 @@ public class Resource {
 
     @Column(nullable = false)
     private String support;
+
+    @Column
+    private String category;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<Update> updates;

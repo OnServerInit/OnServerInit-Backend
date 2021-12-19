@@ -238,7 +238,7 @@ public class ResourcesController {
         }
 
         resourceRepository.setInfo(resource.getId(), resource.getName(), resource.getBlurb(), resource.getDescription(),
-                resource.getDonation(), resource.getSource(), resource.getSupport());
+                resource.getDonation(), resource.getSource(), resource.getSupport(), resource.getCategory());
 
         return "redirect:/resources/%s".formatted(resource.getId());
     }

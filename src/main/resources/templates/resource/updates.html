@@ -66,6 +66,10 @@
                                th:href="${'/resources/' + resource.getId() + '/edit/update/' + update.getId()}">
                                 <button>Edit</button>
                             </a>
+                            <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}"
+                               th:href="${'/resources/' + resource.getId() + '/edit/update/' + update.getId()}">
+                                <button>Delete</button>
+                            </a>
                         </td>
                     </tr>
                 </table>
