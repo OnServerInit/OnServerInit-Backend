@@ -59,6 +59,7 @@ public class ResourcesController {
     @GetMapping("/resources")
     public String resources(Account account, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
 
+        // TODO: clean up more and make it easier to read
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
 
         List<SimpleResourceDto> data;
@@ -96,12 +97,13 @@ public class ResourcesController {
 
     @GetMapping("/resources/{id_s}")
     public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
-        int id = 0;
+        int id;
         try {
             id = Integer.parseInt(id_s);
         } catch (NumberFormatException e) {
             return "error/404";
         }
+
         Optional<Resource> optionalResource = resourceRepository.findById(id);
 
         if (optionalResource.isEmpty()) return "error/404";
@@ -184,9 +186,9 @@ public class ResourcesController {
     @PostMapping("/resources/{id}/edit/update/{fileId}")
     public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) {
 
-        System.out.println(update.getDescription());
-        //TODO: fix description not updating
+        System.out.println(update.getId());
 
+        //TODO: fix description not updating
         updateRepository.setInfo(update.getId(), update.getName(), update.getDescription(), update.getVersion());
 
         return "redirect:/resources/%s".formatted(id);
@@ -277,7 +279,7 @@ public class ResourcesController {
 
         model.addAttribute("resource", resource);
         model.addAttribute("update", new CreateUpdateRequest());
-        model.addAttribute("url", "/resources/%s/upload/".formatted(id));
+        model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/%s/upload/".formatted(id));
         model.addAttribute("mainUrl", PluginSiteApplication.config.domain + "/resources/%s".formatted(id));
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
