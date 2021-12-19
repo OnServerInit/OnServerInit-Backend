@@ -179,6 +179,7 @@ public class ResourcesController {
         model.addAttribute("update", update);
         model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/" + id);
         model.addAttribute("account", account);
+        model.addAttribute("resourceid", id);
 
         return "resource/editUpdate";
     }
@@ -186,9 +187,8 @@ public class ResourcesController {
     @PostMapping("/resources/{id}/edit/update/{fileId}")
     public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) {
 
-        System.out.println(update.getId());
-
-        //TODO: fix description not updating
+        //update.getId() doesnt actually return the id of the update for some reason
+        // figure out why in the future
         updateRepository.setInfo(fileId, update.getName(), update.getDescription(), update.getVersion());
 
         return "redirect:/resources/%s".formatted(id);
