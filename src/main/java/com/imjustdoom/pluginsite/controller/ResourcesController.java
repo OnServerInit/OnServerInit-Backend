@@ -197,7 +197,7 @@ public class ResourcesController {
     @GetMapping("/resources/{id}/edit")
     public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account) {
         model.addAttribute("error", error);
-        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
+        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSizeByte());
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         Resource resource = optionalResource.get();
@@ -282,7 +282,7 @@ public class ResourcesController {
         model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/%s/upload/".formatted(id));
         model.addAttribute("mainUrl", PluginSiteApplication.config.domain + "/resources/%s".formatted(id));
         model.addAttribute("error", error);
-        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
+        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSizeByte());
         model.addAttribute("account", account);
         model.addAttribute("limit", PluginSiteApplication.config.maxUpdatesPerHour);
 
@@ -296,11 +296,13 @@ public class ResourcesController {
             return "redirect:/resources/%s/upload?error=uploadlimit".formatted(id);
         }
 
-        if (file.isEmpty() && updateRequest.getExternalLink() == null) {
-            //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filesize";
+        System.out.println(file.getSize());
+        System.out.println(PluginSiteApplication.config.getMaxUploadSizeByte());
+        if ((file.isEmpty() || file.getSize() > PluginSiteApplication.config.getMaxUploadSizeByte()) && updateRequest.getExternalLink().equals("")) {
+            return "redirect:/resources/%s/upload?error=filesize".formatted(id);
         }
-        if (!file.getOriginalFilename().endsWith(".jar") && updateRequest.getExternalLink() == null) {
-            //return "redirect:/resources/upload/" + updateRequest.getId() + "/?error=filetype";
+        if ((!file.getOriginalFilename().endsWith(".jar") && !file.getOriginalFilename().endsWith(".zip")) && updateRequest.getExternalLink().equals("")) {
+            return "redirect:/resources/%s/upload?error=filetype".formatted(id);
         }
 
         JsonObject versions = new JsonObject();

@@ -20,12 +20,12 @@
                 <form method="POST" th:action="${url}" th:object="${update}" enctype="multipart/form-data"
                       action="#" th:if="${account.getId()} == ${resource.getAuthor().getId()}">
                     <p th:if="${error == 'filesize'}"
-                       th:text="'File size is too large or is empty, the max size is ' + ${maxUploadSize}"></p>
+                       th:text="'File size is too large or is empty, the max size is ' + ${maxUploadSize} + ' Bytes'"></p>
                     <p th:if="${error == 'filetype'}"
                        th:text="'This file extension is not allowed, you can only use .jar'"></p>
                     <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
                     <p>Version: <input type="text" th:field="*{version}" maxlength="128" required/></p>
-                    <p>File: <input type="file" name="file" accept=".jar" required id="file"></p>
+                    <p>File: <input type="file" name="file" accept=".jar, .zip" required id="file"></p>
                     <p>External Download: <input type="text" th:field="*{externalLink}" maxlength="256" required
                                                  id="externalDownload"/></p>
                     <p>The description uses Markdown as formatting</p>

@@ -10,7 +10,7 @@ public class Config {
     public String host;
     public String port;
     public String database;
-    public String maxUploadSize;
+    public int maxUploadSizeByte;
     public String domain;
     public int maxCreationsPerHour;
     public int maxUpdatesPerHour;
