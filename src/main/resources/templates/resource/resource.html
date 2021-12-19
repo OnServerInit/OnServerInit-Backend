@@ -66,6 +66,10 @@
                         <a href="/report">
                             <button>Report</button>
                         </a>
+
+                        <a>
+                            <button id="report-button" type="resource">Report-Overlay</button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -164,6 +168,7 @@
 
     <script th:src="@{/js/starController.js}"></script>
     <div lang="en" th:include="footer :: footer"></div>
+    <div lang="en" th:include="report-overlay :: report-overlay"></div>
 </div>
 </body>
 </html>

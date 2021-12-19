@@ -32,3 +32,14 @@ alerts_container.addEventListener('mouseover', function () {
 alerts_container.addEventListener('mouseout', function () {
     alerts_container.style.display = 'none';
 });
+
+
+// closeMobile();
+
+function openMobile(){
+    document.getElementById('pullout-window').style.left = '0px';
+}
+
+function closeMobile(){
+    document.getElementById('pullout-window').style.left = '-' + (document.getElementById('pullout-window').offsetWidth + document.getElementById('menu-button').offsetWidth) + 'px';
+}
