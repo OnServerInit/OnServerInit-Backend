@@ -19,8 +19,6 @@ import com.imjustdoom.pluginsite.service.ResourceService;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -73,15 +71,16 @@ public class ResourcesController {
             Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25);
             data = resourceService.searchResources(search, page);
             resources = data.size();
-            data = data.subList((int) pageable.getOffset(), pageable.getOffset() + pageable.getPageSize() > data.size() ? data.size() : (int) (pageable.getOffset() + pageable.getPageSize()));
+            data.subList((int) pageable.getOffset(), pageable.getOffset() + pageable.getPageSize() > data.size() ? data.size() : (int) (pageable.getOffset() + pageable.getPageSize()));
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
 
             model.addAttribute("results", resources);
-        } if(!category.equalsIgnoreCase("all")) {
+        }
+        if (!category.equalsIgnoreCase("all")) {
             Sort sort1 = Sort.by(sort).descending();
-            if(sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
+            if (sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
             Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
 
             resources = resourceRepository.findAllByCategory(category, pageable).size();

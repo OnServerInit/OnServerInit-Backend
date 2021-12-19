@@ -28,6 +28,14 @@ public class StorageManager {
                 e.printStackTrace();
             }
         }
+
+        if (!FileUtil.doesFileExist("./resources/logos")) {
+            try {
+                Files.createDirectory(Paths.get("./resources/logos"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void storeFile(MultipartFile file) {
