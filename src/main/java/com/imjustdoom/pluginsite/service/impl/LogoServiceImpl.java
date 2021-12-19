@@ -1,6 +1,8 @@
 package com.imjustdoom.pluginsite.service.impl;
 
+import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.service.LogoService;
+import com.imjustdoom.pluginsite.util.FileUtil;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpEntity;
@@ -9,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -17,7 +21,23 @@ public class LogoServiceImpl implements LogoService {
 
     @Override
     public void createLogo(int id) {
+        if (!FileUtil.doesFileExist("./resources/logos/" + id)) {
+            try {
+                Files.createDirectory(Paths.get("./resources/logos/" + id));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+        if (!FileUtil.doesFileExist("./resources/logos/" + id + "/logo.png")) {
+            InputStream stream = PluginSiteApplication.class.getResourceAsStream("/pictures/logo.png");
+            assert stream != null;
+            try {
+                Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

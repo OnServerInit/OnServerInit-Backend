@@ -29,9 +29,13 @@
                     <p>External Download: <input type="text" th:field="*{externalLink}" maxlength="256" required
                                                  id="externalDownload"/></p>
                     <p>The description uses Markdown as formatting</p>
-                    <label>
-                        <textarea th:field="*{description}" required class="text-box"></textarea>
-                    </label>
+                    <div class="input" style="width: 100% !important;">
+                        <p>Description</p>
+                        <label>
+                            <textarea class="text-box" id="description"></textarea>
+                        </label>
+                        <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
+                    </div>
                     <div>
                         <p>Bare minimum Software Needed:</p>
                         <p><input type="checkbox" value="minestom" th:name="softwareCheckbox"> Minestom</p>

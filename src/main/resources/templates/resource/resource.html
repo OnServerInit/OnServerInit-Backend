@@ -33,14 +33,14 @@
                     <hr th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
                     <br th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
 
-                    <p th:if="${resource.getDonation()} != ''"><a th:href="${resource.getDonation()}"
-                                                                  th:text="'Donation Link: ' + ${resource.getDonation()}"></a>
+                    <p th:if="${resource.getDonation()} != ''">Donation Link: <a th:href="${resource.getDonation()}"
+                                                                  th:text="${resource.getDonation()}"></a>
                     </p>
-                    <p th:if="${resource.getSource()} != ''"><a th:href="${resource.getSource()}"
-                                                                th:text="'Source Code: ' + ${resource.getSource()}"></a>
+                    <p th:if="${resource.getSource()} != ''">Source Code: <a th:href="${resource.getSource()}"
+                                                                th:text="${resource.getSource()}"></a>
                     </p>
-                    <p th:if="${resource.getSupport()} != ''"><a th:href="${resource.getSupport()}"
-                                                                 th:text="'Support: ' + ${resource.getSupport()}"></a>
+                    <p th:if="${resource.getSupport()} != ''">Support: <a th:href="${resource.getSupport()}"
+                                                                 th:text="${resource.getSupport()}"></a>
                     </p>
                     <br th:if="${resource.getDonation()} != '' or ${resource.getSource()} != '' or ${resource.getSupport()} != ''">
 

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "update_table")
 public class Update {
 
-    public Update(String description, String filename, String version, String download, String name, JsonObject versions, JsonObject software) {
+    public Update(String description, String filename, String version, String download, String name, JsonObject versions, JsonObject software, Resource resource) {
         this.downloads = 0;
         this.description = description;
         this.filename = filename;
@@ -23,6 +23,7 @@ public class Update {
         this.uploaded = LocalDateTime.now();
         this.versions = versions.toString();
         this.software = software.toString();
+        this.resource = resource;
     }
 
     @Id
@@ -56,8 +57,7 @@ public class Update {
     @Column(nullable = false)
     private int downloads;
 
-    //@Column(nullable = false)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Resource resource;
 
     public Update() {

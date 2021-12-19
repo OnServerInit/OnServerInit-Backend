@@ -15,6 +15,7 @@ import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
+import com.imjustdoom.pluginsite.service.ResourceService;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
@@ -50,6 +51,7 @@ import java.util.Optional;
 public class ResourcesController {
 
     private final LogoService logoService;
+    private final ResourceService resourceService;
     private final ResourceRepository resourceRepository;
     private final AccountRepository accountRepository;
     private final UpdateRepository updateRepository;
@@ -57,28 +59,19 @@ public class ResourcesController {
     @GetMapping("/resources")
     public String resources(Account account, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
 
+        // TODO: clean up more and make it easier to read
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
 
-        List<SimpleResourceDto> data = new ArrayList<>();
-        List<String> searchList = new ArrayList<>();
+        List<SimpleResourceDto> data;
+
         int resources, total, remainder;
 
         if (search != null && !search.equals("")) {
-            List<BoundExtractedResult<Resource>> searchResults;
-            searchResults = FuzzySearch.extractSorted(search, resourceRepository.findAll(), Resource::getName);
-            for (BoundExtractedResult<Resource> extractedResult : searchResults) {
-                if (extractedResult.getScore() < 30) continue;
-                searchList.add(extractedResult.getString());
 
-                Optional<Resource> optionalResource = resourceRepository.findByNameEqualsIgnoreCase(extractedResult.getString());
-                Resource resource = optionalResource.get();
-
-                Integer downloads = updateRepository.getTotalDownloads(resource.getId());
-                data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
-
-            }
-
-            resources = searchList.size();
+            Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25);
+            data = resourceService.searchResources(search, page);
+            resources = data.size();
+            data = data.subList((int) pageable.getOffset(), pageable.getOffset() + pageable.getPageSize() > data.size() ? data.size() : (int) (pageable.getOffset() + pageable.getPageSize()));
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
@@ -86,17 +79,12 @@ public class ResourcesController {
             model.addAttribute("results", resources);
         } else {
 
-            total = resourceRepository.findAll().size() / 25;
-            remainder = resourceRepository.findAll().size() % 25;
+            resources = resourceRepository.findAll().size();
+            total = resources / 25;
+            remainder = resources % 25;
             if (remainder > 1) total++;
 
-            Sort sort1 = Sort.by(sort).ascending();
-            Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
-
-            for (Resource resource : resourceRepository.findAll(pageable)) {
-                Integer downloads = updateRepository.getTotalDownloads(resource.getId());
-                data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
-            }
+            data = resourceService.getResources(sort, page);
         }
 
         model.addAttribute("total", total);
@@ -109,12 +97,13 @@ public class ResourcesController {
 
     @GetMapping("/resources/{id_s}")
     public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
-        int id = 0;
+        int id;
         try {
             id = Integer.parseInt(id_s);
         } catch (NumberFormatException e) {
             return "error/404";
         }
+
         Optional<Resource> optionalResource = resourceRepository.findById(id);
 
         if (optionalResource.isEmpty()) return "error/404";
@@ -190,17 +179,17 @@ public class ResourcesController {
         model.addAttribute("update", update);
         model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/" + id);
         model.addAttribute("account", account);
+        model.addAttribute("resourceid", id);
 
         return "resource/editUpdate";
     }
 
     @PostMapping("/resources/{id}/edit/update/{fileId}")
-    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id) {
+    public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) {
 
-        System.out.println(update.getDescription());
-        //TODO: fix description not updating
-
-        updateRepository.setInfo(update.getId(), update.getName(), update.getDescription(), update.getVersion());
+        //update.getId() doesnt actually return the id of the update for some reason
+        // figure out why in the future
+        updateRepository.setInfo(fileId, update.getName(), update.getDescription(), update.getVersion());
 
         return "redirect:/resources/%s".formatted(id);
     }
@@ -256,37 +245,18 @@ public class ResourcesController {
 
     //TODO: Do sanity checks
     @PostMapping("/resources/create")
-    public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) throws IOException {
-        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour) {
+    public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) {
+        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour)
             return "redirect:/resources/create?error=createlimit";
-        }
 
         if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName()))
             return "redirect:/resources/create?error=nametaken";
 
-        Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
-                resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
-                "", account, resourceRequest.getSupportLink());
+        Resource resource = resourceService.createResource(resourceRequest, account);
 
-        resourceRepository.save(resource);
+        logoService.createLogo(resource.getId());
 
-        int id = resource.getId();
-
-        if (!FileUtil.doesFileExist("./resources/logos/" + id)) {
-            try {
-                Files.createDirectory(Paths.get("./resources/logos/" + id));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (!FileUtil.doesFileExist("./resources/logos/" + id + "/logo.png")) {
-            InputStream stream = PluginSiteApplication.class.getResourceAsStream("/pictures/logo.png");
-            assert stream != null;
-            Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
-        }
-
-        return "redirect:/resources/%s".formatted(id);
+        return "redirect:/resources/%s".formatted(resource.getId());
     }
 
     @GetMapping("/resources/create")
@@ -309,7 +279,7 @@ public class ResourcesController {
 
         model.addAttribute("resource", resource);
         model.addAttribute("update", new CreateUpdateRequest());
-        model.addAttribute("url", "/resources/%s/upload/".formatted(id));
+        model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/%s/upload/".formatted(id));
         model.addAttribute("mainUrl", PluginSiteApplication.config.domain + "/resources/%s".formatted(id));
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSize());
@@ -341,11 +311,11 @@ public class ResourcesController {
         JsonObject software = new JsonObject();
         JsonArray softwareArray = new JsonArray();
         for (String s : softwareBoxes) softwareArray.add(s);
-        software.add("versions", softwareArray);
+        software.add("software", softwareArray);
 
-        Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(), updateRequest.getVersion(), "", updateRequest.getName(), versions, software);
-
-        update.setResource(resourceRepository.getById(id));
+        Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(),
+                updateRequest.getVersion(), "", updateRequest.getName(), versions, software,
+                resourceRepository.findById(id).get());
         updateRepository.save(update);
 
         if (updateRequest.getExternalLink() == null || updateRequest.getExternalLink().equals("")) {

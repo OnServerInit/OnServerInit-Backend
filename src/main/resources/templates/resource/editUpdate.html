@@ -13,12 +13,12 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
-                <form method="POST" th:action="${'/resources/' + id + '/edit/update/' + update.getId()}"
+                <form method="POST" th:action="${'/resources/' + resourceid + '/edit/update/' + update.getId()}"
                       th:object="${update}"
                       action="#" th:if="${account.getId() == update.getResource().getAuthor().getId()}"
                       enctype="multipart/form-data">
                     <div class="input">
-                        <p>Name</p>
+                        <p th:text="${resourceid}">Name</p>
                         <input type="text" th:field="*{name}" maxlength="128" required/>
                     </div>
                     <div class="input">
