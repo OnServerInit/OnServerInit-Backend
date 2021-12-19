@@ -295,6 +295,7 @@ ul li {
 .alerts-dropdown {
     position: absolute;
     right: 0;
+    z-index: 20;
 }
 
 .alerts-inner-body {
@@ -726,6 +727,7 @@ border-top: #374151 solid 2px;
     flex-direction: column;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     transition: all 0.5s ease;
+    z-index: 20;
 }
 
 .pullout-window > a{
