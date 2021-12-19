@@ -728,6 +728,7 @@ border-top: #374151 solid 2px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     transition: all 0.5s ease;
     z-index: 20;
+    display: none
 }
 
 .pullout-window > a{
@@ -872,6 +873,10 @@ border-top: #374151 solid 2px;
 }
 
 @media (hover: none) {
+
+    .pullout-window{
+        display: flex;
+    }
 
     .mobile{
         display: block;
