@@ -14,7 +14,7 @@
                       enctype="multipart/form-data" action="#">
                     <p>
                         <input type="submit" name="field" value="Overview">
-                        <input type="submit" name="field" value="Resources">
+                        <input type="submit" name="field" value="Resources" th:if="${user.getResources().size() != 0}">
                     </p>
                 </form>
                 <p th:text="'Name: ' + ${user.getUsername()}"></p>
