@@ -15,6 +15,7 @@ import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
+import com.imjustdoom.pluginsite.service.ResourceService;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
@@ -50,6 +51,7 @@ import java.util.Optional;
 public class ResourcesController {
 
     private final LogoService logoService;
+    private final ResourceService resourceService;
     private final ResourceRepository resourceRepository;
     private final AccountRepository accountRepository;
     private final UpdateRepository updateRepository;
@@ -59,26 +61,16 @@ public class ResourcesController {
 
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
 
-        List<SimpleResourceDto> data = new ArrayList<>();
-        List<String> searchList = new ArrayList<>();
+        List<SimpleResourceDto> data;
+
         int resources, total, remainder;
 
         if (search != null && !search.equals("")) {
-            List<BoundExtractedResult<Resource>> searchResults;
-            searchResults = FuzzySearch.extractSorted(search, resourceRepository.findAll(), Resource::getName);
-            for (BoundExtractedResult<Resource> extractedResult : searchResults) {
-                if (extractedResult.getScore() < 30) continue;
-                searchList.add(extractedResult.getString());
 
-                Optional<Resource> optionalResource = resourceRepository.findByNameEqualsIgnoreCase(extractedResult.getString());
-                Resource resource = optionalResource.get();
-
-                Integer downloads = updateRepository.getTotalDownloads(resource.getId());
-                data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
-
-            }
-
-            resources = searchList.size();
+            Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25);
+            data = resourceService.searchResources(search, page);
+            resources = data.size();
+            data = data.subList((int) pageable.getOffset(), pageable.getOffset() + pageable.getPageSize() > data.size() ? data.size() : (int) (pageable.getOffset() + pageable.getPageSize()));
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
@@ -86,17 +78,12 @@ public class ResourcesController {
             model.addAttribute("results", resources);
         } else {
 
-            total = resourceRepository.findAll().size() / 25;
-            remainder = resourceRepository.findAll().size() % 25;
+            resources = resourceRepository.findAll().size();
+            total = resources / 25;
+            remainder = resources % 25;
             if (remainder > 1) total++;
 
-            Sort sort1 = Sort.by(sort).ascending();
-            Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
-
-            for (Resource resource : resourceRepository.findAll(pageable)) {
-                Integer downloads = updateRepository.getTotalDownloads(resource.getId());
-                data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
-            }
+            data = resourceService.getResources(sort, page);
         }
 
         model.addAttribute("total", total);
@@ -256,37 +243,18 @@ public class ResourcesController {
 
     //TODO: Do sanity checks
     @PostMapping("/resources/create")
-    public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) throws IOException {
-        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour) {
+    public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) {
+        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour)
             return "redirect:/resources/create?error=createlimit";
-        }
 
         if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName()))
             return "redirect:/resources/create?error=nametaken";
 
-        Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
-                resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
-                "", account, resourceRequest.getSupportLink());
+        Resource resource = resourceService.createResource(resourceRequest, account);
 
-        resourceRepository.save(resource);
+        logoService.createLogo(resource.getId());
 
-        int id = resource.getId();
-
-        if (!FileUtil.doesFileExist("./resources/logos/" + id)) {
-            try {
-                Files.createDirectory(Paths.get("./resources/logos/" + id));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (!FileUtil.doesFileExist("./resources/logos/" + id + "/logo.png")) {
-            InputStream stream = PluginSiteApplication.class.getResourceAsStream("/pictures/logo.png");
-            assert stream != null;
-            Files.copy(stream, Path.of("./resources/logos/" + id + "/logo.png"));
-        }
-
-        return "redirect:/resources/%s".formatted(id);
+        return "redirect:/resources/%s".formatted(resource.getId());
     }
 
     @GetMapping("/resources/create")
