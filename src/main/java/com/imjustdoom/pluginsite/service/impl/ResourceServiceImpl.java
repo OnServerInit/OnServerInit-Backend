@@ -60,7 +60,8 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public List<SimpleResourceDto> getResources(String sort, String page) {
         List<SimpleResourceDto> data = new ArrayList<>();
-        Sort sort1 = Sort.by(sort).ascending();
+        Sort sort1 = Sort.by(sort).descending();
+        if(sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
         Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
 
         for (Resource resource : resourceRepository.findAll(pageable)) {
