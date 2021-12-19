@@ -57,7 +57,7 @@ public class ResourcesController {
     private final UpdateRepository updateRepository;
 
     @GetMapping("/resources")
-    public String resources(Account account, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
+    public String resources(Account account, @RequestParam(name = "category", required = false, defaultValue = "all") String category, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
 
         // TODO: clean up more and make it easier to read
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
@@ -65,6 +65,8 @@ public class ResourcesController {
         List<SimpleResourceDto> data;
 
         int resources, total, remainder;
+
+        System.out.println(category);
 
         if (search != null && !search.equals("")) {
 
@@ -77,6 +79,17 @@ public class ResourcesController {
             if (remainder > 1) total++;
 
             model.addAttribute("results", resources);
+        } if(!category.equalsIgnoreCase("all")) {
+            Sort sort1 = Sort.by(sort).descending();
+            if(sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
+            Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
+
+            resources = resourceRepository.findAllByCategory(category, pageable).size();
+            total = resources / 25;
+            remainder = resources % 25;
+            if (remainder > 1) total++;
+
+            data = resourceService.getResourcesWithCategory(sort, page, category);
         } else {
 
             resources = resourceRepository.findAll().size();

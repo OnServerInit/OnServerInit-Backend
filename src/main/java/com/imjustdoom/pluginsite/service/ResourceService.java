@@ -13,5 +13,7 @@ public interface ResourceService {
 
     List<SimpleResourceDto> searchResources(String search, String page);
 
+    List<SimpleResourceDto> getResourcesWithCategory(String sort, String page, String category);
+
     List<SimpleResourceDto> getResources(String sort, String page);
 }

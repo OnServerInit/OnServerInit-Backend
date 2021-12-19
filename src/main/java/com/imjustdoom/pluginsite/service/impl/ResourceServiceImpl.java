@@ -58,11 +58,26 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<SimpleResourceDto> getResources(String sort, String page) {
+    public List<SimpleResourceDto> getResourcesWithCategory(String sortBy, String page, String category) {
         List<SimpleResourceDto> data = new ArrayList<>();
-        Sort sort1 = Sort.by(sort).descending();
-        if(sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
-        Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
+        Sort sort = Sort.by(sortBy).descending();
+        if(sortBy.equalsIgnoreCase("name")) sort = sort.ascending();
+        Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
+
+        for (Resource resource : resourceRepository.findAllByCategory(category, pageable)) {
+            Integer downloads = updateRepository.getTotalDownloads(resource.getId());
+            data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
+        }
+
+        return data;
+    }
+
+    @Override
+    public List<SimpleResourceDto> getResources(String sortBy, String page) {
+        List<SimpleResourceDto> data = new ArrayList<>();
+        Sort sort = Sort.by(sortBy).descending();
+        if(sortBy.equalsIgnoreCase("name")) sort = sort.ascending();
+        Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
 
         for (Resource resource : resourceRepository.findAll(pageable)) {
             Integer downloads = updateRepository.getTotalDownloads(resource.getId());

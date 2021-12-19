@@ -32,5 +32,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     List<Resource> findAllByAuthorId(int authorId, Pageable pageable);
 
+    List<Resource> findAllByCategory(String category, Pageable pageable);
+
     Optional<Resource> findByNameEqualsIgnoreCase(String name);
 }
