@@ -1,0 +1,78 @@
+<div th:fragment="report-overlay">
+    <div class="report-background" id="report-overlay">
+        <div class="report-body-outer" id="report-body-outer">
+            <div class="report-body-inner">
+                <button class="close-btn" id="report-close-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+                <form action="/report" class="report-form">
+                    <div class="invisable" style="display:none">
+                        <select name="reportingObject" id="reportingObject" th:field="*{reportingObject}">
+                            <option value="" id="reportingObject" class="adfkugosdfiygusdlkjfghsldkfjghlskdffjgh">Resource</option>
+                        </select>
+                    </div>
+                    <div class="tab">
+                        <div class="input w-full">
+                            <h1 id="report-title">Report this </h1>
+                            <!-- <p style="font-weight: normal;">To properly evaluate this resource we need to ask you some questions.</p> -->
+
+                            <!-- <p>What is the problem?</p> -->
+                            
+                            <div class="input-radio">
+                                <input type="radio" name="reason" id="explicit" value="Explicit">
+                                <label for="explicit">Explicit</label>
+                            </div>
+                            
+                            <div class="input-radio">
+                                <input type="radio" name="reason" id="malicious" value="Malicious">
+                                <label for="malicious">Malicious</label>
+                            </div>
+                            
+                            <div class="input-radio">
+                                <input type="radio" name="reason" id="spam" value="Spam/Unwanted">
+                                <label for="spam">Spam/Unwanted</label>
+                            </div>
+
+                            <div class="input-radio">
+                                <input type="radio" name="reason" id="threats" value="Threats">
+                                <label for="threats">Threats</label>
+                            </div>
+
+                            <div class="input-radio">
+                                <input type="radio" name="reason" id="duplication" value="Duplication/Copy">
+                                <label for="duplication">Duplication/Copy</label>
+                            </div>
+
+                            <div class="input-radio">
+                                <input type="radio" name="reason" id="missclassification" value="Missclassification">
+                                <label for="missclassification">Missclassification</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab">
+                        <h1>Can you describe why you are reporting this user.</h1>
+                        <textarea rows="3" cols="" class="review-text"></textarea>
+                    </div>
+
+
+                    <div class="report-bottom">
+                        <div class="buttons" id="report-buttons">
+                            <button class="button-report">Back</button>
+                            <button class="button-report">Next</button>
+                            <button class="button-report">Submit</button>
+                        </div>
+
+                        <div class="steps" id="steps">
+                            <span class="step"></span>
+                            <span class="step"></span>
+                            <span class="step step-active" id="animated-span"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1;">
+        <div id="get-center" style="position: fixed; top: 50%; left: 50%; transition: translate(-50%, -50%);"></div>
+    </div>
+    <script th:src="@{/js/report.js}"></script>
+</div>
