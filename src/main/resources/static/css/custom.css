@@ -209,6 +209,7 @@ ul li {
 }
 
 .inside-main-body {
+    position: relative;
     padding: 1rem;
     word-wrap: break-word;
 }
@@ -294,6 +295,7 @@ ul li {
 .alerts-dropdown {
     position: absolute;
     right: 0;
+    z-index: 20;
 }
 
 .alerts-inner-body {
@@ -445,6 +447,32 @@ border-top: #374151 solid 2px;
 
 .resource-controls a:not(:first-child) {
     margin-left: 1rem;
+}
+
+.resource-more{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.resource-tooltip{
+    position: absolute;
+    top: 1rem;
+    right: 3rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.5s ease;
+    overflow: hidden;
+}
+
+.resource-tooltip > a > button{
+    padding: 10px 20px 10px 20px;
+}
+
+.resource-tooltip > a:not(:first-child) {
+    border-top: 1px solid #D1D5DB;
 }
 
 .blog-container {
@@ -699,6 +727,8 @@ border-top: #374151 solid 2px;
     flex-direction: column;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     transition: all 0.5s ease;
+    z-index: 20;
+    display: none
 }
 
 .pullout-window > a{
@@ -734,6 +764,7 @@ border-top: #374151 solid 2px;
     right: 0;
     height: 100%;
     overflow: hidden;
+    display: none;
 }
 
 .report-body-outer{
@@ -842,6 +873,10 @@ border-top: #374151 solid 2px;
 }
 
 @media (hover: none) {
+
+    .pullout-window{
+        display: flex;
+    }
 
     .mobile{
         display: block;
