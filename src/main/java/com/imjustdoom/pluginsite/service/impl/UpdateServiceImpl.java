@@ -31,7 +31,7 @@ public class UpdateServiceImpl implements UpdateService {
 
     @Override
     public Update createUpdate(CreateUpdateRequest updateRequest, Account account) {
-        Update resource = new Update(updateRequest.getDescription(), "", "", "", "", new JsonObject(), new JsonObject(), new Resource());
+        Update resource = new Update(updateRequest.getDescription(), "", "", "", "", new JsonObject(), new JsonObject(), new Resource(), updateRequest.getExternalLink());
 
         updateRepository.save(resource);
 

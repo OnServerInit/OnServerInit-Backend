@@ -1,5 +1,6 @@
 package com.imjustdoom.pluginsite.controller;
 
+import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.model.Update;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
@@ -8,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,12 +50,11 @@ public class FileController {
 
         updateRepository.addDownload(fileId);
 
-        /**if(!rs.getString("external").equals("")) {
-         HttpHeaders headers = new HttpHeaders();
-         headers.add("Location", rs.getString("external"));
-         PluginSiteApplication.getDB().getStmt().executeUpdate("UPDATE resources SET downloads=downloads + 1 WHERE id=%s".formatted(id));
-         return new ResponseEntity<String>(headers,HttpStatus.FOUND);
-         }**/
+         if(!update.getExternal().equalsIgnoreCase("")) {
+             HttpHeaders headers = new HttpHeaders();
+             headers.add("Location", update.getExternal());
+             return new ResponseEntity<String>(headers, HttpStatus.FOUND);
+         }
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
