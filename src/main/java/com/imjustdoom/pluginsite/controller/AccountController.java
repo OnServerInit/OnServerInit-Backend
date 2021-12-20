@@ -1,23 +1,19 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.dtos.in.CreateAccountRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
-import com.imjustdoom.pluginsite.util.StringUtil;
-import com.imjustdoom.pluginsite.util.Validator;
+import com.imjustdoom.pluginsite.util.ValidationHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,11 +38,11 @@ public class AccountController {
 
     @PostMapping("/signup")
     public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
-        if (!Validator.isUsernameValid(accountRequest.getUsername())) return "redirect:/signup?error=invalidcharacter";
+        if (!ValidationHelper.isUsernameValid(accountRequest.getUsername())) return "redirect:/signup?error=invalidcharacter";
 
         String emailAddress = accountRequest.getEmail();
 
-        if (!Validator.isEmailValid(emailAddress)) return "redirect:/signup?error=invalidemail";
+        if (!ValidationHelper.isEmailValid(emailAddress)) return "redirect:/signup?error=invalidemail";
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(accountRequest.getUsername()))
             return "redirect:/signup?error=usernametaken";
@@ -92,8 +88,8 @@ public class AccountController {
 
     @PostMapping("/account/details")
     public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
-        if (!Validator.isUsernameValid(username)) return "redirect:/account/details?error=invalidcharacter";
-        if (!Validator.isEmailValid(email)) return "redirect:/account/details?error=invalidemail";
+        if (!ValidationHelper.isUsernameValid(username)) return "redirect:/account/details?error=invalidcharacter";
+        if (!ValidationHelper.isEmailValid(email)) return "redirect:/account/details?error=invalidemail";
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(username))
             return "redirect:/account/details?error=usernametaken";

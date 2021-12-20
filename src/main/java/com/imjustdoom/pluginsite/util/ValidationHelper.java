@@ -2,7 +2,7 @@ package com.imjustdoom.pluginsite.util;
 
 import java.util.regex.Pattern;
 
-public class Validator {
+public class ValidationHelper {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(\\S+)$");
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]*$");
 

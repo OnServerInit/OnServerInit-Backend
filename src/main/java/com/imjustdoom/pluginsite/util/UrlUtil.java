@@ -7,13 +7,14 @@ import java.util.regex.Pattern;
 
 @Component
 public class UrlUtil {
-    private final String domain;
     private final String domainRedirect;
 
     public UrlUtil(SiteConfig siteConfig) {
-        String configDomain = siteConfig.getDomain();
-        this.domain = configDomain.endsWith("/") ? configDomain.substring(0, configDomain.length() - 1) : configDomain;
-        this.domainRedirect = this.domain.concat("/redirect?url=http");
+        String domain = siteConfig.getDomain();
+        if (domain.endsWith("/"))
+            domain = domain.substring(0, domain.length() - 1);
+
+        this.domainRedirect = domain.concat("/redirect?url=http");
     }
 
     public String encode(String text) {
