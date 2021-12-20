@@ -18,7 +18,7 @@
                       action="#" th:if="${account.getId() == update.getResource().getAuthor().getId()}"
                       enctype="multipart/form-data">
                     <div class="input">
-                        <p th:text="${resourceid}">Name</p>
+                        <p>Name</p>
                         <input type="text" th:field="*{name}" maxlength="128" required/>
                     </div>
                     <div class="input">

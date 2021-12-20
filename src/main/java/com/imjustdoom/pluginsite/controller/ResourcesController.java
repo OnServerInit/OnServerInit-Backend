@@ -30,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -208,7 +209,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/{id}/edit")
-    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account) {
+    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account, @ModelAttribute(name = "resource") Resource resourceModel) {
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSizeByte());
 
@@ -218,7 +219,8 @@ public class ResourcesController {
         if (optionalResource.isEmpty()) return "error/404";
 
         model.addAttribute("authorid", resource.getAuthor());
-        model.addAttribute("resource", resource);
+        resourceModel.setAuthor(account);
+        model.addAttribute("resource", resourceModel.getName() == null ? resource : resourceModel);
         model.addAttribute("url", "/resources/" + id + "/edit");
         model.addAttribute("account", account);
 
@@ -226,21 +228,25 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/{id}/edit")
-    public String editSubmit(@RequestParam("logo") MultipartFile file, @ModelAttribute Resource resource, @PathVariable("id") int id) throws IOException {
+    public String editSubmit(@RequestParam("logo") MultipartFile file, RedirectAttributes redirectAttributes, @ModelAttribute Resource resource, @PathVariable("id") int id) throws IOException {
+
+        redirectAttributes.addFlashAttribute("resource", resource);
+        if (resourceRepository.existsByNameEqualsIgnoreCaseAndIdEqualsNot(id, resource.getName()))
+            return "redirect:/resources/%s/edit?error=nametaken".formatted(resource.getId());
 
         if (!file.isEmpty()) {
             if (!file.getContentType().contains("image")) {
-                return "redirect:/resources/edit/%s/?error=logotype".formatted(resource.getId());
+                return "redirect:/resources/%s/edit?error=logotype".formatted(resource.getId());
             }
 
             if (file.getSize() > 10000) {
-                return "redirect:/resources/edit/%s/?error=filesize".formatted(resource.getId());
+                return "redirect:/resources/%s/edit?error=filesize".formatted(resource.getId());
             }
 
             BufferedImage image = ImageIO.read(file.getInputStream());
 
             if (image.getHeight() != image.getWidth())
-                return "redirect:/resources/edit/%s/?error=logosize".formatted(resource.getId());
+                return "redirect:/resources/%s/edit?error=logosize".formatted(resource.getId());
 
             Path destinationFile = Path.of("./resources/logos/%s/logo.png".formatted(id)).normalize().toAbsolutePath();
 
@@ -258,7 +264,8 @@ public class ResourcesController {
 
     //TODO: Do sanity checks
     @PostMapping("/resources/create")
-    public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account) {
+    public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("resourceRequest", resourceRequest);
         if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour)
             return "redirect:/resources/create?error=createlimit";
 
@@ -273,17 +280,19 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/create")
-    public String create(Model model, Account account, @RequestParam(name = "error", required = false) String error) {
+    public String create(Model model, Account account, @RequestParam(name = "error", required = false) String error, @ModelAttribute(name = "resourceRequest") CreateResourceRequest resourceRequest) {
         model.addAttribute("error", error);
         model.addAttribute("limit", PluginSiteApplication.config.maxCreationsPerHour);
         model.addAttribute("account", account);
-        model.addAttribute("resource", new CreateResourceRequest());
+        model.addAttribute("resource", resourceRequest.getName() == null ? new CreateResourceRequest() : resourceRequest);
         model.addAttribute("url", PluginSiteApplication.config.domain + "/resources");
         return "resource/create";
     }
 
     @GetMapping("/resources/{id}/upload")
-    public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account) {
+    public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account, @ModelAttribute(name = "updateRequest") CreateUpdateRequest updateRequest) {
+
+        // TODO: make the checkboxing also save
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         Resource resource = optionalResource.get();
@@ -291,7 +300,7 @@ public class ResourcesController {
         if (optionalResource.isEmpty()) return "error/404";
 
         model.addAttribute("resource", resource);
-        model.addAttribute("update", new CreateUpdateRequest());
+        model.addAttribute("update", updateRequest.getName() == null ? new CreateUpdateRequest() : updateRequest);
         model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/%s/upload/".formatted(id));
         model.addAttribute("mainUrl", PluginSiteApplication.config.domain + "/resources/%s".formatted(id));
         model.addAttribute("error", error);
@@ -303,8 +312,9 @@ public class ResourcesController {
     }
 
     @PostMapping("/resources/{id}/upload")
-    public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest) throws IOException {
+    public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest, RedirectAttributes redirectAttributes) throws IOException {
 
+        redirectAttributes.addFlashAttribute("updateRequest", updateRequest);
         if (updateRepository.getUpdatesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxUpdatesPerHour) {
             return "redirect:/resources/%s/upload?error=uploadlimit".formatted(id);
         }

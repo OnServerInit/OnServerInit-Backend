@@ -13,6 +13,8 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <p th:if="${error == 'nametaken'}">That resource name is taken, please use another name. If you are the
+                    owner of the original plugin please contact support</p>
                 <p th:if="${error == 'logotype'}">Please upload an image instead</p>
                 <p th:if="${error == 'logosize'}">Please upload an image with the same height and width</p>
                 <p th:if="${error == 'filesize'}" th:text="'Image size is too large' + ${maxUploadSize}"></p>

@@ -17,6 +17,9 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     boolean existsByNameEqualsIgnoreCase(String name);
 
+    @Query("SELECT COUNT(resource)>0 FROM Resource resource WHERE NOT resource.id = ?1 AND resource.name = ?2")
+    boolean existsByNameEqualsIgnoreCaseAndIdEqualsNot(int id, String name);
+
     List<Resource> findAllByStatusEqualsIgnoreCase(String status, Pageable pageable);
 
     List<Resource> findAllByStatusEqualsIgnoreCase(String status, Sort sort);
