@@ -73,6 +73,39 @@
                         </td>
                     </tr>
                 </table>
+                <div>
+                    <button class="resource-more" id="resource-more">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+                             fill="#000000">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                    </button>
+
+                    <div class="resource-tooltip" id="resource-tooltip">
+                        <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}"
+                           th:href="${editUrl}">
+                            <button>Edit Plugin</button>
+                        </a>
+
+                        <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}"
+                           th:href="${uploadUrl}">
+                            <button>Upload</button>
+                        </a>
+
+                        <a href="/report">
+                            <button>Report</button>
+                        </a>
+
+                        <a>
+                            <button id="report-button" type="resource">Report-Overlay</button>
+                        </a>
+                        <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}"
+                           th:href="${'/resources/' + id_s + '/delete'}">
+                            <button>Delete</button>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="side-body-container">
@@ -92,7 +125,10 @@
             </div>
         </div>
     </div>
+
+    <script th:src="@{/js/resourceTooltip.js}"></script>
     <div lang="en" th:include="footer :: footer"></div>
+    <div lang="en" th:include="report-overlay :: report-overlay"></div>
 </div>
 </body>
 </html>

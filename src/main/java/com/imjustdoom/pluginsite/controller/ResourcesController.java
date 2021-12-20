@@ -306,8 +306,6 @@ public class ResourcesController {
             return "redirect:/resources/%s/upload?error=uploadlimit".formatted(id);
         }
 
-        System.out.println(file.getSize());
-        System.out.println(PluginSiteApplication.config.getMaxUploadSizeByte());
         if ((file.isEmpty() || file.getSize() > PluginSiteApplication.config.getMaxUploadSizeByte()) && updateRequest.getExternalLink().equals("")) {
             return "redirect:/resources/%s/upload?error=filesize".formatted(id);
         }
