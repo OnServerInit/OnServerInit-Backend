@@ -23,6 +23,7 @@
                        th:text="'File size is too large or is empty, the max size is ' + ${maxUploadSize} + ' Bytes'"></p>
                     <p th:if="${error == 'filetype'}"
                        th:text="'This file extension is not allowed, you can only use .jar'"></p>
+                    <p th:if="${error == 'invalidinput'}">One of your inputs are empty, please submit something for it.</p>
                     <p>Name: <input type="text" th:field="*{name}" maxlength="128" required/></p>
                     <p>Version: <input type="text" th:field="*{version}" maxlength="128" required/></p>
                     <p>File: <input type="file" name="file" accept=".jar, .zip" required id="file"></p>

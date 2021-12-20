@@ -181,7 +181,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/resources/{id}/edit/update/{fileId}")
-    public String editResourceUpdate(@PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Account account) {
+    public String editResourceUpdate(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Account account) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         if (optionalResource.isEmpty()) return "error/404";
@@ -190,6 +190,7 @@ public class ResourcesController {
         if (optionalUpdate.isEmpty()) return "error/404";
         Update update = optionalUpdate.get();
 
+        model.addAttribute("error", error);
         model.addAttribute("update", update);
         model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/" + id);
         model.addAttribute("account", account);
@@ -200,6 +201,11 @@ public class ResourcesController {
 
     @PostMapping("/resources/{id}/edit/update/{fileId}")
     public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) {
+
+        if (update.getName().equalsIgnoreCase("")
+                || update.getVersion().equalsIgnoreCase("")
+                || update.getDescription().equalsIgnoreCase(""))
+            return "redirect:/resources/%s/edit/update/%s?error=invalidinput".formatted(id, fileId);
 
         //update.getId() doesnt actually return the id of the update for some reason
         // figure out why in the future
@@ -233,6 +239,11 @@ public class ResourcesController {
         redirectAttributes.addFlashAttribute("resource", resource);
         if (resourceRepository.existsByNameEqualsIgnoreCaseAndIdEqualsNot(id, resource.getName()))
             return "redirect:/resources/%s/edit?error=nametaken".formatted(resource.getId());
+
+        if (resource.getName().equalsIgnoreCase("")
+                || resource.getBlurb().equalsIgnoreCase("")
+                || resource.getDescription().equalsIgnoreCase(""))
+            return "redirect:/resources/%s/edit?error=invalidinput".formatted(resource.getId());
 
         if (!file.isEmpty()) {
             if (!file.getContentType().contains("image")) {
@@ -271,6 +282,11 @@ public class ResourcesController {
 
         if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName()))
             return "redirect:/resources/create?error=nametaken";
+
+        if (resourceRequest.getName().equalsIgnoreCase("")
+                || resourceRequest.getBlurb().equalsIgnoreCase("")
+                || resourceRequest.getDescription().equalsIgnoreCase(""))
+            return "redirect:/resources/create?error=invalidinput";
 
         Resource resource = resourceService.createResource(resourceRequest, account);
 
@@ -325,6 +341,11 @@ public class ResourcesController {
         if ((!file.getOriginalFilename().endsWith(".jar") && !file.getOriginalFilename().endsWith(".zip")) && updateRequest.getExternalLink().equals("")) {
             return "redirect:/resources/%s/upload?error=filetype".formatted(id);
         }
+
+        if (updateRequest.getName().equalsIgnoreCase("")
+                || updateRequest.getVersion().equalsIgnoreCase("")
+                || updateRequest.getDescription().equalsIgnoreCase(""))
+            return "redirect:/resources/%s/upload?error=invalidinput";
 
         JsonObject versions = new JsonObject();
         JsonArray versionsArray = new JsonArray();

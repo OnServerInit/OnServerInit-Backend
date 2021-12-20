@@ -13,6 +13,7 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <p th:if="${error == 'invalidinput'}">One of your inputs are empty, please submit something for it.</p>
                 <form method="POST" th:action="${'/resources/' + resourceid + '/edit/update/' + update.getId()}"
                       th:object="${update}"
                       action="#" th:if="${account.getId() == update.getResource().getAuthor().getId()}"

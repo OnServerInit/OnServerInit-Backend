@@ -13,6 +13,7 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <p th:if="${error == 'invalidinput'}">One of your inputs are empty, please submit something for it.</p>
                 <p th:if="${error == 'nametaken'}">That resource name is taken, please use another name. If you are the
                     owner of the original plugin please contact support</p>
                 <p th:if="${error == 'logotype'}">Please upload an image instead</p>
