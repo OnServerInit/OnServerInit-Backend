@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>404 Error</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+<div class="content-container">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body full-body">
+            <div class="inside-main-body">
+                <h1>Oops</h1>
+                <h2>Looks like this resource was deleted.</h2>
+                <p>The resource you're looking for doesn't exist. Please check the URL and try again.</p>
+                <button class="button" onclick="window.location.href='/';">Go Home</button>
+            </div>
+        </div>
+    </div>
+    <div lang="en" th:include="footer :: footer"></div>
+</div>
+<body>
+</body>
+</html>

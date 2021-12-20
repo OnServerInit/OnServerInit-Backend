@@ -26,7 +26,7 @@ public class Resource {
         this.created = LocalDateTime.now();
         this.updated = LocalDateTime.now();
         this.category = category;
-        this.status = "active";
+        this.status = "public";
     }
 
     @Id

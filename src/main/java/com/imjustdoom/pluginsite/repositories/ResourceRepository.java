@@ -2,6 +2,7 @@ package com.imjustdoom.pluginsite.repositories;
 
 import com.imjustdoom.pluginsite.model.Resource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,12 @@ import java.util.Optional;
 public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     boolean existsByNameEqualsIgnoreCase(String name);
+
+    List<Resource> findAllByStatusEqualsIgnoreCase(String status, Pageable pageable);
+
+    List<Resource> findAllByStatusEqualsIgnoreCase(String status, Sort sort);
+
+    List<Resource> findAllByStatusEqualsIgnoreCase(String status);
 
     @Modifying
     @Transactional
@@ -32,7 +39,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     List<Resource> findAllByAuthorId(int authorId, Pageable pageable);
 
-    List<Resource> findAllByCategory(String category, Pageable pageable);
+    List<Resource> findAllByCategoryAndStatusEqualsIgnoreCase(String status, String category, Pageable pageable);
 
     Optional<Resource> findByNameEqualsIgnoreCase(String name);
 

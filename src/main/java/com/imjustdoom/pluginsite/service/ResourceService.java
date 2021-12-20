@@ -11,7 +11,7 @@ public interface ResourceService {
 
     Resource createResource(CreateResourceRequest resourceRequest, Account account);
 
-    List<SimpleResourceDto> searchResources(String search, String page);
+    List<SimpleResourceDto> searchResources(String search, String sortBy, String page);
 
     List<SimpleResourceDto> getResourcesWithCategory(String sort, String page, String category);
 

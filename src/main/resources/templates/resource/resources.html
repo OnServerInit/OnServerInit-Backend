@@ -18,6 +18,7 @@
                     <div style="flex-grow: 1;">
                         Sort By:
                         <select id="sortby" onchange="changeSort()">
+                            <option th:if="${search != null && search != ''}" value="relevant">Relevant</option>
                             <option value="updated">Updated</option>
                             <option value="created">Created</option>
                             <option value="download">Downloads</option>

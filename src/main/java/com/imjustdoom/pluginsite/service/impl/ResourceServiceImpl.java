@@ -38,10 +38,15 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<SimpleResourceDto> searchResources(String search, String page) {
+    public List<SimpleResourceDto> searchResources(String search, String sortBy, String page) {
         List<BoundExtractedResult<Resource>> searchResults;
         List<SimpleResourceDto> data = new ArrayList<>();
-        searchResults = FuzzySearch.extractSorted(search, resourceRepository.findAll(), Resource::getName);
+
+        Sort sort = Sort.by(sortBy).descending();
+        if(sortBy.equalsIgnoreCase("name")) sort = sort.ascending();
+        Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
+
+        searchResults = FuzzySearch.extractSorted(search, resourceRepository.findAllByStatusEqualsIgnoreCase("public", pageable), Resource::getName);
 
         for (BoundExtractedResult<Resource> extractedResult : searchResults) {
             if (extractedResult.getScore() < 40) continue;
@@ -64,7 +69,7 @@ public class ResourceServiceImpl implements ResourceService {
         if(sortBy.equalsIgnoreCase("name")) sort = sort.ascending();
         Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
 
-        for (Resource resource : resourceRepository.findAllByCategory(category, pageable)) {
+        for (Resource resource : resourceRepository.findAllByCategoryAndStatusEqualsIgnoreCase("public", category, pageable)) {
             Integer downloads = updateRepository.getTotalDownloads(resource.getId());
             data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
         }
@@ -79,7 +84,7 @@ public class ResourceServiceImpl implements ResourceService {
         if(sortBy.equalsIgnoreCase("name")) sort = sort.ascending();
         Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
 
-        for (Resource resource : resourceRepository.findAll(pageable)) {
+        for (Resource resource : resourceRepository.findAllByStatusEqualsIgnoreCase("public", pageable)) {
             Integer downloads = updateRepository.getTotalDownloads(resource.getId());
             data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
         }

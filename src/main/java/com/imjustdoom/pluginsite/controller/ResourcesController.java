@@ -19,6 +19,7 @@ import com.imjustdoom.pluginsite.service.ResourceService;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -66,22 +67,19 @@ public class ResourcesController {
 
         if (search != null && !search.equals("")) {
 
-            Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25);
-            data = resourceService.searchResources(search, page);
-            resources = data.size();
-            data.subList((int) pageable.getOffset(), pageable.getOffset() + pageable.getPageSize() > data.size() ? data.size() : (int) (pageable.getOffset() + pageable.getPageSize()));
+            data = resourceService.searchResources(search, sort, page);
+            resources = FuzzySearch.extractSorted(search, resourceRepository.findAllByStatusEqualsIgnoreCase("public"), Resource::getName).size();
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
 
             model.addAttribute("results", resources);
-        }
-        if (!category.equalsIgnoreCase("all")) {
+        } else if (!category.equalsIgnoreCase("all")) {
             Sort sort1 = Sort.by(sort).descending();
             if (sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
             Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
 
-            resources = resourceRepository.findAllByCategory(category, pageable).size();
+            resources = resourceRepository.findAllByCategoryAndStatusEqualsIgnoreCase("public", category, pageable).size();
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
@@ -119,6 +117,11 @@ public class ResourcesController {
         if (optionalResource.isEmpty()) return "error/404";
 
         Resource resource = resourceRepository.getById(id);
+
+        if(!resource.getStatus().equalsIgnoreCase("public") && !account.getRole().equalsIgnoreCase("role_admin")) {
+            model.addAttribute("account", account);
+            return "error/resourceDeleted";
+        }
 
         String description = UrlUtil.encode(resource.getDescription());
 

@@ -11,6 +11,7 @@
         <div class="main-body-container">
             <div class="main-body">
                 <div class="inside-main-body">
+                    <p th:if="${resource.getStatus() == 'removed'}">This resource is currently deleted</p>
                     <div class="info-left flex">
                         <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
 
