@@ -53,7 +53,7 @@
                         <div class="plugin-box">
                             <div class="info-left"><img th:src="${'/logo/' + file.getId()}" alt="Logo" class="logo">
                             </div>
-                            <div class="info-left"><a th:href="${'resources/' + file.getId()}"
+                            <div class="info-left"><a th:href="${'/resources/' + file.getId()}"
                                                       th:text="${file.getName()}"
                                                       class="align-centre title"></a>
                                 <p th:text="${file.getBlurb()}" class="blurb"></p></div>

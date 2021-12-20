@@ -35,7 +35,6 @@ public class ImageUtil {
                 ImageWriteParam writerConfig = imageWriter.getDefaultWriteParam();
                 writerConfig.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 writerConfig.setCompressionQuality(0.7f); // 0.0 - 1.0
-                // todo we can make the writer config its own static variable
 
                 imageWriter.write(null, new IIOImage(bufferedImage, null, null), writerConfig);
                 imageWriter.dispose();
