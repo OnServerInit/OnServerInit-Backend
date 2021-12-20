@@ -6,6 +6,7 @@ import com.imjustdoom.pluginsite.dtos.in.CreateAccountRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.util.StringUtil;
+import com.imjustdoom.pluginsite.util.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,15 +42,11 @@ public class AccountController {
 
     @PostMapping("/signup")
     public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
-
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
-        if (!pattern.matcher(accountRequest.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
+        if (!Validator.isUsernameValid(accountRequest.getUsername())) return "redirect:/signup?error=invalidcharacter";
 
         String emailAddress = accountRequest.getEmail();
-        String regexPattern = "^(.+)@(\\S+)$";
-        boolean validEmail = StringUtil.patternMatches(emailAddress, regexPattern);
 
-        if (!validEmail) return "redirect:/signup?error=invalidemail";
+        if (!Validator.isEmailValid(emailAddress)) return "redirect:/signup?error=invalidemail";
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(accountRequest.getUsername()))
             return "redirect:/signup?error=usernametaken";
@@ -73,7 +70,7 @@ public class AccountController {
     @PostMapping("/login")
     public String loginSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
 
-        if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) {
+        if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) { // todo change
             Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(accountRequest.getUsername());
             if (BCrypt.checkpw(accountRequest.getPassword(), account.get().getPassword())) {
 
@@ -95,14 +92,8 @@ public class AccountController {
 
     @PostMapping("/account/details")
     public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
-
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
-        if (!pattern.matcher(username).matches()) return "redirect:/account/details?error=invalidcharacter";
-
-        String regexPattern = "^(.+)@(\\S+)$";
-        boolean validEmail = StringUtil.patternMatches(email, regexPattern);
-
-        if (!validEmail) return "redirect:/account/details?error=invalidemail";
+        if (!Validator.isUsernameValid(username)) return "redirect:/account/details?error=invalidcharacter";
+        if (!Validator.isEmailValid(email)) return "redirect:/account/details?error=invalidemail";
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(username))
             return "redirect:/account/details?error=usernametaken";
