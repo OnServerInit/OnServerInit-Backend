@@ -327,7 +327,7 @@ public class ResourcesController {
 
         Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(),
                 updateRequest.getVersion(), "", updateRequest.getName(), versions, software,
-                resourceRepository.findById(id).get());
+                resourceRepository.findById(id).get(), updateRequest.getExternalLink());
         updateRepository.save(update);
 
         if (updateRequest.getExternalLink() == null || updateRequest.getExternalLink().equals("")) {
@@ -352,5 +352,18 @@ public class ResourcesController {
         updateRepository.setDownload(update.getId(), download);
 
         return "redirect:/resources/%s".formatted(id);
+    }
+
+    @GetMapping("/resources/{id}/delete")
+    public String delete(Account account, Model model, @PathVariable("id") int id) {
+        model.addAttribute("account", account);
+        model.addAttribute("resource", resourceRepository.findById(id).get());
+        return "resource/delete";
+    }
+
+    @PostMapping("/resources/{id}/delete")
+    public String delete(@PathVariable("id") int id) {
+        resourceRepository.updateStatusById(id, "removed");
+        return "redirect:/";
     }
 }

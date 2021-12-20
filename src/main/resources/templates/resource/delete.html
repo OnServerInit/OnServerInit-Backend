@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Edit Resource</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css"
+          integrity="sha512-lB03MbtC3LxImQ+BKnZIyvVHTQ8SSmQ15AhVh5U/+CCp4wKtZMvgLGXbZIjIBBbnKsmk3/6n2vcF8a9CtVVSfA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<body>
+<div class="content-container">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content">
+        <div class="main-body">
+            <div class="inside-main-body">
+
+                <form method="POST" th:action="${'/resources/' + id + '/delete'}" th:object="${resource}" action="#"
+                      th:if="${account.getId() == resource.getAuthor().getId()}" enctype="multipart/form-data">
+
+                    <h1>Delete your resource?</h1>
+                    <h2>Are you sure you want to delete your resource?</h2>
+                    <p>Once you delete your resource it would be very hard to get it back</p>
+                    <div class="redirect-confirm">
+                        <a href="/" class="a-button" style="background-color: #F3F4F6; color: #EF4444;">Do not delete</a>
+                        <a href="" class="a-button" style="background-color: #EF4444;"><button type="submit">Delete</button></a>
+                    </div>
+                </form>
+                <p th:unless="${account.getId() == resource.getAuthor().getId()}">You do not have permission to delete
+                    this plugin</p>
+            </div>
+        </div>
+        <div class="side-body-container">
+            <div class="side-body">
+                <div class="inside-main-body">
+                    <div lang="en" th:include="sponsor :: sponsor"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div lang="en" th:include="footer :: footer"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"
+            integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        window.addEventListener('load', function () {
+            const description = document.getElementById('hidden-description').value;
+            const simplemde = new SimpleMDE({element: document.getElementById('description')});
+            simplemde.value(description);
+
+            document.getElementById("submit").onclick = function () {
+                document.getElementById("hidden-description").value = simplemde.value();
+            };
+        });
+    </script>
+</div>
+</body>
+</html>

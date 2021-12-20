@@ -26,6 +26,7 @@ public class Resource {
         this.created = LocalDateTime.now();
         this.updated = LocalDateTime.now();
         this.category = category;
+        this.status = "active";
     }
 
     @Id
@@ -64,6 +65,9 @@ public class Resource {
 
     @Column(nullable = false)
     private String category;
+
+    @Column(nullable = false)
+    private String status;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<Update> updates;

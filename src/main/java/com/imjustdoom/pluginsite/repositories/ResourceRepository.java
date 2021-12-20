@@ -35,4 +35,9 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     List<Resource> findAllByCategory(String category, Pageable pageable);
 
     Optional<Resource> findByNameEqualsIgnoreCase(String name);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Resource resource SET resource.status = ?2 WHERE resource.id = ?1")
+    void updateStatusById(int id, String status);
 }

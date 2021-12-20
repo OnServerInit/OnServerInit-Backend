@@ -79,6 +79,9 @@
                             <a>
                                 <button id="report-button" type="resource">Report-Overlay</button>
                             </a>
+                            <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}" th:href="${'/resources/' + id_s + '/delete'}">
+                                <button>Delete</button>
+                            </a>
                         </div>
                     </div>
                 </div>
