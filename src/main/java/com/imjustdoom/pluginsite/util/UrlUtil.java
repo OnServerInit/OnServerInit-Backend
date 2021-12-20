@@ -1,30 +1,30 @@
 package com.imjustdoom.pluginsite.util;
 
-import com.imjustdoom.pluginsite.PluginSiteApplication;
+import com.imjustdoom.pluginsite.config.custom.SiteConfig;
+import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
+@Component
 public class UrlUtil {
-    private static final String domain = (PluginSiteApplication.config.domain.endsWith("/")) ? PluginSiteApplication.config.domain.substring(0, PluginSiteApplication.config.domain.length() - 1) : PluginSiteApplication.config.domain;
-    private static final String domain_redirect = domain + "/redirect?url=http";
+    private final String domain;
+    private final String domainRedirect;
 
-    public static String encode(String text) {
+    public UrlUtil(SiteConfig siteConfig) {
+        String configDomain = siteConfig.getDomain();
+        this.domain = configDomain.endsWith("/") ? configDomain.substring(0, configDomain.length() - 1) : configDomain;
+        this.domainRedirect = this.domain.concat("/redirect?url=http");
+    }
+
+    public String encode(String text) {
         String url = text.replaceAll("/", "%2F");
-        url = url.replaceAll("http", domain_redirect);
+        url = url.replaceAll("http", domainRedirect);
         return url;
     }
 
-    public static String decode(String text) {
-        String url = text.replaceAll(Pattern.quote(domain_redirect), "http");
+    public String decode(String text) {
+        String url = text.replaceAll(Pattern.quote(domainRedirect), "http");
         url = url.replaceAll("%2F", "/");
         return url;
-    }
-
-    public static String e(String text) {
-        return encode(text);
-    }
-
-    public static String d(String text) {
-        return decode(text);
     }
 }

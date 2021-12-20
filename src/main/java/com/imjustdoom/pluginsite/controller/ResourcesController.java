@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.imjustdoom.pluginsite.PluginSiteApplication;
+import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
 import com.imjustdoom.pluginsite.dtos.in.CreateUpdateRequest;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
@@ -49,12 +49,14 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping("/resources")
 public class ResourcesController {
-
     private final LogoService logoService;
     private final ResourceService resourceService;
     private final ResourceRepository resourceRepository;
     private final AccountRepository accountRepository;
     private final UpdateRepository updateRepository;
+
+    private final SiteConfig siteConfig;
+    private final UrlUtil urlUtil;
 
     @GetMapping
     public String resources(Account account, @RequestParam(name = "category", required = false, defaultValue = "all") String category, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
@@ -124,7 +126,7 @@ public class ResourcesController {
             return "error/resourceDeleted";
         }
 
-        String description = UrlUtil.encode(resource.getDescription());
+        String description = urlUtil.encode(resource.getDescription());
 
         description.replaceAll("script", "error style=\"display:none;\"");
         Parser parser = Parser.builder().build();
@@ -192,7 +194,7 @@ public class ResourcesController {
 
         model.addAttribute("error", error);
         model.addAttribute("update", update);
-        model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/" + id);
+        model.addAttribute("url", this.siteConfig.getDomain() + "/resources/" + id);
         model.addAttribute("account", account);
         model.addAttribute("resourceid", id);
 
@@ -218,7 +220,7 @@ public class ResourcesController {
     public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id,
                                Model model, Account account, @ModelAttribute(name = "resource") CreateResourceRequest resourceModel) {
         model.addAttribute("error", error);
-        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSizeByte());
+        model.addAttribute("maxUploadSize", this.siteConfig.getMaxUploadSize().toBytes());
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         Resource resource = optionalResource.get();
@@ -270,7 +272,7 @@ public class ResourcesController {
     @PostMapping("/create")
     public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("resourceRequest", resourceRequest);
-        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour)
+        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > this.siteConfig.getMaxCreationsPerHour())
             return "redirect:/resources/create?error=createlimit";
 
         if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName()))
@@ -289,10 +291,10 @@ public class ResourcesController {
     @GetMapping("/create")
     public String create(Model model, Account account, @RequestParam(name = "error", required = false) String error, @ModelAttribute(name = "resourceRequest") CreateResourceRequest resourceRequest) {
         model.addAttribute("error", error);
-        model.addAttribute("limit", PluginSiteApplication.config.maxCreationsPerHour);
+        model.addAttribute("limit", this.siteConfig.getMaxCreationsPerHour());
         model.addAttribute("account", account);
         model.addAttribute("resource", resourceRequest.getName() == null ? new CreateResourceRequest() : resourceRequest);
-        model.addAttribute("url", PluginSiteApplication.config.domain + "/resources");
+        model.addAttribute("url", this.siteConfig.getDomain() + "/resources");
         return "resource/create";
     }
 
@@ -308,12 +310,12 @@ public class ResourcesController {
 
         model.addAttribute("resource", resource);
         model.addAttribute("update", updateRequest.getName() == null ? new CreateUpdateRequest() : updateRequest);
-        model.addAttribute("url", PluginSiteApplication.config.domain + "/resources/%s/upload/".formatted(id));
-        model.addAttribute("mainUrl", PluginSiteApplication.config.domain + "/resources/%s".formatted(id));
+        model.addAttribute("url", this.siteConfig.getDomain() + "/resources/%s/upload/".formatted(id));
+        model.addAttribute("mainUrl", this.siteConfig.getDomain() + "/resources/%s".formatted(id));
         model.addAttribute("error", error);
-        model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSizeByte());
+        model.addAttribute("maxUploadSize", this.siteConfig.getMaxUploadSize().toBytes());
         model.addAttribute("account", account);
-        model.addAttribute("limit", PluginSiteApplication.config.maxUpdatesPerHour);
+        model.addAttribute("limit", this.siteConfig.getMaxUpdatesPerHour());
 
         return "resource/upload";
     }
@@ -322,11 +324,11 @@ public class ResourcesController {
     public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest, RedirectAttributes redirectAttributes) throws IOException {
 
         redirectAttributes.addFlashAttribute("updateRequest", updateRequest);
-        if (updateRepository.getUpdatesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxUpdatesPerHour) {
+        if (updateRepository.getUpdatesCreateLastHour(account.getId()) > this.siteConfig.getMaxUpdatesPerHour()) {
             return "redirect:/resources/%s/upload?error=uploadlimit".formatted(id);
         }
 
-        if ((file.isEmpty() || file.getSize() > PluginSiteApplication.config.getMaxUploadSizeByte()) && updateRequest.getExternalLink().equals("")) {
+        if ((file.isEmpty() || file.getSize() > this.siteConfig.getMaxUploadSize().toBytes()) && updateRequest.getExternalLink().equals("")) {
             return "redirect:/resources/%s/upload?error=filesize".formatted(id);
         }
         if ((!file.getOriginalFilename().endsWith(".jar") && !file.getOriginalFilename().endsWith(".zip")) && updateRequest.getExternalLink().equals("")) {
@@ -370,7 +372,7 @@ public class ResourcesController {
             }
         }
 
-        String download = "%s/files/%s/download/%s".formatted(PluginSiteApplication.config.domain, update.getResource().getId(), update.getId());
+        String download = "%s/files/%s/download/%s".formatted(this.siteConfig.getDomain(), update.getResource().getId(), update.getId());
         resourceRepository.setDownload(id, download);
         updateRepository.setDownload(update.getId(), download);
 
