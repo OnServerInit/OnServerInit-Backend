@@ -255,11 +255,13 @@ public class ResourcesController {
             if (file.getSize() > 1024000) {
                 return "redirect:/resources/%s/edit?error=filesize".formatted(id);
             }
+
+            resourceRepository.setLogo(id, ImageUtil.handleImage(file));
         }
         // todo handle errors from ImageUtil
 
         resourceRepository.setInfo(id, resource.getName(), resource.getBlurb(), resource.getDescription(),
-                resource.getDonation(), resource.getSource(), resource.getSupport(), resource.getCategory(), ImageUtil.handleImage(file));
+                resource.getDonation(), resource.getSource(), resource.getSupport(), resource.getCategory());
 
         return "redirect:/resources/%s".formatted(id);
     }
