@@ -471,6 +471,10 @@ border-top: #374151 solid 2px;
     padding: 10px 20px 10px 20px;
 }
 
+.resource-tooltip > a{
+    background-color: #ffffff;;
+}
+
 .resource-tooltip > a:not(:first-child) {
     border-top: 1px solid #D1D5DB;
 }
