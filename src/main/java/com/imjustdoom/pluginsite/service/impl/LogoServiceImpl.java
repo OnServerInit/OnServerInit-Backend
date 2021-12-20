@@ -45,10 +45,10 @@ public class LogoServiceImpl implements LogoService {
 
     @Override
     public byte[] serverLogo(int id) {
-        byte[] image = resourceRepository.findLogoById(id);
+        byte[] image = resourceRepository.findResourceLogo(id);
         if(image == null){
             return serveDefaultLogo();
         }
-        return resourceRepository.findLogoById(id);
+        return resourceRepository.findResourceLogo(id);
     }
 }

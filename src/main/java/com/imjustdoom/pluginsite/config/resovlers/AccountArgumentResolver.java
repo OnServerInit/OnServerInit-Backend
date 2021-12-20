@@ -12,8 +12,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @AllArgsConstructor
 public class AccountArgumentResolver implements HandlerMethodArgumentResolver {
-
-    //TODO: change to account service
     private final AccountRepository accountRepository;
 
     @Override

@@ -29,7 +29,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -40,7 +45,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +63,7 @@ public class ResourcesController {
     private final UrlUtil urlUtil;
 
     @GetMapping
-    public String resources(Account account, @RequestParam(name = "category", required = false, defaultValue = "all") String category, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
+    public String resources(Account account, @RequestParam(name = "category", required = false, defaultValue = "all") String category, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) {
 
         // TODO: clean up more and make it easier to read
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";
@@ -107,7 +111,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/{id_s}")
-    public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
+    public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws MalformedURLException {
         int id;
         try {
             id = Integer.parseInt(id_s);
