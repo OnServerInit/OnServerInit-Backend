@@ -11,13 +11,14 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
-                <div class="info-left">
+                <div class="info-left flex">
                     <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
-                </div>
-                <div class="info-left">
-                    <p th:text="${resource.getName()}"></p>
-                    <p th:text="${resource.getBlurb()}" class="blurb"></p>
-                    <br>
+
+                    <div class="info-left" style="margin-left: 1rem;">
+                        <p th:text="${resource.getName()}"></p>
+                        <p th:text="${resource.getBlurb()}" class="blurb"></p>
+                        <br>
+                    </div>
                 </div>
                 <br>
                 <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
