@@ -17,8 +17,9 @@ public class SimpleResourceDto {
     private final LocalDateTime updated;
 
     private final int totalDownloads;
+    private final byte[] logo;
 
     public static SimpleResourceDto create(Resource resource, int totalDownloads) {
-        return new SimpleResourceDto(resource.getId(), resource.getName(), resource.getBlurb(), resource.getCreated(), resource.getUpdated(), totalDownloads);
+        return new SimpleResourceDto(resource.getId(), resource.getName(), resource.getBlurb(), resource.getCreated(), resource.getUpdated(), totalDownloads, resource.getLogo());
     }
 }

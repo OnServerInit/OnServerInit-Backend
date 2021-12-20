@@ -11,9 +11,9 @@ public class CreateResourceRequest {
 
     private String name;
     private String blurb;
-    private String donationLink;
-    private String sourceCodeLink;
-    private String supportLink;
+    private String donation;
+    private String source;
+    private String support;
     private String description;
     private String category;
 }

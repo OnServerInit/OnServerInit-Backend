@@ -29,8 +29,8 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Resource createResource(CreateResourceRequest resourceRequest, Account account) {
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
-                resourceRequest.getBlurb(), resourceRequest.getDonationLink(), resourceRequest.getSourceCodeLink(),
-                "", account, resourceRequest.getSupportLink(), resourceRequest.getCategory());
+                resourceRequest.getBlurb(), resourceRequest.getDonation(), resourceRequest.getSource(),
+                "", account, resourceRequest.getSupport(), resourceRequest.getCategory());
 
         resourceRepository.save(resource);
 
@@ -69,7 +69,7 @@ public class ResourceServiceImpl implements ResourceService {
         if(sortBy.equalsIgnoreCase("name")) sort = sort.ascending();
         Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
 
-        for (Resource resource : resourceRepository.findAllByCategoryAndStatusEqualsIgnoreCase("public", category, pageable)) {
+        for (Resource resource : resourceRepository.findAllByCategoryEqualsAndStatusEquals(category, "public", pageable)) {
             Integer downloads = updateRepository.getTotalDownloads(resource.getId());
             data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
         }

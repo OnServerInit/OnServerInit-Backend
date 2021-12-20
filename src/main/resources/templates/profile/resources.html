@@ -51,7 +51,7 @@
                     <p th:if="${files.size() == 0}">There are currently no resources by this user, sorry :(<br>Not even sure how you got here though</p>
                     <li th:each="file : ${files}" class="no-ml">
                         <div class="plugin-box">
-                            <div class="info-left"><img th:src="'/logo/' + ${file.getId()}" alt="Logo" class="logo">
+                            <div class="info-left"><img th:src="${'/logo/' + file.getId()}" alt="Logo" class="logo">
                             </div>
                             <div class="info-left"><a th:href="${'resources/' + file.getId()}"
                                                       th:text="${file.getName()}"

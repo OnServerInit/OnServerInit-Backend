@@ -34,15 +34,15 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     @Modifying
     @Transactional
     @Query("UPDATE Resource resource SET resource.name = ?2, resource.blurb = ?3, resource.description = ?4, " +
-            "resource.donation = ?5, resource.source = ?6, resource.support = ?7, resource.category = ?8 WHERE resource.id = ?1")
-    void setInfo(int id, String name, String blurb, String description, String donation, String source, String support, String category);
+            "resource.donation = ?5, resource.source = ?6, resource.support = ?7, resource.category = ?8, resource.logo = ?9 WHERE resource.id = ?1")
+    void setInfo(int id, String name, String blurb, String description, String donation, String source, String support, String category, byte[] logo);
 
     @Query("SELECT COUNT(resource) FROM Resource resource WHERE resource.created > CURDATE() - HOUR(1) AND resource.author.id = ?1")
     int getResourcesCreateLastHour(int authorId);
 
     List<Resource> findAllByAuthorId(int authorId, Pageable pageable);
 
-    List<Resource> findAllByCategoryAndStatusEqualsIgnoreCase(String status, String category, Pageable pageable);
+    List<Resource> findAllByCategoryEqualsAndStatusEquals(String category, String status, Pageable pageable);
 
     Optional<Resource> findByNameEqualsIgnoreCase(String name);
 
@@ -50,4 +50,12 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     @Transactional
     @Query("UPDATE Resource resource SET resource.status = ?2 WHERE resource.id = ?1")
     void updateStatusById(int id, String status);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Resource resource SET resource.logo = ?2 WHERE resource.id = ?1")
+    void updateLogoById(int id, byte[] logo);
+
+    @Query("SELECT logo FROM Resource WHERE id = ?1")
+    byte[] findLogoById(int id);
 }

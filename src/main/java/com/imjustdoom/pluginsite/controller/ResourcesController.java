@@ -17,6 +17,7 @@ import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
 import com.imjustdoom.pluginsite.service.ResourceService;
 import com.imjustdoom.pluginsite.util.FileUtil;
+import com.imjustdoom.pluginsite.util.ImageUtil;
 import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -32,8 +33,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -48,6 +47,7 @@ import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
+@RequestMapping("/resources")
 public class ResourcesController {
 
     private final LogoService logoService;
@@ -56,7 +56,7 @@ public class ResourcesController {
     private final AccountRepository accountRepository;
     private final UpdateRepository updateRepository;
 
-    @GetMapping("/resources")
+    @GetMapping
     public String resources(Account account, @RequestParam(name = "category", required = false, defaultValue = "all") String category, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) throws SQLException {
 
         // TODO: clean up more and make it easier to read
@@ -80,7 +80,7 @@ public class ResourcesController {
             if (sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
             Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort1);
 
-            resources = resourceRepository.findAllByCategoryAndStatusEqualsIgnoreCase("public", category, pageable).size();
+            resources = resourceRepository.findAllByCategoryEqualsAndStatusEquals(category, "public", pageable).size();
             total = resources / 25;
             remainder = resources % 25;
             if (remainder > 1) total++;
@@ -104,7 +104,7 @@ public class ResourcesController {
         return "resource/resources";
     }
 
-    @GetMapping("/resources/{id_s}")
+    @GetMapping("/{id_s}")
     public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws SQLException, MalformedURLException {
         int id;
         try {
@@ -180,7 +180,7 @@ public class ResourcesController {
         }
     }
 
-    @GetMapping("/resources/{id}/edit/update/{fileId}")
+    @GetMapping("/{id}/edit/update/{fileId}")
     public String editResourceUpdate(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, @PathVariable("fileId") int fileId, Model model, Account account) {
 
         Optional<Resource> optionalResource = resourceRepository.findById(id);
@@ -199,7 +199,7 @@ public class ResourcesController {
         return "resource/editUpdate";
     }
 
-    @PostMapping("/resources/{id}/edit/update/{fileId}")
+    @PostMapping("/{id}/edit/update/{fileId}")
     public String editUpdateSubmit(@ModelAttribute Update update, @PathVariable("id") int id, @PathVariable("fileId") int fileId) {
 
         if (update.getName().equalsIgnoreCase("")
@@ -214,8 +214,9 @@ public class ResourcesController {
         return "redirect:/resources/%s".formatted(id);
     }
 
-    @GetMapping("/resources/{id}/edit")
-    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account, @ModelAttribute(name = "resource") Resource resourceModel) {
+    @GetMapping("/{id}/edit")
+    public String editResource(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id,
+                               Model model, Account account, @ModelAttribute(name = "resource") CreateResourceRequest resourceModel) {
         model.addAttribute("error", error);
         model.addAttribute("maxUploadSize", PluginSiteApplication.config.getMaxUploadSizeByte());
 
@@ -224,8 +225,8 @@ public class ResourcesController {
 
         if (optionalResource.isEmpty()) return "error/404";
 
-        model.addAttribute("authorid", resource.getAuthor());
-        resourceModel.setAuthor(account);
+        model.addAttribute("id", id);
+        model.addAttribute("authorid", resource.getAuthor().getId());
         model.addAttribute("resource", resourceModel.getName() == null ? resource : resourceModel);
         model.addAttribute("url", "/resources/" + id + "/edit");
         model.addAttribute("account", account);
@@ -233,48 +234,38 @@ public class ResourcesController {
         return "resource/edit";
     }
 
-    @PostMapping("/resources/{id}/edit")
-    public String editSubmit(@RequestParam("logo") MultipartFile file, RedirectAttributes redirectAttributes, @ModelAttribute Resource resource, @PathVariable("id") int id) throws IOException {
+    @PostMapping("/{id}/edit")
+    public String editSubmit(@RequestParam("logo") MultipartFile file, RedirectAttributes redirectAttributes,
+                             @ModelAttribute CreateResourceRequest resource, @PathVariable("id") int id) {
 
         redirectAttributes.addFlashAttribute("resource", resource);
         if (resourceRepository.existsByNameEqualsIgnoreCaseAndIdEqualsNot(id, resource.getName()))
-            return "redirect:/resources/%s/edit?error=nametaken".formatted(resource.getId());
+            return "redirect:/resources/%s/edit?error=nametaken".formatted(id);
 
         if (resource.getName().equalsIgnoreCase("")
                 || resource.getBlurb().equalsIgnoreCase("")
                 || resource.getDescription().equalsIgnoreCase(""))
-            return "redirect:/resources/%s/edit?error=invalidinput".formatted(resource.getId());
+            return "redirect:/resources/%s/edit?error=invalidinput".formatted(id);
 
         if (!file.isEmpty()) {
             if (!file.getContentType().contains("image")) {
-                return "redirect:/resources/%s/edit?error=logotype".formatted(resource.getId());
+                return "redirect:/resources/%s/edit?error=logotype".formatted(id);
             }
 
-            if (file.getSize() > 10000) {
-                return "redirect:/resources/%s/edit?error=filesize".formatted(resource.getId());
-            }
-
-            BufferedImage image = ImageIO.read(file.getInputStream());
-
-            if (image.getHeight() != image.getWidth())
-                return "redirect:/resources/%s/edit?error=logosize".formatted(resource.getId());
-
-            Path destinationFile = Path.of("./resources/logos/%s/logo.png".formatted(id)).normalize().toAbsolutePath();
-
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile,
-                        StandardCopyOption.REPLACE_EXISTING);
+            if (file.getSize() > 1024000) {
+                return "redirect:/resources/%s/edit?error=filesize".formatted(id);
             }
         }
+        // todo handle errors from ImageUtil
 
-        resourceRepository.setInfo(resource.getId(), resource.getName(), resource.getBlurb(), resource.getDescription(),
-                resource.getDonation(), resource.getSource(), resource.getSupport(), resource.getCategory());
+        resourceRepository.setInfo(id, resource.getName(), resource.getBlurb(), resource.getDescription(),
+                resource.getDonation(), resource.getSource(), resource.getSupport(), resource.getCategory(), ImageUtil.handleImage(file));
 
-        return "redirect:/resources/%s".formatted(resource.getId());
+        return "redirect:/resources/%s".formatted(id);
     }
 
     //TODO: Do sanity checks
-    @PostMapping("/resources/create")
+    @PostMapping("/create")
     public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("resourceRequest", resourceRequest);
         if (resourceRepository.getResourcesCreateLastHour(account.getId()) > PluginSiteApplication.config.maxCreationsPerHour)
@@ -290,12 +281,10 @@ public class ResourcesController {
 
         Resource resource = resourceService.createResource(resourceRequest, account);
 
-        logoService.createLogo(resource.getId());
-
         return "redirect:/resources/%s".formatted(resource.getId());
     }
 
-    @GetMapping("/resources/create")
+    @GetMapping("/create")
     public String create(Model model, Account account, @RequestParam(name = "error", required = false) String error, @ModelAttribute(name = "resourceRequest") CreateResourceRequest resourceRequest) {
         model.addAttribute("error", error);
         model.addAttribute("limit", PluginSiteApplication.config.maxCreationsPerHour);
@@ -305,7 +294,7 @@ public class ResourcesController {
         return "resource/create";
     }
 
-    @GetMapping("/resources/{id}/upload")
+    @GetMapping("/{id}/upload")
     public String uploadFile(@RequestParam(name = "error", required = false) String error, @PathVariable("id") int id, Model model, Account account, @ModelAttribute(name = "updateRequest") CreateUpdateRequest updateRequest) {
 
         // TODO: make the checkboxing also save
@@ -327,7 +316,7 @@ public class ResourcesController {
         return "resource/upload";
     }
 
-    @PostMapping("/resources/{id}/upload")
+    @PostMapping("/{id}/upload")
     public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest, RedirectAttributes redirectAttributes) throws IOException {
 
         redirectAttributes.addFlashAttribute("updateRequest", updateRequest);
@@ -386,14 +375,14 @@ public class ResourcesController {
         return "redirect:/resources/%s".formatted(id);
     }
 
-    @GetMapping("/resources/{id}/delete")
+    @GetMapping("/{id}/delete")
     public String delete(Account account, Model model, @PathVariable("id") int id) {
         model.addAttribute("account", account);
         model.addAttribute("resource", resourceRepository.findById(id).get());
         return "resource/delete";
     }
 
-    @PostMapping("/resources/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") int id) {
         resourceRepository.updateStatusById(id, "removed");
         return "redirect:/";

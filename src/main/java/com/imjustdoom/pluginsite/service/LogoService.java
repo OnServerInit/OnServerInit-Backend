@@ -1,16 +1,14 @@
 package com.imjustdoom.pluginsite.service;
 
-import org.springframework.http.HttpEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface LogoService {
 
-    void createLogo(int id);
-
-    void updateLogo(int id);
+    void updateLogo(int id, MultipartFile logo);
 
     boolean logoExists(int id);
 
-    HttpEntity<byte[]> serveLogo(int id);
+    byte[] serveDefaultLogo();
 
-    HttpEntity<byte[]> serveDefaultLogo();
+    byte[] serverLogo(int id);
 }

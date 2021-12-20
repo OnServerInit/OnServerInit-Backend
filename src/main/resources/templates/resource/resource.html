@@ -13,7 +13,7 @@
                 <div class="inside-main-body">
                     <p th:if="${resource.getStatus() == 'removed'}">This resource is currently deleted</p>
                     <div class="info-left flex">
-                        <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
+                        <img th:src="${'/logo/' + resource.getId()}" alt="Logo" class="logo">
 
                         <div class="info-left" style="margin-left: 1rem;">
                             <p th:text="${resource.getName()}"></p>

@@ -69,6 +69,9 @@ public class Resource {
     @Column(nullable = false)
     private String status;
 
+    @Lob
+    private byte[] logo;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<Update> updates;
 }

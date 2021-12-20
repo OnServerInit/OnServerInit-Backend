@@ -20,10 +20,10 @@
                 <p th:if="${error == 'logosize'}">Please upload an image with the same height and width</p>
                 <p th:if="${error == 'filesize'}" th:text="'Image size is too large' + ${maxUploadSize}"></p>
                 <form method="POST" th:action="${url}" th:object="${resource}" action="#"
-                      th:if="${account.getId() == resource.getAuthor().getId()}" enctype="multipart/form-data">
+                      th:if="${account.getId() == authorid}" enctype="multipart/form-data">
                     <!-- <p><img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">Logo: <input type="file" name="logo" accept="image/*" id="logo"></p> -->
                     <div style="display: flex;">
-                        <img th:src="'/logo/' + ${resource.getId()}" alt="Logo" class="logo">
+                        <img th:src="${'/logo/' + resource.getId()}" alt="Logo" class="logo">
                         <div class="input">
                             <p>Logo</p>
                             <input type="file" name="logo" accept="image/*" id="logo">
@@ -79,7 +79,7 @@
                         </a></td>
                     </p>
                 </form>
-                <p th:unless="${account.getId() == resource.getAuthor().getId()}">You do not have permission to edit
+                <p th:unless="${account.getId() == authorid}">You do not have permission to edit
                     this plugin</p>
             </div>
         </div>

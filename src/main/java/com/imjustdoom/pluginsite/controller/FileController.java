@@ -1,16 +1,13 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.imjustdoom.pluginsite.PluginSiteApplication;
 import com.imjustdoom.pluginsite.model.Update;
+import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,15 +24,19 @@ public class FileController {
 
     private final LogoService logoService;
     private final UpdateRepository updateRepository;
+    private final ResourceRepository resourceRepository;
 
     @GetMapping("/logo/{id}")
     @ResponseBody
     public HttpEntity<byte[]> serveLogo(@PathVariable("id") int id) {
-        if (logoService.logoExists(id)) {
-            return logoService.serveLogo(id);
-        } else {
-            return logoService.serveDefaultLogo();
-        }
+
+        byte[] image = logoService.serverLogo(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(image.length);
+
+        return new HttpEntity<>(image, headers);
     }
 
     @GetMapping("/files/{id}/download/{fileId}")

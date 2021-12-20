@@ -10,10 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -28,7 +25,7 @@ public class AccountController {
     private final AccountRepository accountRepository;
 
     @GetMapping("/signup")
-    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Account account, WebRequest request) {
+    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Account account) {
         model.addAttribute("createAccount", new CreateAccountRequest());
         model.addAttribute("account", account);
         model.addAttribute("error", error);
