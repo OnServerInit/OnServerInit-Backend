@@ -10,12 +10,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,11 +29,14 @@ public class MessagesController {
     private final AccountRepository accountRepository;
 
     @GetMapping("/message")
-    public String message(HttpServletResponse response, Account account){
-//        Cookie cookie = new Cookie("token", BCrypt.hashpw(account.getUsername(), BCrypt.gensalt()));
+    public String message(Model model, Account account){
 
-//        response.addCookie(cookie);
+        model.addAttribute("account", account);
 
+        System.out.println(messageGroupRepository.findById(2).get().getName());
+        System.out.println(messageGroupRepository.findById(2).get().getMembers());
+
+        System.out.println(accountRepository.getById(1).getGroups().get(0).getName());
         return "message/message";
     }
 
@@ -47,7 +50,7 @@ public class MessagesController {
         }
         String token = params.get("token");
         HashMap<String, String> response = new HashMap<>();
-        return new ResponseEntity<HashMap<String, String>>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/message/api/get_group", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -59,7 +62,7 @@ public class MessagesController {
         for (Account account : messageGroup.getMembers()) {
             response.put(account.getUsername(), account.getUsername());
         }
-        return new ResponseEntity<HashMap<String, String>>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/message/api/get_messages")
@@ -86,9 +89,11 @@ public class MessagesController {
         List<Account> users = new ArrayList<Account>();
         for (String userId : userIdsList) {
             users.add(accountRepository.findById(Integer.parseInt(userId)).get());
+            System.out.println(accountRepository.findById(Integer.parseInt(userId)).get().getUsername());
         }
 
         MessageGroup messageGroup = new MessageGroup(name, LocalDateTime.now(), users);
+        System.out.println(messageGroup.getMembers());
         messageGroupRepository.save(messageGroup);
 
         HashMap<String, String> response = new HashMap<>();

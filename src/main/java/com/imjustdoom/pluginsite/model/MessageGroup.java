@@ -19,13 +19,15 @@ public class MessageGroup {
         this.name = name;
         this.createdDate = createdDate;
         this.members = members;
+        System.out.println(members.toString());
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "group")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable
     private List<Account> members;
 
     @Column(nullable = false)

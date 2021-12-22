@@ -23,7 +23,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account author;
 
     @ManyToOne(fetch = FetchType.LAZY)
