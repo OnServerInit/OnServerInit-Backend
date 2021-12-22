@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="content-container">
+    <div lang="en" th:include="header :: header"></div>
+    <div class="content" style="position: relative;">
+        <div class="side-body-container" style="height: auto !important;">
+            <div class="side-body" style="height: 100%;">
+                <div class="inside-main-body">
+                    <h1>Conversations</h1>
+                    <div class="conversations">
+                        <div class="conversation active">
+                            <h3>Conversation Name</h3>
+                            <p>4 Members</p>
+                        </div>
+
+                        <div class="conversation">
+                            <h3>Conversation Name</h3>
+                            <p>4 Members</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-body" style="margin-left: 2rem; margin-right: 0 !important; margin-top: 0 !important; height: auto !important;">
+            <div class="inside-main-body" style="height: 100%;">
+                <div class="flex column" style="height: 100%;">
+                    <h1>Conversation Name</h1>
+
+                    <div class="chat grow">
+                        <div class="message-container">
+                            <div class="starting-message message">
+                                <h3>This is the start of your epic conversation!</h3>
+                            </div>
+                        </div>
+
+                        <div class="message-container">
+                            <div class="message other">
+                                <p>How are you doing?</p>
+                            </div>
+                        </div>
+
+                        <div class="message-container">
+                            <div class="message self">
+                                <p>good</p>
+                            </div>
+                        </div>
+
+                        <div class="message-container">
+                            <div class="message self">
+                                <p>hbu?</p>
+                            </div>
+                        </div>
+
+                        <div class="message-container">
+                            <div class="message other">
+                                <p>I'm doing great, what did you want to talk to me about today?</p>
+                            </div>
+                        </div>
+
+                        <div class="message-container">
+                            <div class="message self">
+                                <p>i am having trouble with your plugin</p>
+                            </div>
+                        </div>
+
+                        <div class="message-container">
+                            <div class="message self flex">
+                                <img src="https://via.placeholder.com/128" alt="" class="logo">
+                                <div style="margin-left: 0.5rem;">
+                                    <p>Flappy AC | 1.69.420</p>
+                                    <p class="blurb">flappy anticheat plugin for spigot.</p>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input">
+                        <input type="text">
+                        <button class="chat-send">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <div lang="en" th:include="footer :: footer"></div>
+    <div lang="en" th:include="report-overlay :: report-overlay"></div>
+</div>
+</body>
+</html>

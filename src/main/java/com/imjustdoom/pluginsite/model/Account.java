@@ -52,6 +52,9 @@ public class Account implements UserDetails {
     @Column(nullable = false)
     private String role;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MessageGroup group;
+
     public Account() {
 
     }
