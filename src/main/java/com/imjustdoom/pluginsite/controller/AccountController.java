@@ -1,21 +1,19 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.imjustdoom.pluginsite.PluginSiteApplication;
+import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.dtos.in.CreateAccountRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
-import com.imjustdoom.pluginsite.util.StringUtil;
+import com.imjustdoom.pluginsite.util.ValidationHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +21,7 @@ public class AccountController {
 
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
+    private final SiteConfig siteConfig;
 
     @GetMapping("/signup")
     public String signup(Model model, @RequestParam(name = "error", required = false) String error, Account account) {
@@ -39,15 +38,11 @@ public class AccountController {
 
     @PostMapping("/signup")
     public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
-
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
-        if (!pattern.matcher(accountRequest.getUsername()).matches()) return "redirect:/signup?error=invalidcharacter";
+        if (!ValidationHelper.isUsernameValid(accountRequest.getUsername())) return "redirect:/signup?error=invalidcharacter";
 
         String emailAddress = accountRequest.getEmail();
-        String regexPattern = "^(.+)@(\\S+)$";
-        boolean validEmail = StringUtil.patternMatches(emailAddress, regexPattern);
 
-        if (!validEmail) return "redirect:/signup?error=invalidemail";
+        if (!ValidationHelper.isEmailValid(emailAddress)) return "redirect:/signup?error=invalidemail";
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(accountRequest.getUsername()))
             return "redirect:/signup?error=usernametaken";
@@ -71,7 +66,7 @@ public class AccountController {
     @PostMapping("/login")
     public String loginSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
 
-        if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) {
+        if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) { // todo change
             Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(accountRequest.getUsername());
             if (BCrypt.checkpw(accountRequest.getPassword(), account.get().getPassword())) {
 
@@ -86,21 +81,15 @@ public class AccountController {
     @GetMapping("/account/details")
     public String accountDetails(Model model, Account account, @RequestParam(name = "error", required = false) String error) {
         model.addAttribute("account", account);
-        model.addAttribute("url", PluginSiteApplication.config.domain);
+        model.addAttribute("url", this.siteConfig.getDomain());
         model.addAttribute("error", error);
         return "account/details";
     }
 
     @PostMapping("/account/details")
     public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
-
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]*$");
-        if (!pattern.matcher(username).matches()) return "redirect:/account/details?error=invalidcharacter";
-
-        String regexPattern = "^(.+)@(\\S+)$";
-        boolean validEmail = StringUtil.patternMatches(email, regexPattern);
-
-        if (!validEmail) return "redirect:/account/details?error=invalidemail";
+        if (!ValidationHelper.isUsernameValid(username)) return "redirect:/account/details?error=invalidcharacter";
+        if (!ValidationHelper.isEmailValid(email)) return "redirect:/account/details?error=invalidemail";
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(username))
             return "redirect:/account/details?error=usernametaken";

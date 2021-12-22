@@ -62,5 +62,5 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     void updateLogoById(int id, byte[] logo);
 
     @Query("SELECT logo FROM Resource WHERE id = ?1")
-    byte[] findLogoById(int id);
+    byte[] findResourceLogo(int id);
 }

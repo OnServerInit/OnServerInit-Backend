@@ -21,9 +21,10 @@ import java.util.Optional;
 @Controller
 @AllArgsConstructor
 public class AdminController {
-
     private final AccountRepository accountRepository;
     private final ReportRepository reportRepository;
+
+    private final UrlUtil urlUtil;
 
     @GetMapping("/admin")
     public String admin(Model model, Account account) {
@@ -42,7 +43,7 @@ public class AdminController {
     public String report(Model model, Account account, @PathVariable("id") int id) {
 
         Report report = reportRepository.findById(id).get();
-        String description = UrlUtil.encode(report.getReport());
+        String description = urlUtil.encode(report.getReport());
 
         description.replaceAll("script", "error style=\"display:none;\"");
         Parser parser = Parser.builder().build();
