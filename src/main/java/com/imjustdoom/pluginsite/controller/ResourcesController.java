@@ -18,6 +18,7 @@ import com.imjustdoom.pluginsite.service.LogoService;
 import com.imjustdoom.pluginsite.service.ResourceService;
 import com.imjustdoom.pluginsite.util.FileUtil;
 import com.imjustdoom.pluginsite.util.ImageUtil;
+import com.imjustdoom.pluginsite.util.RequestUtil;
 import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -27,14 +28,11 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -46,6 +44,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,7 +124,7 @@ public class ResourcesController {
 
         Resource resource = resourceRepository.getById(id);
 
-        if(!resource.getStatus().equalsIgnoreCase("public") && !account.getRole().equalsIgnoreCase("role_admin")) {
+        if (!resource.getStatus().equalsIgnoreCase("public") && !account.getRole().equalsIgnoreCase("role_admin")) {
             model.addAttribute("account", account);
             return "error/resourceDeleted";
         }
@@ -153,7 +152,7 @@ public class ResourcesController {
                 Sort sort1 = Sort.by(sort).descending();
 
                 // TODO: improve getting the versions and software. 100% not the best way to do this
-                List<Update> data = updateRepository.findAllByResourceId(id, sort1);
+                List<Update> data = updateRepository.findAllByResourceIdAndStatusEquals(id, "public", sort1);
                 List<List<String>> versions = new ArrayList<>();
                 List<String> versionLists = new ArrayList<>();
                 for (Update update : data) {
@@ -394,5 +393,26 @@ public class ResourcesController {
     public String delete(@PathVariable("id") int id) {
         resourceRepository.updateStatusById(id, "removed");
         return "redirect:/";
+    }
+
+    @PostMapping("/{id}/update/{update}/status")
+    public ResponseEntity<HashMap<String, String>> changeStatus(Account account, @PathVariable("id") int id, @PathVariable("update") int updateId,
+                                                                @RequestBody String request) {
+
+        HashMap<String, String> response = new HashMap<>();
+
+        Optional<Resource> optionalResource = resourceRepository.findById(id);
+        Resource resource = optionalResource.get();
+
+        if (account.getId() != resource.getAuthor().getId()) {
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+
+        HashMap<String, String> params = RequestUtil.getParams(request);
+        String status = params.get("status");
+
+        updateRepository.updateStatusById(updateId, status);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

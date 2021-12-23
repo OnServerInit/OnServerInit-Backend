@@ -24,24 +24,22 @@ import java.util.List;
 @Controller
 @AllArgsConstructor
 public class MessagesController {
+
     private final MessageRepository messageRepository;
     private final MessageGroupRepository messageGroupRepository;
     private final AccountRepository accountRepository;
 
     @GetMapping("/message")
-    public String message(Model model, Account account){
+    public String message(Model model, Account account) {
 
         model.addAttribute("account", account);
 
-        System.out.println(messageGroupRepository.findById(2).get().getName());
         System.out.println(messageGroupRepository.findById(2).get().getMembers());
-
-        System.out.println(accountRepository.getById(1).getGroups().get(0).getName());
         return "message/message";
     }
 
     @PostMapping(value = "/message/api/get_groups", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<HashMap<String, String>> getConversations(@RequestBody String request){
+    public ResponseEntity<HashMap<String, String>> getConversations(@RequestBody String request) {
         HashMap<String, String> params = new HashMap<>();
         String[] pairs = request.split("&");
         for (String pair : pairs) {
@@ -54,7 +52,7 @@ public class MessagesController {
     }
 
     @PostMapping(value = "/message/api/get_group", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<HashMap<String, String>> getGroup(@RequestBody String request){
+    public ResponseEntity<HashMap<String, String>> getGroup(@RequestBody String request) {
         HashMap<String, String> params = RequestUtil.getParams(request);
         String groupId = params.get("groupId");
         MessageGroup messageGroup = messageGroupRepository.findById(Integer.parseInt(groupId)).get();
@@ -80,7 +78,8 @@ public class MessagesController {
     }
 
     @PostMapping(value = "/message/api/create_group", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<HashMap<String, String>> getGroups(@RequestBody String request){
+    public ResponseEntity<HashMap<String, String>> getGroups(@RequestBody String request) {
+
         HashMap<String, String> params = RequestUtil.getParams(request);
         String token = params.get("token");
         String userIds = params.get("userIds");

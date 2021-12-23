@@ -15,6 +15,8 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
 
     List<Update> findAllByResourceId(int resourceId, Sort sort);
 
+    List<Update> findAllByResourceIdAndStatusEquals(int resourceId, String status, Sort sort);
+
     @Modifying
     @Transactional
     @Query("UPDATE Update updates SET updates.download = ?2 WHERE updates.id = ?1")
@@ -35,4 +37,9 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
 
     @Query("SELECT COUNT(updates) FROM Update updates WHERE updates.uploaded > CURDATE() - HOUR(1) AND updates.resource.author.id = ?1")
     int getUpdatesCreateLastHour(int authorId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Update updates SET updates.status = ?2 WHERE updates.id = ?1")
+    void updateStatusById(int id, String status);
 }

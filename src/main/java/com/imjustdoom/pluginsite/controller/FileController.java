@@ -1,5 +1,6 @@
 package com.imjustdoom.pluginsite.controller;
 
+import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Update;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
@@ -41,10 +42,15 @@ public class FileController {
 
     @GetMapping("/files/{id}/download/{fileId}")
     @ResponseBody
-    public ResponseEntity serveFile(@PathVariable("id") int id, @PathVariable("fileId") int fileId) throws MalformedURLException {
+    public ResponseEntity serveFile(Account account, @PathVariable("fileId") int fileId) throws MalformedURLException {
 
         Optional<Update> optional = updateRepository.findById(fileId);
         Update update = optional.get();
+
+        if(!update.getStatus().equalsIgnoreCase("public")
+                && account.getId() != update.getResource().getAuthor().getId()) {
+            return ResponseEntity.notFound().build();
+        }
 
         Path path = Paths.get("resources/plugins/" + fileId + "/");
         Resource file = new UrlResource(path.resolve(update.getFilename()).toUri());

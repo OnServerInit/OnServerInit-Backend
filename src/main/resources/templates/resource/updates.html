@@ -3,7 +3,9 @@
 <head>
     <title th:text="${resource.getName()} + ' Updates'"></title>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script th:src="@{/js/sortby.js}"></script>
+    <script th:src="@{/js/changeUpdateStatus.js}"></script>
 </head>
 <body>
 <div class="content-container">
@@ -66,6 +68,10 @@
                             <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}"
                                th:href="${'/resources/' + resource.getId() + '/edit/update/' + update.getId()}">
                                 <button>Edit</button>
+                            </a>
+                            <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}">
+                                <button onclick="changeUpdateStatus(this)" th:name="${update.getId()}">Archive</button>
+                                <input type="hidden" id="id" th:value="${resource.getId()}"/>
                             </a>
                             <a th:if="${account != null && account.getId() == resource.getAuthor().getId()}"
                                th:href="${'/resources/' + resource.getId() + '/edit/update/' + update.getId()}">
