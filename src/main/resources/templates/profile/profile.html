@@ -11,7 +11,7 @@
         <div class="main-body">
             <div class="inside-main-body">
                 <div class="info-left flex">
-                    <img th:src="${'/profile-picture/' + account.getId()}" alt="Profile Picture" class="logo">
+                    <img th:src="${'/profile-picture/' + user.getId()}" alt="Profile Picture" class="logo">
 
                     <div class="info-left" style="margin-left: 1rem;">
                         <p th:text="'Name: ' + ${user.getUsername()}"></p>
