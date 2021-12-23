@@ -37,11 +37,6 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
             "resource.donation = ?5, resource.source = ?6, resource.support = ?7, resource.category = ?8 WHERE resource.id = ?1")
     void setInfo(int id, String name, String blurb, String description, String donation, String source, String support, String category);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Resource resource SET resource.logo = ?2 WHERE resource.id = ?1")
-    void setLogo(int id, byte[] logo);
-
     @Query("SELECT COUNT(resource) FROM Resource resource WHERE resource.created > CURDATE() - HOUR(1) AND resource.author.id = ?1")
     int getResourcesCreateLastHour(int authorId);
 

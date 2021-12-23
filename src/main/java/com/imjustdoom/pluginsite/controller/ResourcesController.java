@@ -264,7 +264,7 @@ public class ResourcesController {
                 return "redirect:/resources/%s/edit?error=filesize".formatted(id);
             }
 
-            resourceRepository.setLogo(id, ImageUtil.handleImage(file));
+            resourceRepository.updateLogoById(id, ImageUtil.handleImage(file));
         }
         // todo handle errors from ImageUtil
 

@@ -39,4 +39,12 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Transactional
     @Query("UPDATE Account account SET account.role = ?2 WHERE account.id = ?1")
     void setRoleById(int id, String role);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Account account SET account.profile_picture = ?2 WHERE account.id = ?1")
+    void updateProfilePictureById(int id, byte[] profile_picture);
+
+    @Query("SELECT profile_picture FROM Account WHERE id = ?1")
+    byte[] findAccountProfilePicture(int id);
 }

@@ -1,8 +1,8 @@
 package com.imjustdoom.pluginsite.service.impl;
 
 import com.imjustdoom.pluginsite.PluginSiteApplication;
-import com.imjustdoom.pluginsite.repositories.ResourceRepository;
-import com.imjustdoom.pluginsite.service.LogoService;
+import com.imjustdoom.pluginsite.repositories.AccountRepository;
+import com.imjustdoom.pluginsite.service.ProfilePictureService;
 import com.imjustdoom.pluginsite.util.ImageUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,16 +13,16 @@ import java.nio.file.Paths;
 
 @Service
 @AllArgsConstructor
-public class LogoServiceImpl implements LogoService {
+public class ProfilePictureServiceImpl implements ProfilePictureService {
 
-    private final ResourceRepository resourceRepository;
+    private final AccountRepository accountRepository;
 
     @Override
-    public void updateLogo(int id, MultipartFile logo) {
+    public void updateProfilePicture(int id, MultipartFile profilePicture) {
 
-        byte[] image = ImageUtil.handleImage(logo);
+        byte[] image = ImageUtil.handleImage(profilePicture);
 
-        resourceRepository.updateLogoById(id, image);
+        accountRepository.updateProfilePictureById(id, image);
 
         //if (image.getHeight() != image.getWidth())
             //return "redirect:/resources/%s/edit?error=logosize".formatted(id);
@@ -34,7 +34,7 @@ public class LogoServiceImpl implements LogoService {
     }
 
     @Override
-    public byte[] serveDefaultLogo() {
+    public byte[] serveDefaultProfilePicture() {
         try {
             return PluginSiteApplication.class.getResourceAsStream("/pictures/default.png").readAllBytes();
         } catch (IOException e) {
@@ -44,11 +44,11 @@ public class LogoServiceImpl implements LogoService {
     }
 
     @Override
-    public byte[] serverLogo(int id) {
-        byte[] image = resourceRepository.findResourceLogo(id);
+    public byte[] serverProfilePicture(int id) {
+        byte[] image = accountRepository.findAccountProfilePicture(id);
         if(image == null){
-            return serveDefaultLogo();
+            return serveDefaultProfilePicture();
         }
-        return resourceRepository.findResourceLogo(id);
+        return accountRepository.findAccountProfilePicture(id);
     }
 }

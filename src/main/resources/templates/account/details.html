@@ -19,8 +19,18 @@
                 <p th:if="${error == 'passwordtaken'}">That password is taken (haha just kidding, this error actually
                     isn't possible normally)</p>
                 <p th:if="${error == 'invalidcharacter'}">You have a character that is not allowed in your username</p>
-                <form method="POST" th:action="@{/account/details}">
+                <p th:if="${error == 'logotype'}">Please upload an image instead</p>
+                <p th:if="${error == 'logosize'}">Please upload an image with the same height and width</p>
+                <p th:if="${error == 'filesize'}" th:text="'Image size is too large' + ${maxUploadSize}"></p>
+                <form method="POST" th:action="@{/account/details}" enctype="multipart/form-data">
                     <p id="invalid-name"></p>
+                    <div style="display: flex;">
+                        <img th:src="${'/profile-picture/' + account.getId()}" alt="Profile Picture" class="logo">
+                        <div class="input">
+                            <p>Profile Picture</p>
+                            <input type="file" name="logo" accept="image/*" id="logo">
+                        </div>
+                    </div>
                     <div class="input">
                         <p>Username:</p>
                         <input type="text" th:value="${account.getUsername()}" id="username" name="username"

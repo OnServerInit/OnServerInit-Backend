@@ -4,6 +4,7 @@ import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.dtos.in.CreateAccountRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
+import com.imjustdoom.pluginsite.util.ImageUtil;
 import com.imjustdoom.pluginsite.util.ValidationHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Optional;
@@ -87,9 +89,22 @@ public class AccountController {
     }
 
     @PostMapping("/account/details")
-    public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
+    public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email,
+                                     @RequestParam String password, @RequestParam("logo") MultipartFile file) {
         if (!ValidationHelper.isUsernameValid(username)) return "redirect:/account/details?error=invalidcharacter";
         if (!ValidationHelper.isEmailValid(email)) return "redirect:/account/details?error=invalidemail";
+
+        if (!file.isEmpty()) {
+            if (!file.getContentType().contains("image")) {
+                return "redirect:/account/details?error=logotype";
+            }
+
+            if (file.getSize() > 1024000) {
+                return "redirect:/account/details?error=filesize";
+            }
+
+            accountRepository.updateProfilePictureById(account.getId(), ImageUtil.handleImage(file));
+        }
 
         if (accountRepository.existsByUsernameEqualsIgnoreCase(username))
             return "redirect:/account/details?error=usernametaken";

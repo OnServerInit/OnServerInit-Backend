@@ -55,6 +55,9 @@ public class Account implements UserDetails {
     @ManyToMany(mappedBy = "members")
     private List<MessageGroup> groups;
 
+    @Lob
+    private byte[] profile_picture;
+
     public Account() {
 
     }

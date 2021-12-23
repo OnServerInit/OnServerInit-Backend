@@ -10,6 +10,14 @@
     <div class="content">
         <div class="main-body">
             <div class="inside-main-body">
+                <div class="info-left flex">
+                    <img th:src="${'/profile-picture/' + account.getId()}" alt="Profile Picture" class="logo">
+
+                    <div class="info-left" style="margin-left: 1rem;">
+                        <p th:text="'Name: ' + ${user.getUsername()}"></p>
+                        <br>
+                    </div>
+                </div>
                 <form method="GET" th:action="'/profile/' + ${user.getId()}" th:object="${user}"
                       enctype="multipart/form-data" action="#">
                     <p>
@@ -17,7 +25,6 @@
                         <input type="submit" name="field" value="Resources" th:if="${user.getResources().size() != 0}">
                     </p>
                 </form>
-                <p th:text="'Name: ' + ${user.getUsername()}"></p>
             </div>
         </div>
         <div class="side-body-container">
