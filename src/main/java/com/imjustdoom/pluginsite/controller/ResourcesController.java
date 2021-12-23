@@ -139,6 +139,9 @@ public class ResourcesController {
 
         resource.setDescription(html);
 
+        List<Update> updates = updateRepository.findAllByResourceIdAndStatusEquals(id, "public", Sort.by("uploaded").descending());
+
+        model.addAttribute("download", updates.size() > 0 ? updates.get(0).getDownload() : null);
         model.addAttribute("account", account);
         model.addAttribute("resource", resource);
         model.addAttribute("editUrl", "/resources/%s/edit".formatted(id));

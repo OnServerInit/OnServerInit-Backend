@@ -53,7 +53,7 @@
                     <hr>
                     <br>
                     <div class="resource-controls">
-                        <a th:if="${resource.getDownload() != ''}" th:href="${resource.getDownload()}">
+                        <a th:if="${download != null}" th:href="${download}">
                             <button>Download</button>
                         </a>
                     </div>
