@@ -13,86 +13,109 @@
             <div class="side-body" style="height: 100%;">
                 <div class="inside-main-body">
                     <h1>Conversations</h1>
-                    <div class="conversations">
-                        <div class="conversation active">
-                            <h3>Conversation Name</h3>
-                            <p>4 Members</p>
-                        </div>
-
-                        <div class="conversation">
-                            <h3>Conversation Name</h3>
-                            <p>4 Members</p>
-                        </div>
+                    <div class="conversations" id="group_container">
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="main-body" style="margin-left: 2rem; margin-right: 0 !important; margin-top: 0 !important; height: auto !important;">
-            <div class="inside-main-body" style="height: 100%;">
-                <div class="flex column" style="height: 100%;">
-                    <h1>Conversation Name</h1>
-
-                    <div class="chat grow">
-                        <div class="message-container">
-                            <div class="starting-message message">
-                                <h3>This is the start of your epic conversation!</h3>
-                            </div>
+            <div class="adduser" id="action-btns">
+                <button id="leave">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                </button>
+                <button id="add-user">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </button>
+            </div>
+            <div class="inside-main-body" style="height: 100%; max-height: 100%;">
+                <div style="position: absolute; top: 1rem; left: 1rem; right: 1rem; bottom: 1rem;">
+                    <div class="flex column" style="height: 100%; position: relative;">
+                        <div class="flex">
+                            <h1 id="group-name"></h1>
+                            <input type="text" name="" id="group-name-input" class="group-name-input">
+                            <button id="edit-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </button>
+                            <button id="save-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+                            </button>
                         </div>
-
-                        <div class="message-container">
-                            <div class="message other">
-                                <p>How are you doing?</p>
-                            </div>
-                        </div>
-
-                        <div class="message-container">
-                            <div class="message self">
-                                <p>good</p>
-                            </div>
-                        </div>
-
-                        <div class="message-container">
-                            <div class="message self">
-                                <p>hbu?</p>
-                            </div>
-                        </div>
-
-                        <div class="message-container">
-                            <div class="message other">
-                                <p>I'm doing great, what did you want to talk to me about today?</p>
-                            </div>
-                        </div>
-
-                        <div class="message-container">
-                            <div class="message self">
-                                <p>i am having trouble with your plugin</p>
-                            </div>
-                        </div>
-
-                        <div class="message-container">
-                            <div class="message self flex">
-                                <img src="https://via.placeholder.com/128" alt="" class="logo">
-                                <div style="margin-left: 0.5rem;">
-                                    <p>Flappy AC | 1.69.420</p>
-                                    <p class="blurb">flappy anticheat plugin for spigot.</p>
-                                    <br>
+    
+                        <div class="chat" id="chat-container">
+                            <div class="message-container">
+                                <div class="starting-message message">
+                                    <h3 id="starter-message"></h3>
                                 </div>
                             </div>
+    
+                            <!-- <div class="message-container">
+                                <div class="message other">
+                                    <p>How are you doing?</p>
+                                </div>
+                            </div>
+    
+                            <div class="message-container">
+                                <div class="message self">
+                                    <p>good</p>
+                                </div>
+                            </div>
+    
+                            <div class="message-container">
+                                <div class="message self">
+                                    <p>hbu?</p>
+                                </div>
+                            </div>
+    
+                            <div class="message-container">
+                                <div class="message other">
+                                    <p>I'm doing great, what did you want to talk to me about today?</p>
+                                </div>
+                            </div>
+    
+                            <div class="message-container">
+                                <div class="message self">
+                                    <p>i am having trouble with your plugin</p>
+                                </div>
+                            </div>
+    
+                            <div class="message-container">
+                                <div class="message self flex">
+                                    <img src="https://via.placeholder.com/128" alt="" class="logo">
+                                    <div style="margin-left: 0.5rem;">
+                                        <p>Flappy AC | 1.69.420</p>
+                                        <p class="blurb">flappy anticheat plugin for spigot.</p>
+                                        <br>
+                                    </div>
+                                </div>
+                            </div> -->
                         </div>
-                    </div>
-
-                    <div class="chat-input">
-                        <input type="text">
-                        <button class="chat-send">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                        </button>
+    
+                        <div class="chat-input">
+                            <input type="text" id="chat-input">
+                            <button class="chat-send" id="chat-send">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="user-add-overlay" id="user-add">
+        <div class="user-add-body" id="user-add-body">
+            <div class="search-container">
+                <input type="text" id="user-search-input">
+                <!-- <input type="button" value="Add user" id="search-button" onclick=""> -->
+            </div>
+            <div class="search-results-container">
+                <div class="search-results" id="search-results">
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:src="@{/js/message.js}"></script>
     <div lang="en" th:include="footer :: footer"></div>
     <div lang="en" th:include="report-overlay :: report-overlay"></div>
 </div>

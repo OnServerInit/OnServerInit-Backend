@@ -915,6 +915,12 @@ border-top: #374151 solid 2px;
 
 .chat{
     position: relative;
+    min-height: 0 !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    flex-basis: 1px;
+    flex-grow: 1;
+    width: 100%;
 }
 
 .chat-input{
@@ -969,6 +975,7 @@ border-top: #374151 solid 2px;
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    transition: all 0.5s ease;
 }
 
 .message{
@@ -987,12 +994,88 @@ border-top: #374151 solid 2px;
 
 .message.self{
     background-color: #EF4444;
+    /* margin-left: 100%; */
+    /* transform: translateX(-100%); */
+}
+
+.message.system{
+    /* background-color: #374151; */
+}
+
+.message-author{
+    font-size: 12px;
+    margin-bottom: 3px;
+    color: #374151;
+}
+
+.message-author.self{
+    width: max-content;
     margin-left: 100%;
     transform: translateX(-100%);
 }
 
+.profile-picture{
+    height: 2.5rem;
+    border-radius: 10px;
+}
+
 .message.other{
     background-color: #374151;
+}
+
+.adduser{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 20;
+}
+
+.user-add-overlay{
+    background-color: rgb(55, 65, 81, 0.5);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    overflow: hidden;
+}
+
+.user-add-body{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24rem;
+    /* height: 10rem; */
+    height: auto;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    transition: all 0.5s ease;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.search-results-container{
+    width: 100%;
+    height: auto;
+    padding-top: 1rem;
+}
+
+.search-results{
+    background-color: #D1D5DB;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 15px;
+}
+
+.search-results > p{
+    padding: 0.5rem;
+    margin: 0;
+}
+
+.search-results > p:not(:last-child){
+    border-bottom: 1px solid;
 }
 
 @media (hover: none) {

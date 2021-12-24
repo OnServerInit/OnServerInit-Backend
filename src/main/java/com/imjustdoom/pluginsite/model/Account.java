@@ -57,6 +57,9 @@ public class Account implements UserDetails {
 
     @Lob
     private byte[] profile_picture;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
+    private List<Message> messages;
 
     public Account() {
 
