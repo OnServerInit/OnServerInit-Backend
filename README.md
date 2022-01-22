@@ -7,7 +7,7 @@ for people to upload their Minecraft plugins for all different software, Sponge,
 
 Current name is OnServerInit but not final
 
-You can view a demo of the site here (Usually on the latest update) http://168.138.14.84:25503/
+You can view a demo of the site here (Usually on the latest update) http://168.138.22.103:25000
 
 Trello board https://trello.com/b/nZ9TzBKC/onserverinit
 
