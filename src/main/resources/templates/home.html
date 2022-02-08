@@ -1,41 +1,70 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Home</title>
-    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
 </head>
+
 <body>
-<div class="content-container">
-    <div lang="en" th:include="header :: header"></div>
-    <div class="content">
-        <div class="main-body">
-            <div class="inside-main-body">
-                <h1>Home</h1>
-                <!--                <p th:if="${auth != null}" th:text="${auth.getName()}"></p>-->
-                <div class="blog-container">
-                    <div class="blog" th:each="blog: ${blogs}">
-                        <h2 th:text="${blog.name}"></h2>
-                        <div class="blog-timeuser">
-                            <p th:text="${blog.dateString}"></p>
-                            <p style="margin-left: 5px"> • </p>
-                            <a style="margin-left: 5px" th:href="'/profile/' + ${blog.authorId}"
-                               th:text="${blog.authorName}"></a>
-                        </div>
-                        <div th:utext="${blog.post}"></div>
-                    </div>
+    <div class="content-container">
+        <div lang="en" th:include="header :: header"></div>
+
+        <div style="position: relative; flex-grow: 1; flex-basis: 10px;">
+            <svg id="visual" preserveAspectRatio="none" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                style="width: 100%; height: 100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+                <defs>
+                    <linearGradient id="grad1_0" x1="33.3%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="20%" stop-color="#ffffff" stop-opacity="1"></stop>
+                        <stop offset="80%" stop-color="#ffffff" stop-opacity="1"></stop>
+                    </linearGradient>
+                </defs>
+                <defs>
+                    <linearGradient id="grad2_0" x1="0%" y1="0%" x2="66.7%" y2="100%">
+                        <stop offset="20%" stop-color="#ffffff" stop-opacity="1"></stop>
+                        <stop offset="80%" stop-color="#ffffff" stop-opacity="1"></stop>
+                    </linearGradient>
+                </defs>
+                <g transform="translate(900, 0)">
+                    <path
+                        d="M0 324.5C-35.4 297 -70.9 269.6 -103.7 250.4C-136.5 231.2 -166.7 220.3 -202.2 202.2C-237.7 184.2 -278.5 159.1 -299.8 124.2C-321.1 89.3 -322.8 44.6 -324.5 0L0 0Z"
+                        fill="#2D7C44"></path>
+                </g>
+                <g transform="translate(0, 600)">
+                    <path
+                        d="M0 -324.5C45 -320.2 90 -315.9 121.7 -293.8C153.4 -271.7 171.9 -231.8 202.9 -202.9C233.9 -174.1 277.5 -156.2 299.8 -124.2C322.1 -92.2 323.3 -46.1 324.5 0L0 0Z"
+                        fill="#2D7C44"></path>
+                </g>
+            </svg>
+
+            <div class="info-box top">
+                <h1 class="title">A Modern Marketplace</h1>
+                <p class="text">Something about us being aaa idk what to write yes default sample text go brr.</p>
+                <div class="buttons">
+                    <a href="" class="button filled">View Plugins</a>
+                    <a href="" class="button outline">View Plugins</a>
+                </div>
+            </div>
+
+            <div class="info-box bottom filled">
+                <h1 class="title">A Modern Marketplace</h1>
+                <p class="text">Something about us being aaa idk what to write yes default sample text go brr.</p>
+                <div class="buttons">
+                    <a href="" class="button filled" style="flex-grow: 1;">View Plugins</a>
                 </div>
             </div>
         </div>
-        <div class="side-body-container">
-            <div class="side-body">
-                <div class="inside-main-body">
-                    <div lang="en" th:include="sponsor :: sponsor"></div>
-                </div>
-            </div>
-        </div>
+
+        <!-- <div lang="en" th:include="footer :: footer"></div> -->
+        <!-- <div lang="en" th:include="report-overlay :: report-overlay"></div> -->
+
+        <script th:src="@{/js/cssHead.js}"></script>
+
+        <script>
+            addToHead(['/css/home.css']);
+        </script>
     </div>
-    <div lang="en" th:include="footer :: footer"></div>
-    <div lang="en" th:include="report-overlay :: report-overlay"></div>
-</div>
 </body>
+
 </html>

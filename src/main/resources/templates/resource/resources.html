@@ -1,36 +1,20 @@
 <!DOCTYPE html>
 <html lang="">
+
 <head>
     <title>Resources</title>
-    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <!-- <link th:href="@{/css/custom.css}" rel="stylesheet" /> -->
     <script th:src="@{/js/sortby.js}"></script>
     <script th:src="@{/js/pageChanger.js}"></script>
     <script th:src="@{/js/changeCategory.js}"></script>
     <script th:src="@{/js/search.js}"></script>
 </head>
+
 <body>
-<div class="content-container">
-    <div lang="en" th:include="header :: header"></div>
-    <div class="content">
-        <div class="main-body">
-            <div class="inside-main-body">
-                <div class="resource-top-controls">
-                    <div style="flex-grow: 1;">
-                        Sort By:
-                        <select id="sortby" onchange="changeSort()">
-                            <option th:if="${search != null && search != ''}" value="relevant">Relevant</option>
-                            <option value="updated">Updated</option>
-                            <option value="created">Created</option>
-                            <option value="download">Downloads</option>
-                            <option value="name">Alphabetical</option>
-                        </select>
-                    </div>
-                    <div class="search-container">
-                        <input type="text" id="search-input"><input type="button" value="Search" id="search-button"
-                                                                    onclick="search()">
-                    </div>
-                </div>
-                <p th:if="${results != null}" th:text="${results + ' Results'}"></p>
+    <div class="content-container">
+        <div lang="en" th:include="header :: header"></div>
+        <div class="content">
+            <!--<p th:if="${results != null}" th:text="${results + ' Results'}"></p>
                 <div class="horizontal-center">
                     <a th:if="${page > 1}" th:href="'/resources?page=' + ${page - 1}" class="page-button">
                         <button><</button>
@@ -46,8 +30,7 @@
                         <button>></button>
                     </a>
                 </div>
-                <ul class="plugin-list">
-                    <!-- <hr> -->
+                    <!-- <hr> --
                     <p th:if="${files.size() == 0}">There are currently no resources, sorry :(</p>
                     <li th:each="file : ${files}" class="no-ml">
                         <div class="plugin-box">
@@ -64,18 +47,32 @@
                             </div>
                         </div>
                         <!-- <hr> -->
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="side-body-container">
-            <div class="side-body">
-                <div class="inside-main-body">
-                    <div lang="en" th:include="sponsor :: sponsor"></div>
+
+            <div class="plugins">
+                <p th:if="${files.size() == 0}">There are currently no resources, sorry :(</p>
+
+                <div th:each="file : ${files}">
+                    <div class="plugin plugin-row-dark">
+                        <img th:src="${'/logo/' + file.getId()}" alt="Logo" class="logo">
+                        <div class="plugin-info" style="flex-grow: 1;">
+                            <div class="tags">
+                                <span class="tag t-r">Server software</span>
+                            </div>
+                            <a class="stitle a-override" th:href="${'resources/' + file.getId()}"
+                                th:text="${file.getName()}"></a>
+                            <p th:text="${file.getBlurb()}"></p>
+                        </div>
+                        <div class="plugin-buttons">
+                            <a href="/resources/1?field=Updates" class="button filled">Versions</a>
+                            <a th:href="${'/resources/' + file.getId()}" class="button outline">View Plugin</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="side-body slight-margin">
-                <div class="inside-main-body">
+
+            <div class="side">
+                <div class="side-body">
+                    <h1 class="title">Categories</h1>
                     <p><button onclick="changeCategory('all')">All Categories</button></p>
                     <p><button onclick="changeCategory('chat')">Chat</button></p>
                     <p><button onclick="changeCategory('misc')">Misc</button></p>
@@ -90,8 +87,14 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div lang="en" th:include="footer :: footer"></div>
-</div>
+        <!-- <div lang="en" th:include="footer :: footer"></div> -->
+
+
+        <script th:src="@{/js/cssHead.js}"></script>
+
+        <script>
+            addToHead(['/css/resources.css']);
+        </script>
 </body>
+
 </html>

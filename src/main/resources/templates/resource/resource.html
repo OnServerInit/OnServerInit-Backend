@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="">
+
 <head>
     <title th:text="${resource.getName()}"></title>
-    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <!-- <link th:href="@{/css/custom.css}" rel="stylesheet"/> -->
 </head>
+
 <body>
-<div class="content-container">
-    <div lang="en" th:include="header :: header"></div>
-    <div class="content">
-        <div class="main-body-container">
+    <div class="content-container">
+        <div lang="en" th:include="header :: header"></div>
+        <div class="content">
+            <!-- <div class="main-body-container">
             <div class="main-body">
                 <div class="inside-main-body">
                     <p th:if="${resource.getStatus() == 'removed'}">This resource is currently deleted</p>
@@ -159,7 +161,7 @@
                     <a th:if="${account != null && account.getRole() == 'ROLE_ADMIN'}" th:href="${editUrl}">
                         <button>Put Under Review</button>
                     </a>
-                </div>-->
+                </div>--
             </div>
         </div>
         <div class="side-body-container">
@@ -178,13 +180,110 @@
                 </div>
             </div>
 
-        </div>
-    </div>
+        </div> -->
 
-    <script th:src="@{/js/resourceTooltip.js}"></script>
-    <script th:src="@{/js/starController.js}"></script>
-    <div lang="en" th:include="footer :: footer"></div>
-    <div lang="en" th:include="report-overlay :: report-overlay"></div>
-</div>
+            <!-- <div class="main-container">
+
+        </div> -->
+
+            <div class="main">
+                <div class="main-body">
+                    <a href="" class="button filled" style="position: absolute; right: 15px; top: 15px;">Download</a>
+
+                    <div style="display: flex; gap: 20px;">
+                        <img th:src="${'/logo/' + resource.getId()}" alt="Logo" class="logo">
+                        <div class="plugin-info" style="flex-grow: 1; justify-content: space-between;">
+                            <a class="mtitle a-override" th:href="${'resources/' + resource.getId()}"
+                                th:text="${resource.getName()}"></a>
+                            <p th:text="${resource.getBlurb()}"></p>
+
+                            <div class="tags">
+                                <span class="tag">Server Software</span>
+                                <span class="tag">Fun</span>
+                                <span class="tag">General</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            <form method="GET" th:action="'/resources/' + ${resource.getId()}" th:object="${resource}"
+                                enctype="multipart/form-data" action="#">
+                                <p class="option-picker">
+                                    <input type="submit" name="field" value="Overview" class="active-filled">
+                                    <input type="submit" name="field" value="Updates">
+                                </p>
+                            </form>
+
+                            <div
+                                style="height: 3px; width: 100%; border-bottom-left-radius: 3px; border-bottom-right-radius: 2px; border-top-right-radius: 2px; background-color: var(--accent);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side">
+                <div class="side-body">
+                    <img th:src="${'/profile-picture/' + resource.getAuthor().getId()}" alt="Profile Picture"
+                        class="user-picture c-x block">
+                    <h2 class="text-center" style="margin-bottom: 20px;"
+                        th:text="${resource.getAuthor().getUsername()}"></h2>
+                    <div class="buttons" style="width: 100%;">
+                        <a href="" class="button filled equal-grow">View Profile</a>
+                        <a href="" class="button outline equal-grow">Message</a>
+                    </div>
+                </div>
+
+                <div class="side-body stext">
+                    <h2 class="stitle">Statistics</h2>
+                    <div class="row">
+                        <p>Total Reviews</p>
+                        <p class="s-highlighted">9</p>
+                    </div>
+
+                    <div class="row">
+                        <p>Review Score</p>
+                        <p class="s-highlighted">3.2</p>
+                    </div>
+
+                    <div class="row">
+                        <p>Total Downloads</p>
+                        <p class="s-highlighted">526</p>
+                    </div>
+
+                    <div class="row">
+                        <p>Total Views</p>
+                        <p class="s-highlighted">10,532</p>
+                    </div>
+                </div>
+
+                <div class="side-body stext">
+                    <h2 class="stitle">Links</h2>
+
+                    <div class="row">
+                        <p>Source Code</p>
+                        <a href="" class="link">Github</a>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <p>Suppot</p>
+                        <a href="" class="link">Discord</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:src="@{/js/resourceTooltip.js}"></script>
+        <script th:src="@{/js/starController.js}"></script>
+        <script th:src="@{/js/cssHead.js}"></script>
+
+        <script>
+            addToHead(['/css/resources.css']);
+        </script>
+        <!-- <div lang="en" th:include="footer :: footer"></div> -->
+        <!-- <div lang="en" th:include="report-overlay :: report-overlay"></div> -->
+    </div>
 </body>
+
 </html>
