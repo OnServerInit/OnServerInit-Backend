@@ -1,6 +1,7 @@
 package com.imjustdoom.pluginsite.config;
 
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -46,6 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin", "/admin/roles").hasRole("ADMIN")
                 .antMatchers("/resources/create", "/account/details").authenticated()
                 .antMatchers("/signup", "/login").not().authenticated()
+
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 
                 .anyRequest().permitAll()
 
