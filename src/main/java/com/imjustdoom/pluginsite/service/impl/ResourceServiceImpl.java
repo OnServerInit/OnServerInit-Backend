@@ -51,6 +51,7 @@ public class ResourceServiceImpl implements ResourceService {
         for (BoundExtractedResult<Resource> extractedResult : searchResults) {
             if (extractedResult.getScore() < 40) continue;
 
+            //TODO: use getReferent
             Optional<Resource> optionalResource = resourceRepository.findByNameEqualsIgnoreCase(extractedResult.getString());
             Resource resource = optionalResource.get();
 

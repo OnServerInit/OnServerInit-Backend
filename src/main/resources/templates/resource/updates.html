@@ -36,9 +36,22 @@
                 <div>
                     Sort By:
                     <select id="sortby" onchange="changeSort()">
-                        <option value="uploaded">Uploaded</option>
+                        <option value="uploaded" selected>Uploaded</option>
                         <option value="downloads">Downloads</option>
-                        <option value="alphabetical">Alphabetical</option>
+                        <option value="name">Alphabetical</option>
+                    </select>
+                    Software:
+                    <select id="software-sort" onchange="changeSoftware()">
+                        <option value="all" selected>All</option>
+                        <option value="bukkit">Bukkit</option>
+                        <option value="spigot">Spigot</option>
+                        <option value="paper">Paper</option>
+                        <option value="purpur">Purpur</option>
+                        <option value="hmod">hMod</option>
+                        <option value="minestom">Minestom</option>
+                        <option value="krypton">Krypton</option>
+                        <option value="cuberite">Cuberite</option>
+                        <option value="sponge">Sponge</option>
                     </select>
                 </div>
                 <br>
@@ -48,6 +61,7 @@
                         <td>Version</td>
                         <td>Uploaded</td>
                         <td>Versions</td>
+                        <td>Software</td>
                         <td>Downloads</td>
                         <td>Actions</td>
                     </tr>
@@ -59,6 +73,11 @@
                             [[${versions.get(iter.index).get(0)}]]
                             <span th:if="${versionLists.get(iter.index)} != ''" class="tooltiptext"
                                   th:text="${versionLists.get(iter.index)}"></span>
+                        </td>
+                        <td th:inline="text" class="tooltip">
+                            Software
+                            <span th:if="${softwareLists.get(iter.index)} != ''" class="tooltiptext"
+                                  th:text="${softwareLists.get(iter.index)}"></span>
                         </td>
                         <td th:text="${update.getDownloads()}"></td>
                         <td>

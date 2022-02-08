@@ -1,9 +1,5 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
 import com.imjustdoom.pluginsite.dtos.in.CreateUpdateRequest;
@@ -43,10 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @AllArgsConstructor
@@ -110,7 +103,7 @@ public class ResourcesController {
     }
 
     @GetMapping("/{id_s}")
-    public String resource(Account account, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws MalformedURLException {
+    public String resource(Account account, @RequestParam(name = "software", required = false, defaultValue = "all") String softwareParam, @RequestParam(name = "sort", required = false, defaultValue = "uploaded") String sort, @PathVariable("id_s") String id_s, @RequestParam(name = "field", required = false, defaultValue = "") String field, Model model) throws MalformedURLException {
         int id;
         try {
             id = Integer.parseInt(id_s);
@@ -153,34 +146,51 @@ public class ResourcesController {
         switch (field.toLowerCase()) {
             case "updates":
                 Sort sort1 = Sort.by(sort).descending();
+                if (sort.equalsIgnoreCase("name")) sort1 = sort1.ascending();
 
                 // TODO: improve getting the versions and software. 100% not the best way to do this
-                List<Update> data = updateRepository.findAllByResourceIdAndStatusEquals(id, "public", sort1);
+                List<Update> data;
+                if (!softwareParam.equals("all")) {
+                    data = updateRepository.findAllByResourceIdAndStatusEqualsAndSoftware(id, "public", softwareParam, sort1);
+                    //data = new ArrayList<>();
+                } else {
+                    data = updateRepository.findAllByResourceIdAndStatusEquals(id, "public", sort1);
+                }
                 List<List<String>> versions = new ArrayList<>();
                 List<String> versionLists = new ArrayList<>();
+                List<String> softwareLists = new ArrayList<>();
                 for (Update update : data) {
-                    JsonObject jsonObject = JsonParser.parseString(update.getVersions()).getAsJsonObject();
                     List<String> versionList = new ArrayList<>();
 
-                    versionList.add(jsonObject.get("versions").getAsJsonArray().get(0).getAsString());
+                    versionList.add(update.getVersions().get(0));
                     boolean first = true;
                     StringBuilder versionString = new StringBuilder();
                     String splitter = "";
-                    for (JsonElement v : jsonObject.get("versions").getAsJsonArray()) {
+                    for (String v : update.getVersions()) {
                         if (first) {
                             first = false;
                             continue;
                         }
                         versionString.append(splitter);
                         splitter = ", ";
-                        versionString.append(v.getAsString());
+                        versionString.append(v);
                     }
                     versionLists.add(versionString.toString());
                     versions.add(versionList);
+
+                    StringBuilder softwareString = new StringBuilder();
+                    splitter = "";
+                    for (String v : update.getSoftware()) {
+                        softwareString.append(splitter);
+                        splitter = ", ";
+                        softwareString.append(v);
+                    }
+                    softwareLists.add(softwareString.toString());
                 }
 
                 model.addAttribute("versions", versions);
                 model.addAttribute("versionLists", versionLists);
+                model.addAttribute("softwareLists", softwareLists);
                 model.addAttribute("updates", data);
                 return "resource/updates";
             default:
@@ -256,10 +266,6 @@ public class ResourcesController {
             return "redirect:/resources/%s/edit?error=invalidinput".formatted(id);
 
         if (!file.isEmpty()) {
-            if (!file.getContentType().contains("image")) {
-                return "redirect:/resources/%s/edit?error=logotype".formatted(id);
-            }
-
             if (file.getSize() > 1024000) {
                 return "redirect:/resources/%s/edit?error=filesize".formatted(id);
             }
@@ -346,18 +352,8 @@ public class ResourcesController {
                 || updateRequest.getDescription().equalsIgnoreCase(""))
             return "redirect:/resources/%s/upload?error=invalidinput";
 
-        JsonObject versions = new JsonObject();
-        JsonArray versionsArray = new JsonArray();
-        for (String s : versionBoxes) versionsArray.add(s);
-        versions.add("versions", versionsArray);
-
-        JsonObject software = new JsonObject();
-        JsonArray softwareArray = new JsonArray();
-        for (String s : softwareBoxes) softwareArray.add(s);
-        software.add("software", softwareArray);
-
         Update update = new Update(updateRequest.getDescription(), file.getOriginalFilename(),
-                updateRequest.getVersion(), "", updateRequest.getName(), versions, software,
+                updateRequest.getVersion(), "", updateRequest.getName(), versionBoxes, softwareBoxes,
                 resourceRepository.findById(id).get(), updateRequest.getExternalLink());
         updateRepository.save(update);
 

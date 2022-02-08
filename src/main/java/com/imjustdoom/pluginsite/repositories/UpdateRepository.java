@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -16,6 +17,9 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
     List<Update> findAllByResourceId(int resourceId, Sort sort);
 
     List<Update> findAllByResourceIdAndStatusEquals(int resourceId, String status, Sort sort);
+
+    @Query("SELECT updates FROM Update updates WHERE ?3 in(updates.software)")
+    List<Update> findAllByResourceIdAndStatusEqualsAndSoftware(int resourceId, String status, String software, Sort sort);
 
     @Modifying
     @Transactional
