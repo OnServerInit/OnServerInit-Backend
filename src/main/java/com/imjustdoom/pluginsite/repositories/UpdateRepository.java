@@ -18,6 +18,7 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
 
     List<Update> findAllByResourceIdAndStatusEquals(int resourceId, String status, Sort sort);
 
+    // TODO: get this to actually work at some point
     @Query("SELECT updates FROM Update updates WHERE ?3 in(updates.software)")
     List<Update> findAllByResourceIdAndStatusEqualsAndSoftware(int resourceId, String status, String software, Sort sort);
 

@@ -59,7 +59,10 @@ public class MessagesController {
     @GetMapping("/message/new/{id}")
     public String newMessage(Model model, Account account, @PathVariable("id") int id){
         List<Account> users = new ArrayList<>();
-        users.add(accountRepository.findById(id).get());
+        Optional<Account> adding = accountRepository.findById(id);
+        // TODO: add an error message
+        if(adding.isEmpty() || adding.get().getId() == account.getId()) return "redirect:/message";
+        users.add(adding.get());
         users.add(account);
         String name = "Generic Group #" + (int) (Math.random() * 100);
         MessageGroup messageGroup = new MessageGroup(name, LocalDateTime.now(), users);
