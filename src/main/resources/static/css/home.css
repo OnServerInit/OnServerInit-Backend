@@ -1,0 +1,21 @@
+.info-box{
+    width: 35%;
+    padding: 20px;
+}
+
+.info-box.filled{
+    background-color: var(--gray);
+    border-radius: 8px;
+}
+
+.info-box.top{
+    position: absolute;
+    top: 30px;
+    left: 20px;
+}
+
+.info-box.bottom{
+    position: absolute;
+    bottom: 40px;
+    right: 35px;
+}
