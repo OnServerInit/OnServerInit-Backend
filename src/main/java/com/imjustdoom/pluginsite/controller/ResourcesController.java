@@ -282,21 +282,7 @@ public class ResourcesController {
     //TODO: Do sanity checks
     @PostMapping("/create")
     public String createSubmit(@ModelAttribute CreateResourceRequest resourceRequest, Account account, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("resourceRequest", resourceRequest);
-        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > this.siteConfig.getMaxCreationsPerHour())
-            return "redirect:/resources/create?error=createlimit";
-
-        if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName()))
-            return "redirect:/resources/create?error=nametaken";
-
-        if (resourceRequest.getName().equalsIgnoreCase("")
-                || resourceRequest.getBlurb().equalsIgnoreCase("")
-                || resourceRequest.getDescription().equalsIgnoreCase(""))
-            return "redirect:/resources/create?error=invalidinput";
-
-        Resource resource = resourceService.createResource(resourceRequest, account);
-
-        return "redirect:/resources/%s".formatted(resource.getId());
+        return resourceService.postCreateResource(resourceRequest, account, siteConfig, redirectAttributes);
     }
 
     @GetMapping("/create")
@@ -332,7 +318,11 @@ public class ResourcesController {
     }
 
     @PostMapping("/{id}/upload")
-    public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes, @RequestParam(name = "versionCheckbox") List<String> versionBoxes, @PathVariable("id") int id, @RequestParam("file") MultipartFile file, @ModelAttribute CreateUpdateRequest updateRequest, RedirectAttributes redirectAttributes) throws IOException {
+    public String uploadFilePost(Account account, @RequestParam(name = "softwareCheckbox") List<String> softwareBoxes,
+                                 @RequestParam(name = "versionCheckbox") List<String> versionBoxes,
+                                 @PathVariable("id") int id, @RequestParam("file") MultipartFile file,
+                                 @ModelAttribute CreateUpdateRequest updateRequest, RedirectAttributes redirectAttributes)
+            throws IOException {
 
         redirectAttributes.addFlashAttribute("updateRequest", updateRequest);
         if (updateRepository.getUpdatesCreateLastHour(account.getId()) > this.siteConfig.getMaxUpdatesPerHour()) {
@@ -394,7 +384,8 @@ public class ResourcesController {
     }
 
     @PostMapping("/{id}/update/{update}/status")
-    public ResponseEntity<HashMap<String, String>> changeStatus(Account account, @PathVariable("id") int id, @PathVariable("update") int updateId,
+    public ResponseEntity<HashMap<String, String>> changeStatus(Account account, @PathVariable("id") int id,
+                                                                @PathVariable("update") int updateId,
                                                                 @RequestBody String request) {
 
         HashMap<String, String> response = new HashMap<>();

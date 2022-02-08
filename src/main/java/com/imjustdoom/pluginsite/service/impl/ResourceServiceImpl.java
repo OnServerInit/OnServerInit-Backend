@@ -1,5 +1,6 @@
 package com.imjustdoom.pluginsite.service.impl;
 
+import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +29,28 @@ public class ResourceServiceImpl implements ResourceService {
     private final ResourceRepository resourceRepository;
 
     @Override
-    public Resource createResource(CreateResourceRequest resourceRequest, Account account) {
+    public String postCreateResource(CreateResourceRequest resourceRequest, Account account, SiteConfig siteConfig,
+                                     RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("resourceRequest", resourceRequest);
+        if (resourceRepository.getResourcesCreateLastHour(account.getId()) > siteConfig.getMaxCreationsPerHour())
+            return "redirect:/resources/create?error=createlimit";
+
+        if (resourceRepository.existsByNameEqualsIgnoreCase(resourceRequest.getName()))
+            return "redirect:/resources/create?error=nametaken";
+
+        if (resourceRequest.getName().equalsIgnoreCase("")
+                || resourceRequest.getBlurb().equalsIgnoreCase("")
+                || resourceRequest.getDescription().equalsIgnoreCase(""))
+            return "redirect:/resources/create?error=invalidinput";
+
         Resource resource = new Resource(resourceRequest.getName(), resourceRequest.getDescription(),
                 resourceRequest.getBlurb(), resourceRequest.getDonation(), resourceRequest.getSource(),
                 "", account, resourceRequest.getSupport(), resourceRequest.getCategory());
 
         resourceRepository.save(resource);
 
-        return resource;
+        return "redirect:/resources/%s".formatted(resource.getId());
     }
 
     @Override
