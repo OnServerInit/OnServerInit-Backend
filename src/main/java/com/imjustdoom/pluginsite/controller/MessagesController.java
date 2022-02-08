@@ -73,7 +73,7 @@ public class MessagesController {
 
     @PostMapping(value = "/message/api/get_groups", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<HashMap<String, String>> getConversations(Account account){
-        List<MessageGroup> messageGroups = new ArrayList<>();
+        List<MessageGroup> messageGroups;
         if(account == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

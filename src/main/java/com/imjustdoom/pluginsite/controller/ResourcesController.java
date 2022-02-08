@@ -12,10 +12,7 @@ import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
 import com.imjustdoom.pluginsite.service.ResourceService;
-import com.imjustdoom.pluginsite.util.FileUtil;
-import com.imjustdoom.pluginsite.util.ImageUtil;
-import com.imjustdoom.pluginsite.util.RequestUtil;
-import com.imjustdoom.pluginsite.util.UrlUtil;
+import com.imjustdoom.pluginsite.util.*;
 import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.commonmark.node.Node;
@@ -142,6 +139,8 @@ public class ResourcesController {
 
         Integer totalDownloads = updateRepository.getTotalDownloads(resource.getId());
         model.addAttribute("totalDownloads", totalDownloads == null ? 0 : totalDownloads);
+        model.addAttribute("created", resource.getCreated().format(DateUtil.getDateFormatter()));
+        model.addAttribute("updated", resource.getUpdated().format(DateUtil.getDateFormatter()));
 
         switch (field.toLowerCase()) {
             case "updates":

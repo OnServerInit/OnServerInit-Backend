@@ -170,8 +170,8 @@
             </div>
             <div class="side-body slight-margin">
                 <div class="inside-main-body side-body-info-text">
-                    <p class="" th:text="'Created: ' + ${resource.getCreated()}"></p>
-                    <p th:text="'Updated: ' + ${resource.getUpdated()}"></p>
+                    <p class="" th:text="'Created: ' + ${created}"></p>
+                    <p th:text="'Updated: ' + ${updated}"></p>
                     Author: <a th:href="'/profile/' + ${resource.getAuthor().getId()}"
                                th:text="${resource.getAuthor().getUsername()}"></a>
                     <p th:text="'Downloads: ' + ${totalDownloads}"></p>

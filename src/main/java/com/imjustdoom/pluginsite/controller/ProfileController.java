@@ -6,6 +6,7 @@ import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
+import com.imjustdoom.pluginsite.util.DateUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,8 +44,10 @@ public class ProfileController {
         for (Resource resource : profile.getResources()) {
             totalDownloads += updateRepository.getTotalDownloads(resource.getId()) == null ? 0 : updateRepository.getTotalDownloads(resource.getId());
         }
+
         model.addAttribute("totalDownloads", totalDownloads);
         model.addAttribute("user", profile);
+        model.addAttribute("joined", profile.getJoined().format(DateUtil.getDateFormatter()));
 
         switch (field.toLowerCase()) {
             case "resources":
