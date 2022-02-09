@@ -11,65 +11,62 @@
 <div class="content-container">
     <div lang="en" th:include="header :: header"></div>
     <div class="content">
-        <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#" class="main-body"
-              id="form">
-            <div class="inside-main-body">
-                <p th:if="${error == 'nametaken'}">That resource name is taken, please use another name. If you are the
-                    owner of the original plugin please contact support</p>
-                <p th:if="${error == 'invalidinput'}">One of your inputs are empty, please submit something for it.</p>
-                <p th:if="${error == 'createlimit'}"
-                   th:text="${'Please wait. You have created ' + limit + ' resources in the last hour'}"></p>
-                <div class="input">
-                    <p>Name</p>
-                    <input type="text" th:field="*{name}" maxlength="128" required/>
-                </div>
-                <div class="input">
-                    <p>Blurb</p>
-                    <input type="text" th:field="*{blurb}" maxlength="256" required/>
-                </div>
-                <div class="input">
-                    <p>Donation Link (Optional)</p>
-                    <input type="text" th:field="*{donation}" maxlength="2048"/>
-                </div>
-                <div class="input">
-                    <p>Source Code (Optional)</p>
-                    <input type="text" th:field="*{source}" maxlength="2048"/>
-                </div>
-                <div class="input">
-                    <p>Support (Optional)</p>
-                    <input type="text" th:field="*{support}" maxlength="2048"/>
-                </div>
+        <div class="main-body-container">
+            <div class="main-body" id="test">
+                <form method="POST" th:action="@{/resources/create}" th:object="${resource}" action="#"
+                      class="inside-main-body" id="form">
+                    <div class="input">
+                        <p>Name</p>
+                        <input type="text" th:field="*{name}" maxlength="128" required/>
+                    </div>
+                    <div class="input">
+                        <p>Blurb</p>
+                        <input type="text" th:field="*{blurb}" maxlength="256" required/>
+                    </div>
+                    <div class="input">
+                        <p>Donation Link (Optional)</p>
+                        <input type="text" th:field="*{donation}" maxlength="2048"/>
+                    </div>
+                    <div class="input">
+                        <p>Source Code (Optional)</p>
+                        <input type="text" th:field="*{source}" maxlength="2048"/>
+                    </div>
+                    <div class="input">
+                        <p>Support (Optional)</p>
+                        <input type="text" th:field="*{support}" maxlength="2048"/>
+                    </div>
 
-                <div class="input" style="width: 100% !important;">
-                    <p>Description</p>
-                    <label>
-                        <textarea class="text-box" id="description"></textarea>
-                    </label>
-                    <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
-                </div>
-                <div>
-                    Category:
-                    <select required th:field="*{category}">
-                        <option value="chat">Chat</option>
-                        <option value="misc">Misc</option>
-                        <option value="fun">Fun</option>
-                        <option value="world">World Management</option>
-                        <option value="economy">Economy</option>
-                        <option value="library">Library/API</option>
-                        <option value="tools">Tools/Utilities</option>
-                        <option value="mechanics">Mechanics</option>
-                        <option value="skript">Skript</option>
-                        <option value="software">Server Software</option>
-                    </select>
-                </div>
-                <p>
-                <td><input type="submit" value="Submit" id="submit"/>
-                    <a th:href="${url}">
-                        <button class="button">Cancel</button>
-                    </a></td>
-                </p>
+                    <div class="input" style="width: 100% !important;">
+                        <p>Description</p>
+                        <label>
+                            <textarea class="text-box" id="description"></textarea>
+                        </label>
+                        <textarea hidden id="hidden-description" th:field="*{description}"></textarea>
+                    </div>
+                    <div>
+                        Category:
+                        <select required th:field="*{category}">
+                            <option value="chat">Chat</option>
+                            <option value="misc">Misc</option>
+                            <option value="fun">Fun</option>
+                            <option value="world">World Management</option>
+                            <option value="economy">Economy</option>
+                            <option value="library">Library/API</option>
+                            <option value="tools">Tools/Utilities</option>
+                            <option value="mechanics">Mechanics</option>
+                            <option value="skript">Skript</option>
+                            <option value="software">Server Software</option>
+                        </select>
+                    </div>
+                    <p>
+                    <td><input type="submit" value="Submit" id="submit"/>
+                        <a th:href="${url}">
+                            <button class="button">Cancel</button>
+                        </a></td>
+                    </p>
+                </form>
             </div>
-        </form>
+        </div>
         <div class="side-body-container">
             <div class="side-body">
                 <div class="inside-main-body">
@@ -78,21 +75,60 @@
             </div>
         </div>
     </div>
-    <div lang="en" th:include="footer :: footer"></div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"
-        integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-    window.addEventListener('load', function () {
-        const description = document.getElementById('hidden-description').value;
-        const simplemde = new SimpleMDE({element: document.getElementById('description')});
-        simplemde.value(description);
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"
+            integrity="sha512-ksSfTk6JIdsze75yZ8c+yDVLu09SNefa9IicxEE+HZvWo9kLPY1vrRlmucEMHQReWmEdKqusQWaDMpkTb3M2ug=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        window.addEventListener('load', function () {
+            const description = document.getElementById('hidden-description').value;
+            const simplemde = new SimpleMDE({element: document.getElementById('description')});
+            simplemde.value(description);
 
-        document.getElementById("submit").onclick = function () {
-            document.getElementById("hidden-description").value = simplemde.value();
-        };
-    });
-</script>
+            document.getElementById("submit").onclick = function () {
+                document.getElementById("hidden-description").value = simplemde.value();
+            };
+
+            var error = getQueryVariable("error");
+            var content = document.getElementById("test");
+
+            if(error === undefined) return;
+
+            var body = document.createElement("div");
+            body.classList.add("main-body");
+            body.classList.add("error-box");
+            content.before(body);
+
+            var insidebody = document.createElement("div");
+            insidebody.classList.add("inside-main-body");
+            body.appendChild(insidebody);
+
+            var errorMessage;
+            if(error.toLowerCase() === "nametaken") {
+                errorMessage = "That resource name is taken, please use another name. If you are " +
+                    "the owner of the original plugin please contact support";
+            } else if(error.toLowerCase() === "invalidinput") {
+                errorMessage = "One of your inputs are empty, please submit something for it.";
+            } else if(error.toLowerCase() === "createlimit") {
+                errorMessage = "Please wait. You have created " + [(${limit})] + " resources in the last hour";
+            }
+            var text = document.createElement("p");
+            text.innerText = errorMessage;
+            insidebody.appendChild(text);
+        });
+
+
+
+        function getQueryVariable(variable) {
+            const query = window.location.search.substring(1);
+            const vars = query.split("&");
+            for (let i = 0; i < vars.length; i++) {
+                const pair = vars[i].split("=");
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
+            }
+        }
+    </script>
+    <div lang="en" th:include="footer :: footer"></div>
 </body>
 </html>

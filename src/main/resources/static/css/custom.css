@@ -540,6 +540,10 @@ border-top: #374151 solid 2px;
     font-weight: 600;
 }
 
+.error-box {
+    background: orangered;
+}
+
 /* more */
 
 .centered{
