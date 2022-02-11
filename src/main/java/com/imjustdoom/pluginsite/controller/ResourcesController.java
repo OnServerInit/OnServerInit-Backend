@@ -63,7 +63,11 @@ public class ResourcesController {
     private final UrlUtil urlUtil;
 
     @GetMapping
-    public String resources(Account account, @RequestParam(name = "category", required = false, defaultValue = "all") String category, @RequestParam(name = "search", required = false) String search, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, Model model) {
+    public String resources(Account account, @RequestParam(name = "category", required = false, defaultValue = "all") String category,
+                            @RequestParam(name = "search", required = false) String search,
+                            @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort,
+                            @RequestParam(name = "page", required = false, defaultValue = "1") String page,
+                            Model model) {
 
         // TODO: clean up more and make it easier to read
         if (Integer.parseInt(page) < 1) return "redirect:/resources?page=1";

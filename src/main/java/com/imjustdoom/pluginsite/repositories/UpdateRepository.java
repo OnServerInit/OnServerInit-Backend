@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -35,7 +34,7 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
     @Query("SELECT SUM(updates.downloads) FROM Update updates WHERE updates.resource.id = ?1")
     Integer getTotalDownloads(int id);
 
-    @Query("SELECT SUM(update.downloads) FROM Update update WHERE update.resource.author.id = ?1")
+    @Query("SELECT SUM(updates.downloads) FROM Update updates WHERE updates.resource.author.id = ?1")
     Integer getTotalAccountDownloads(int userId);
 
     @Modifying

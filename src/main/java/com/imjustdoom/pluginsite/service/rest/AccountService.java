@@ -9,7 +9,7 @@ import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.util.ImageUtil;
 import com.imjustdoom.pluginsite.util.ValidationHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public Account register(CreateAccountRequest request) throws RestException {
         String username = request.getUsername();
