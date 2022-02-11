@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +28,11 @@ public class ProfileController {
     private final UpdateRepository updateRepository;
 
     @GetMapping("/profile/{id}")
-    public String profile(Account account, @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort, @RequestParam(name = "page", required = false, defaultValue = "1") String page, @RequestParam(name = "field", required = false, defaultValue = "") String field, @PathVariable("id") int id, Model model) {
+    public String profile(Account account,
+                          @RequestParam(name = "sort", required = false, defaultValue = "updated") String sort,
+                          @RequestParam(name = "page", required = false, defaultValue = "1") String page,
+                          @RequestParam(name = "field", required = false, defaultValue = "") String field,
+                          @PathVariable("id") int id, Model model) {
         model.addAttribute("account", account);
         model.addAttribute("page", Integer.parseInt(page));
 
