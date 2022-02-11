@@ -1,12 +1,10 @@
-package com.imjustdoom.pluginsite.dtos.in;
+package com.imjustdoom.pluginsite.dtos.in.account;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
-@NoArgsConstructor
 public class CreateAccountRequest {
 
     private String username;
