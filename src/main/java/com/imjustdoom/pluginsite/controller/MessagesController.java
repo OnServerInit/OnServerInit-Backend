@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
 @AllArgsConstructor
 public class MessagesController {
 

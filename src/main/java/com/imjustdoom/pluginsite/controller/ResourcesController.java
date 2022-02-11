@@ -12,7 +12,11 @@ import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.LogoService;
 import com.imjustdoom.pluginsite.service.ResourceService;
-import com.imjustdoom.pluginsite.util.*;
+import com.imjustdoom.pluginsite.util.DateUtil;
+import com.imjustdoom.pluginsite.util.FileUtil;
+import com.imjustdoom.pluginsite.util.ImageUtil;
+import com.imjustdoom.pluginsite.util.RequestUtil;
+import com.imjustdoom.pluginsite.util.UrlUtil;
 import lombok.AllArgsConstructor;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.commonmark.node.Node;
@@ -23,9 +27,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -36,9 +45,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
-@Controller
 @AllArgsConstructor
 @RequestMapping("/resources")
 public class ResourcesController {
