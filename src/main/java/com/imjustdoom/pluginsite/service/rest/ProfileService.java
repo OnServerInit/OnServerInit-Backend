@@ -16,7 +16,7 @@ public class ProfileService {
 
     public ProfileDto getProfileDto(int userId) throws RestException {
         Account account = this.accountService.getAccount(userId);
-        int totalDownloads = this.updateRepository.getTotalAccountDownloads(userId);
+        int totalDownloads = this.updateRepository.getTotalAccountDownloads(userId).orElse(0);
 
         return new ProfileDto(account.getId(), totalDownloads, AccountDto.fromAccount(account));
     }

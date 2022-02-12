@@ -17,8 +17,10 @@ public class RestExceptionResponseHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(RestException.class)
     public void handle(HttpServletResponse response, RestException exception) throws IOException {
-        if (!response.isCommitted())
+        if (!response.isCommitted()) {
+            response.setStatus(exception.getErrorCode().getHttpStatus().value());
             this.mapper.writeValue(response.getWriter(), exception);
+        }
     }
 
     // Could add an error ticketing system for unknown errors (5xx) thrown

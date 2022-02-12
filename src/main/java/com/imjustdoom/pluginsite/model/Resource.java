@@ -49,6 +49,7 @@ public class Resource {
     @Column(nullable = false)
     private LocalDateTime updated;
 
+    // todo if we are making these option, they should also be nullable??
     @Column(nullable = false)
     private String donation;
 

@@ -71,7 +71,7 @@ public class ResourceServiceImpl implements ResourceService {
             Optional<Resource> optionalResource = resourceRepository.findByNameEqualsIgnoreCase(extractedResult.getString());
             Resource resource = optionalResource.get();
 
-            Integer downloads = updateRepository.getTotalDownloads(resource.getId());
+            Integer downloads = updateRepository.getTotalDownloads(resource.getId()).get();
             data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
 
         }
@@ -87,7 +87,7 @@ public class ResourceServiceImpl implements ResourceService {
         Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
 
         for (Resource resource : resourceRepository.findAllByCategoryEqualsAndStatusEquals(category, "public", pageable)) {
-            Integer downloads = updateRepository.getTotalDownloads(resource.getId());
+            Integer downloads = updateRepository.getTotalDownloads(resource.getId()).get();
             data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
         }
 
@@ -102,7 +102,7 @@ public class ResourceServiceImpl implements ResourceService {
         Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 25, sort);
 
         for (Resource resource : resourceRepository.findAllByStatusEqualsIgnoreCase("public", pageable)) {
-            Integer downloads = updateRepository.getTotalDownloads(resource.getId());
+            Integer downloads = updateRepository.getTotalDownloads(resource.getId()).get();
             data.add(SimpleResourceDto.create(resource, downloads == null ? 0 : downloads));
         }
 

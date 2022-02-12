@@ -9,8 +9,9 @@ import com.imjustdoom.pluginsite.service.ProfilePictureService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.*;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,32 +28,6 @@ public class FileController {
     private final ProfilePictureService profilePictureService;
     private final UpdateRepository updateRepository;
     private final ResourceRepository resourceRepository;
-
-    @GetMapping("/logo/{id}")
-    @ResponseBody
-    public HttpEntity<byte[]> serveLogo(@PathVariable("id") int id) {
-
-        byte[] image = logoService.serverLogo(id);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(image.length);
-
-        return new HttpEntity<>(image, headers);
-    }
-
-    @GetMapping("/profile-picture/{id}")
-    @ResponseBody
-    public HttpEntity<byte[]> serveProfilePicture(@PathVariable("id") int id) {
-
-        byte[] image = profilePictureService.serverProfilePicture(id);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(image.length);
-
-        return new HttpEntity<>(image, headers);
-    }
 
     @GetMapping("/files/{id}/download/{fileId}")
     @ResponseBody

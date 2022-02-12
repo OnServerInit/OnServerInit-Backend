@@ -14,7 +14,11 @@ public enum RestErrorCode {
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "data", 101),
     WRONG_FILE_TYPE(HttpStatus.BAD_REQUEST, "data", 2),
     FILE_TOO_LARGE(HttpStatus.BAD_REQUEST, "data", 3),
-    PAGE_SIZE_TOO_LARGE(HttpStatus.BAD_REQUEST, "data", 4);
+    PAGE_SIZE_TOO_LARGE(HttpStatus.BAD_REQUEST, "data", 4),
+    REQUIRED_ARGUMENTS_MISSING(HttpStatus.BAD_REQUEST, "data", 5),
+
+    TOO_MANY_RESOURCE_UPDATES(HttpStatus.TOO_MANY_REQUESTS, "resource", 1),
+    RESOURCE_NAME_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "resource", 2);
 
     private final HttpStatus httpStatus;
     private final String module;

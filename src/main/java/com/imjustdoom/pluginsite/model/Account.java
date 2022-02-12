@@ -30,10 +30,10 @@ public class Account implements UserDetails {
     private int id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
-    private List<Resource> resources;
+    private List<Resource> resources = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "reporter")
-    private List<Report> reports;
+    private List<Report> reports = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -59,7 +59,7 @@ public class Account implements UserDetails {
     private byte[] profile_picture;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
 
     public Account() {
 
