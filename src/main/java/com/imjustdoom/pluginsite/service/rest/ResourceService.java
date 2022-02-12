@@ -4,16 +4,20 @@ import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
+import com.imjustdoom.pluginsite.dtos.in.resource.EditResourceUpdateRequest;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
+import com.imjustdoom.pluginsite.model.Update;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
+import com.imjustdoom.pluginsite.util.ImageUtil;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -32,16 +36,82 @@ public class ResourceService {
 
     //TODO: More sanity checks
     public Resource createResource(Account account, CreateResourceRequest request) throws RestException {
-        if (this.resourceRepository.getResourcesCreateLastHour(account.getId()) > this.siteConfig.getMaxCreationsPerHour()) throw new RestException(RestErrorCode.TOO_MANY_RESOURCE_UPDATES);
-        if (this.resourceRepository.existsByNameEqualsIgnoreCase(request.getName())) throw new RestException(RestErrorCode.RESOURCE_NAME_NOT_AVAILABLE);
-        if (request.getName().isEmpty() || request.getBlurb().isEmpty() || request.getDescription().isEmpty()) throw new RestException(RestErrorCode.REQUIRED_ARGUMENTS_MISSING);
+        if (this.resourceRepository.getResourcesCreateLastHour(account.getId()) > this.siteConfig.getMaxCreationsPerHour())
+            throw new RestException(RestErrorCode.TOO_MANY_RESOURCE_UPDATES);
+        if (this.resourceRepository.existsByNameEqualsIgnoreCase(request.getName()))
+            throw new RestException(RestErrorCode.RESOURCE_NAME_NOT_AVAILABLE);
+        if (request.getName().isEmpty() || request.getBlurb().isEmpty() || request.getDescription().isEmpty())
+            throw new RestException(RestErrorCode.REQUIRED_ARGUMENTS_MISSING);
 
         Resource resource = new Resource(request.getName(), request.getDescription(),
             request.getBlurb(), request.getDonation(), request.getSource(),
             "", account, request.getSupport(), request.getCategory());
 
-        this.resourceRepository.save(resource);
+        return this.resourceRepository.save(resource);
+    }
+
+    // TODO: More sanity checks
+    // todo: also this is horrible, can we just use querydsl?
+    public Resource updateResource(Account account, int resourceId, MultipartFile file, CreateResourceRequest request) throws RestException {
+        Resource resource = this.resourceRepository.findById(resourceId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND));
+
+        String name = request.getName();
+        if (name != null && !name.isEmpty())
+            resource.setName(name);
+
+        String description = request.getDescription();
+        if (description != null && !description.isEmpty())
+            resource.setDescription(description);
+
+        String blurb = request.getBlurb();
+        if (blurb != null && !blurb.isEmpty())
+            resource.setBlurb(blurb);
+
+        String category = request.getCategory();
+        if (category != null && !category.isEmpty())
+            resource.setCategory(category);
+
+        String donation = request.getDonation();
+        if (donation != null && !donation.isEmpty())
+            resource.setDonation(donation);
+
+        String support = request.getSupport();
+        if (support != null && !support.isEmpty())
+            resource.setSupport(support);
+
+        String source = request.getSource();
+        if (source != null && !source.isEmpty())
+            resource.setSource(source);
+
+        if (file != null && !file.isEmpty())
+            resource.setLogo(ImageUtil.handleImage(file));
 
         return this.resourceRepository.save(resource);
+    }
+
+    public Update changeUpdateStatus(Account account, int resourceId, int updateId, String status) throws RestException {
+        Resource resource = this.resourceRepository.findById(resourceId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND));
+        if (resource.getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.INVALID_ACCESS);
+        return this.updateRepository.updateStatusById(updateId, status).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_UPDATE_NOT_FOUND));
+    }
+
+    public Update editResourceUpdate(Account account, int resourceId, int updateId, EditResourceUpdateRequest request) throws RestException {
+        Resource resource = this.resourceRepository.findById(resourceId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND));
+        if (resource.getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.INVALID_ACCESS);
+        Update update = this.updateRepository.findById(updateId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_UPDATE_NOT_FOUND));
+
+        String name = request.getName();
+        if (name != null && !name.isEmpty())
+            update.setName(name);
+
+        String version = request.getVersion();
+        if (version != null && !version.isEmpty())
+            update.setVersion(version);
+
+        String description = request.getDescription();
+        if (description != null && !description.isEmpty())
+            update.setDescription(description);
+
+        return this.updateRepository.save(update);
     }
 }

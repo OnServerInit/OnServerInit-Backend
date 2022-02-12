@@ -49,5 +49,5 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
     @Modifying
     @Transactional
     @Query("UPDATE Update updates SET updates.status = ?2 WHERE updates.id = ?1")
-    void updateStatusById(int id, String status);
+    Optional<Update> updateStatusById(int id, String status);
 }

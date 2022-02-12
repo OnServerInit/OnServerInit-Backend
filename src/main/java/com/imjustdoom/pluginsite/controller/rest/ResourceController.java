@@ -3,9 +3,11 @@ package com.imjustdoom.pluginsite.controller.rest;
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
+import com.imjustdoom.pluginsite.dtos.in.resource.EditResourceUpdateRequest;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
+import com.imjustdoom.pluginsite.model.Update;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.service.rest.ResourceService;
 import com.querydsl.core.types.Predicate;
@@ -17,9 +19,14 @@ import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/resource")
@@ -37,13 +44,28 @@ public class ResourceController {
     }
 
     @PostMapping
-    public void createResource(Account account, CreateResourceRequest resourceRequest) throws RestException {
-        this.resourceService.createResource(account, resourceRequest);
+    public void createResource(Account account, CreateResourceRequest request) throws RestException {
+        this.resourceService.createResource(account, request);
+    }
+
+    @PostMapping("/{resourceId}/edit")
+    public void updateResourceInfo(Account account, @PathVariable int resourceId, @RequestParam(value = "file", required = false) MultipartFile file, CreateResourceRequest request) throws RestException {
+        this.resourceService.updateResource(account, resourceId, file, request);
     }
 
     // todo properly delete
-    @DeleteMapping("/{id}")
-    public void deleteResource(Account account, int id) {
-        this.resourceRepository.updateStatusById(id, "removed");
+    @DeleteMapping("/{resourceId}")
+    public void deleteResource(@PathVariable int resourceId) {
+        this.resourceRepository.updateStatusById(resourceId, "removed");
+    }
+
+    @PatchMapping("/{resourceId}/update/{updateId}/status")
+    public Update changeUpdateStatus(Account account, @PathVariable int resourceId, @PathVariable int updateId, @RequestParam String status) throws RestException {
+        return this.resourceService.changeUpdateStatus(account, resourceId, updateId, status);
+    }
+
+    @PatchMapping("/{resourceId}/edit/update/{updateId}")
+    public Update editResourceUpdate(Account account, @PathVariable int resourceId, @PathVariable int updateId, @RequestBody EditResourceUpdateRequest request) throws RestException {
+        return this.resourceService.editResourceUpdate(account, resourceId, updateId, request);
     }
 }
