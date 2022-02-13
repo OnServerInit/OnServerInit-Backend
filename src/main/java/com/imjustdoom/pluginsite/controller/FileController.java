@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,11 +45,11 @@ public class FileController {
 
         updateRepository.addDownload(fileId);
 
-         if(!update.getExternal().equalsIgnoreCase("")) {
-             HttpHeaders headers = new HttpHeaders();
-             headers.add("Location", update.getExternal());
-             return new ResponseEntity<String>(headers, HttpStatus.FOUND);
-         }
+//         if(!update.getExternal().equalsIgnoreCase("")) {
+//             HttpHeaders headers = new HttpHeaders();
+//             headers.add("Location", update.getExternal());
+//             return new ResponseEntity<String>(headers, HttpStatus.FOUND);
+//         }
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);

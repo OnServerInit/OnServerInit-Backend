@@ -21,7 +21,7 @@ public class Test {
         createAccountRequest.setPassword("test");
         Account account = accountService.register(createAccountRequest);
 
-        Resource resource = new Resource("test", "test", "", "", "", "test", account, "", "none");
+        Resource resource = new Resource("test", "test", "", "", "", account, "", "none");
         resourceRepository.save(resource);
         accountRepository.save(account);
     }

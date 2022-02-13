@@ -24,11 +24,6 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Update updates SET updates.download = ?2 WHERE updates.id = ?1")
-    void setDownload(int id, String download);
-
-    @Modifying
-    @Transactional
     @Query("UPDATE Update updates SET updates.downloads = updates.downloads + 1 WHERE updates.id = ?1")
     void addDownload(int id);
 

@@ -14,14 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Resource {
 
-    public Resource(String name, String description, String blurb, String donation, String source, String download,
+    public Resource(String name, String description, String blurb, String donation, String source,
                     Account author, String support, String category) {
         this.name = name;
         this.description = description;
         this.blurb = blurb;
         this.donation = donation;
         this.source = source;
-        this.download = download;
         this.author = author;
         this.support = support;
         this.created = LocalDateTime.now();
@@ -49,15 +48,12 @@ public class Resource {
     @Column(nullable = false)
     private LocalDateTime updated;
 
-    // todo if we are making these option, they should also be nullable??
+    // todo if we are making these optional, they should also be nullable??
     @Column(nullable = false)
     private String donation;
 
     @Column(nullable = false)
     private String source;
-
-    @Column(nullable = false)
-    private String download;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Account author;

@@ -4,11 +4,9 @@ import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
-import com.imjustdoom.pluginsite.dtos.in.resource.EditResourceUpdateRequest;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
-import com.imjustdoom.pluginsite.model.Update;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
 import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.util.ImageUtil;
@@ -37,7 +35,7 @@ public class ResourceService {
     //TODO: More sanity checks
     public Resource createResource(Account account, CreateResourceRequest request) throws RestException {
         if (this.resourceRepository.getResourcesCreateLastHour(account.getId()) > this.siteConfig.getMaxCreationsPerHour())
-            throw new RestException(RestErrorCode.TOO_MANY_RESOURCE_UPDATES);
+            throw new RestException(RestErrorCode.TOO_MANY_RESOURCE_CREATIONS);
         if (this.resourceRepository.existsByNameEqualsIgnoreCase(request.getName()))
             throw new RestException(RestErrorCode.RESOURCE_NAME_NOT_AVAILABLE);
         if (request.getName().isEmpty() || request.getBlurb().isEmpty() || request.getDescription().isEmpty())
@@ -45,7 +43,7 @@ public class ResourceService {
 
         Resource resource = new Resource(request.getName(), request.getDescription(),
             request.getBlurb(), request.getDonation(), request.getSource(),
-            "", account, request.getSupport(), request.getCategory());
+            account, request.getSupport(), request.getCategory());
 
         return this.resourceRepository.save(resource);
     }
@@ -87,31 +85,5 @@ public class ResourceService {
             resource.setLogo(ImageUtil.handleImage(file));
 
         return this.resourceRepository.save(resource);
-    }
-
-    public Update changeUpdateStatus(Account account, int resourceId, int updateId, String status) throws RestException {
-        Resource resource = this.resourceRepository.findById(resourceId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND));
-        if (resource.getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.INVALID_ACCESS);
-        return this.updateRepository.updateStatusById(updateId, status).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_UPDATE_NOT_FOUND));
-    }
-
-    public Update editResourceUpdate(Account account, int resourceId, int updateId, EditResourceUpdateRequest request) throws RestException {
-        Resource resource = this.resourceRepository.findById(resourceId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND));
-        if (resource.getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.INVALID_ACCESS);
-        Update update = this.updateRepository.findById(updateId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_UPDATE_NOT_FOUND));
-
-        String name = request.getName();
-        if (name != null && !name.isEmpty())
-            update.setName(name);
-
-        String version = request.getVersion();
-        if (version != null && !version.isEmpty())
-            update.setVersion(version);
-
-        String description = request.getDescription();
-        if (description != null && !description.isEmpty())
-            update.setDescription(description);
-
-        return this.updateRepository.save(update);
     }
 }
