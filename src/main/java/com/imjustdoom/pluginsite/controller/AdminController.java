@@ -1,9 +1,9 @@
-package com.imjustdoom.pluginsite.controller.rest;
+package com.imjustdoom.pluginsite.controller;
 
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.model.Report;
-import com.imjustdoom.pluginsite.service.rest.ReportService;
+import com.imjustdoom.pluginsite.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

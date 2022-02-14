@@ -3,9 +3,16 @@ package com.imjustdoom.pluginsite.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.persistence.Id;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,9 +22,9 @@ import java.util.List;
 @NoArgsConstructor
 public class MessageGroup {
 
-    public MessageGroup(String name, LocalDateTime createdDate, List<Account> members){
+    public MessageGroup(String name, LocalDateTime createdTime, List<Account> members) {
         this.name = name;
-        this.createdDate = createdDate;
+        this.createdTime = createdTime;
         this.members = members;
         System.out.println(members.toString());
     }
@@ -34,7 +41,7 @@ public class MessageGroup {
     private String name;
 
     @Column(nullable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime createdTime;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "group")
     private List<Message> messages;

@@ -6,7 +6,7 @@ import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
-import com.imjustdoom.pluginsite.service.rest.AccountService;
+import com.imjustdoom.pluginsite.service.AccountService;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package com.imjustdoom.pluginsite.service.rest;
+package com.imjustdoom.pluginsite.service;
 
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;

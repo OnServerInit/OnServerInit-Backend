@@ -1,4 +1,4 @@
-package com.imjustdoom.pluginsite.service.rest;
+package com.imjustdoom.pluginsite.service;
 
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.out.ProfileDto;

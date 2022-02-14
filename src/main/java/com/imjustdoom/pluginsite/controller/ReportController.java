@@ -1,8 +1,8 @@
-package com.imjustdoom.pluginsite.controller.rest;
+package com.imjustdoom.pluginsite.controller;
 
 import com.imjustdoom.pluginsite.dtos.in.CreateReportRequest;
 import com.imjustdoom.pluginsite.model.Account;
-import com.imjustdoom.pluginsite.service.rest.ReportService;
+import com.imjustdoom.pluginsite.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

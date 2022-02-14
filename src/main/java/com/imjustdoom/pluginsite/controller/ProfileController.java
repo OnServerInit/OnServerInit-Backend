@@ -1,8 +1,8 @@
-package com.imjustdoom.pluginsite.controller.rest;
+package com.imjustdoom.pluginsite.controller;
 
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.out.ProfileDto;
-import com.imjustdoom.pluginsite.service.rest.ProfileService;
+import com.imjustdoom.pluginsite.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

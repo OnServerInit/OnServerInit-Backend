@@ -1,4 +1,4 @@
-package com.imjustdoom.pluginsite.controller.rest;
+package com.imjustdoom.pluginsite.controller;
 
 
 import com.imjustdoom.pluginsite.config.exception.RestException;
@@ -6,7 +6,7 @@ import com.imjustdoom.pluginsite.dtos.in.CreateUpdateRequest;
 import com.imjustdoom.pluginsite.dtos.in.resource.EditResourceUpdateRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Update;
-import com.imjustdoom.pluginsite.service.rest.ResourceUpdateService;
+import com.imjustdoom.pluginsite.service.ResourceUpdateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;

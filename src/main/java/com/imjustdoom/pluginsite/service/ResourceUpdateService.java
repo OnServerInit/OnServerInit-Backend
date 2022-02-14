@@ -1,4 +1,4 @@
-package com.imjustdoom.pluginsite.service.rest;
+package com.imjustdoom.pluginsite.service;
 
 import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
@@ -39,14 +39,14 @@ public class ResourceUpdateService {
 
     public Update changeStatus(Account account, int updateId, String status) throws RestException {
         Update update = this.updateRepository.findById(updateId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_UPDATE_NOT_FOUND));
-        if (update.getResource().getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.INVALID_ACCESS);
+        if (update.getResource().getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.FORBIDDEN);
         update.setStatus(status);
         return this.updateRepository.save(update);
     }
 
     public Update editUpdate(Account account, int updateId, EditResourceUpdateRequest request) throws RestException {
         Update update = this.updateRepository.findById(updateId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_UPDATE_NOT_FOUND));
-        if (update.getResource().getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.INVALID_ACCESS);
+        if (update.getResource().getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.FORBIDDEN);
 
         String name = request.getName();
         if (name != null && !name.isEmpty())

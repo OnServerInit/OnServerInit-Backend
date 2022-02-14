@@ -1,4 +1,4 @@
-package com.imjustdoom.pluginsite.controller.rest;
+package com.imjustdoom.pluginsite.controller;
 
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
@@ -7,7 +7,7 @@ import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
-import com.imjustdoom.pluginsite.service.rest.ResourceService;
+import com.imjustdoom.pluginsite.service.ResourceService;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,8 +34,7 @@ public class ResourceController {
     @GetMapping
     public Page<SimpleResourceDto> searchResources(@PageableDefault(size = 25, sort = "updated", direction = Sort.Direction.DESC) Pageable pageable,
                                                    @QuerydslPredicate(root = Resource.class) Predicate predicate) throws RestException {
-        if (pageable.getPageSize() > 50)
-            throw new RestException(RestErrorCode.PAGE_SIZE_TOO_LARGE, "Page size is too large (%s > %s)", pageable.getPageSize(), 50);
+        if (pageable.getPageSize() > 50) throw new RestException(RestErrorCode.PAGE_SIZE_TOO_LARGE, "Page size is too large (%s > %s)", pageable.getPageSize(), 50);
         return this.resourceService.searchResources(pageable, predicate);
     }
 

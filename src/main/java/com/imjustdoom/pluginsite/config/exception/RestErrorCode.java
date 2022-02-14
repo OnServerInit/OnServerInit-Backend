@@ -10,13 +10,15 @@ public enum RestErrorCode {
     USERNAME_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "auth", 3),
     EMAIL_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "auth", 4),
 
-    INVALID_ACCESS(HttpStatus.UNAUTHORIZED, "auth", 100),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "auth", 100),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "auth", 101),
 
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "data", 100),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "data", 101),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "data", 102),
     RESOURCE_UPDATE_NOT_FOUND(HttpStatus.NOT_FOUND, "data", 103),
     DOWNLOAD_NOT_FOUND(HttpStatus.NOT_FOUND, "data", 104),
+    MESSAGE_GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "data", 105),
 
     WRONG_FILE_TYPE(HttpStatus.BAD_REQUEST, "data", 2),
     FILE_TOO_LARGE(HttpStatus.BAD_REQUEST, "data", 3),

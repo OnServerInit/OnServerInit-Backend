@@ -1,4 +1,4 @@
-package com.imjustdoom.pluginsite.service.rest;
+package com.imjustdoom.pluginsite.service;
 
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
@@ -9,15 +9,23 @@ import com.imjustdoom.pluginsite.repositories.AccountRepository;
 import com.imjustdoom.pluginsite.util.ImageUtil;
 import com.imjustdoom.pluginsite.util.ValidationHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return accountRepository.findByUsernameEqualsIgnoreCase(s).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 
     public Account register(CreateAccountRequest request) throws RestException {
         String username = request.getUsername();
