@@ -7,7 +7,6 @@ import com.imjustdoom.pluginsite.dtos.in.account.CreateAccountRequest;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.service.AccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,15 +35,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
-        System.out.println("Authenticating " + request.getUsername() + " : " + request.getPassword());
+    public void login(@RequestBody LoginRequest request, HttpServletResponse response) {
         Authentication authentication = this.authenticationManager
             .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return ResponseEntity.ok()
-            .header("token", this.jwtProvider.generateToken(authentication))
-            .build();
+        Cookie cookie = this.jwtProvider.generateTokenCookie(authentication);
+        response.addCookie(cookie);
     }
 }

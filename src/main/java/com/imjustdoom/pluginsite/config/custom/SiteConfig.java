@@ -9,7 +9,7 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.util.unit.DataUnit;
 
 @Getter
-@ConfigurationProperties(prefix = "app")
+@ConfigurationProperties("app")
 @ConstructorBinding
 @AllArgsConstructor
 public class SiteConfig {

@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -37,13 +38,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
+            .csrf()
+            .ignoringAntMatchers("/auth/**")
+            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 
-            .authorizeRequests()
+            .and().authorizeRequests()
             .antMatchers("/admin", "/admin/roles").hasRole("ADMIN")
             .antMatchers("/resources/create", "/account/details").authenticated()
             .antMatchers("/auth/**").permitAll()
-
             .anyRequest().permitAll()
 
             .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -1,47 +1,35 @@
 package com.imjustdoom.pluginsite.config.security.jwt;
 
+import com.imjustdoom.pluginsite.config.custom.JwtConfig;
 import com.imjustdoom.pluginsite.model.Account;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.Key;
-import java.time.Duration;
+import javax.servlet.http.Cookie;
 import java.time.Instant;
 import java.util.Date;
 
-@ConfigurationProperties("jwt")
-@ConstructorBinding
+@Component
+@RequiredArgsConstructor
 public class JwtProvider {
-    private static final Path KEY_PATH = Path.of("./jwt_secret");
-
+    public static final String COOKIE_NAME = "JWT_TOKEN";
     private static final String USER_ID = "userId";
 
-    private final Duration expiryTime;
-    private final Key key;
+    private final JwtConfig jwtConfig;
 
-    public JwtProvider(String secret, Duration expiryTime) throws IOException {
-        byte[] encodedSecret;
-        if (secret == null) {
-            if (Files.exists(KEY_PATH)) {
-                encodedSecret = Files.readAllBytes(KEY_PATH);
-            } else {
-                encodedSecret = Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded();
-                Files.write(KEY_PATH, encodedSecret);
-            }
-        } else {
-            encodedSecret = secret.getBytes(StandardCharsets.UTF_8);
-        }
-        this.key = Keys.hmacShaKeyFor(encodedSecret);
-        this.expiryTime = expiryTime;
+    public Cookie generateTokenCookie(Authentication authentication) {
+        Cookie cookie = new Cookie(COOKIE_NAME, this.generateToken(authentication));
+        cookie.setSecure(this.jwtConfig.isSecureCookie());
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge((int) this.jwtConfig.getExpiryTime().getSeconds());
+        cookie.setPath("/");
+        if (this.jwtConfig.getDomain() != null)
+            cookie.setDomain(this.jwtConfig.getDomain());
+
+        return cookie;
     }
 
     public String generateToken(Authentication authentication) {
@@ -53,14 +41,14 @@ public class JwtProvider {
         return Jwts.builder()
             .setClaims(claims)
             .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(Date.from(Instant.now().plus(this.expiryTime)))
-            .signWith(this.key)
+            .setExpiration(Date.from(Instant.now().plus(this.jwtConfig.getExpiryTime())))
+            .signWith(this.jwtConfig.getKey())
             .compact();
     }
 
     public String getSubjectFromToken(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(this.key)
+            .setSigningKey(this.jwtConfig.getKey())
             .build()
             .parseClaimsJws(token)
             .getBody().getSubject();
@@ -68,7 +56,7 @@ public class JwtProvider {
 
     public boolean validateToken(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(this.key)
+            .setSigningKey(this.jwtConfig.getKey())
             .build()
             .parseClaimsJws(token) != null;
     }
