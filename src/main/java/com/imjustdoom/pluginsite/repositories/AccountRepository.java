@@ -42,9 +42,9 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Account account SET account.profile_picture = ?2 WHERE account.id = ?1")
-    void updateProfilePictureById(int id, byte[] profile_picture);
+    @Query("UPDATE Account account SET account.profilePicture = ?2 WHERE account.id = ?1")
+    void updateProfilePictureById(int id, byte[] profilePicture);
 
-    @Query("SELECT profile_picture FROM Account WHERE id = ?1")
+    @Query("SELECT profilePicture FROM Account WHERE id = ?1")
     byte[] findAccountProfilePicture(int id);
 }

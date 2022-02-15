@@ -1,11 +1,15 @@
 package com.imjustdoom.pluginsite.repositories;
 
+import com.imjustdoom.pluginsite.model.QResource;
 import com.imjustdoom.pluginsite.model.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
+import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -13,7 +17,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ResourceRepository extends JpaRepository<Resource, Integer> {
+public interface ResourceRepository extends JpaRepository<Resource, Integer>, QuerydslPredicateExecutor<Resource>, QuerydslBinderCustomizer<QResource> {
+
+    @Override
+    default void customize(QuerydslBindings bindings, QResource root) {
+        bindings.including(
+            root.name,
+            root.category,
+            root.author.username,
+            root.author.id
+        );
+        bindings.excludeUnlistedProperties(true);
+    }
 
     boolean existsByNameEqualsIgnoreCase(String name);
 
@@ -25,11 +40,6 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     List<Resource> findAllByStatusEqualsIgnoreCase(String status, Sort sort);
 
     List<Resource> findAllByStatusEqualsIgnoreCase(String status);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE Resource resource SET resource.download = ?2 WHERE resource.id = ?1")
-    void setDownload(int id, String download);
 
     @Modifying
     @Transactional

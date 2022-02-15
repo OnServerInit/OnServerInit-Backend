@@ -3,9 +3,14 @@ package com.imjustdoom.pluginsite.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.persistence.Id;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Setter
 @Getter
@@ -13,7 +18,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Message {
 
-    public Message(String content, Account author, MessageGroup group){
+    public Message(String content, Account author, MessageGroup group) {
         this.content = content;
         this.author = author;
         this.group = group;

@@ -1,119 +1,67 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.imjustdoom.pluginsite.config.custom.SiteConfig;
-import com.imjustdoom.pluginsite.dtos.in.CreateAccountRequest;
+import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
+import com.imjustdoom.pluginsite.config.exception.RestException;
+import com.imjustdoom.pluginsite.dtos.in.account.CreateAccountRequest;
+import com.imjustdoom.pluginsite.dtos.in.account.UpdateAccountRequest;
+import com.imjustdoom.pluginsite.dtos.out.account.AccountDto;
+import com.imjustdoom.pluginsite.dtos.out.account.SelfAccountDto;
+import com.imjustdoom.pluginsite.dtos.out.message.MessageGroupDto;
 import com.imjustdoom.pluginsite.model.Account;
-import com.imjustdoom.pluginsite.repositories.AccountRepository;
-import com.imjustdoom.pluginsite.util.ImageUtil;
-import com.imjustdoom.pluginsite.util.ValidationHelper;
+import com.imjustdoom.pluginsite.service.AccountService;
+import com.imjustdoom.pluginsite.service.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Optional;
-
-@Controller
+@RestController
+@RequestMapping("/account")
 @RequiredArgsConstructor
 public class AccountController {
+    private final AccountService accountService;
+    private final MessageService messageService;
 
-    private final PasswordEncoder passwordEncoder;
-    private final AccountRepository accountRepository;
-    private final SiteConfig siteConfig;
+    @PostMapping("/register")
+    public String signupSubmit(@RequestBody CreateAccountRequest accountRequest) throws RestException {
+        Account account = this.accountService.register(accountRequest);
 
-    @GetMapping("/signup")
-    public String signup(Model model, @RequestParam(name = "error", required = false) String error, Account account) {
-        model.addAttribute("createAccount", new CreateAccountRequest());
-        model.addAttribute("account", account);
-        model.addAttribute("error", error);
-        return "account/signup";
+        return ""; // todo return a registration DTO of some sort, probably with a session token
     }
 
-    @GetMapping("/logout")
-    public RedirectView logout() {
-        return new RedirectView("/");
+    // todo login with JWT
+
+    @GetMapping("/details")
+    public SelfAccountDto getSelfAccountDetails(Account account) {
+        return SelfAccountDto.fromAccount(account);
     }
 
-    @PostMapping("/signup")
-    public String signupSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
-        if (!ValidationHelper.isUsernameValid(accountRequest.getUsername())) return "redirect:/signup?error=invalidcharacter";
-
-        String emailAddress = accountRequest.getEmail();
-
-        if (!ValidationHelper.isEmailValid(emailAddress)) return "redirect:/signup?error=invalidemail";
-
-        if (accountRepository.existsByUsernameEqualsIgnoreCase(accountRequest.getUsername()))
-            return "redirect:/signup?error=usernametaken";
-
-        if (accountRepository.existsByEmailEqualsIgnoreCase(emailAddress)) return "redirect:/signup?error=emailtaken";
-
-        Account account = new Account(accountRequest.getUsername(), emailAddress, passwordEncoder.encode(accountRequest.getPassword()));
-        accountRepository.save(account);
-
-        return "redirect:/profile/" + account.getId();
+    @PatchMapping("/details")
+    public SelfAccountDto updateAccountDetails(Account account, @RequestBody UpdateAccountRequest request,
+                                               @RequestParam(value = "profilePicture", required = false) MultipartFile file) throws RestException {
+        return SelfAccountDto.fromAccount(this.accountService.updateAccountDetails(account, request, file));
     }
 
-    @GetMapping("/login")
-    public String login(Model model, @RequestParam(name = "error", required = false) String error, Account account) {
-        model.addAttribute("error", error);
-        model.addAttribute("createAccount", new CreateAccountRequest());
-        model.addAttribute("account", account);
-        return "account/login";
+    @GetMapping("/{id}/details")
+    public AccountDto getAccountDetails(@PathVariable int id) throws RestException {
+        return AccountDto.fromAccount(this.accountService.getAccount(id));
     }
 
-    @PostMapping("/login")
-    public String loginSubmit(@ModelAttribute CreateAccountRequest accountRequest) {
+    @GetMapping("/groups")
+    public Page<MessageGroupDto> getMessageGroups(Account account,
+                                                  @PageableDefault(size = 25) Pageable pageable) throws RestException {
+        if (pageable.getPageSize() > 50) throw new RestException(RestErrorCode.PAGE_SIZE_TOO_LARGE, "Page size is too large (%s > %s)", pageable.getPageSize(), 50);
 
-        if (accountRepository.existsByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(accountRequest.getUsername(), "")) { // todo change
-            Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(accountRequest.getUsername());
-            if (BCrypt.checkpw(accountRequest.getPassword(), account.get().getPassword())) {
-
-                return "redirect:/profile/" + account.get().getId();
-            }
-            return "redirect:/login?error=incorrectpassword";
-        }
-
-        return "redirect:/login?error=notfound";
-    }
-
-    @GetMapping("/account/details")
-    public String accountDetails(Model model, Account account, @RequestParam(name = "error", required = false) String error) {
-        model.addAttribute("account", account);
-        model.addAttribute("url", this.siteConfig.getDomain());
-        model.addAttribute("error", error);
-        return "account/details";
-    }
-
-    @PostMapping("/account/details")
-    public String postAccountDetails(Account account, @RequestParam String username, @RequestParam String email,
-                                     @RequestParam String password, @RequestParam("logo") MultipartFile file) {
-        if (!ValidationHelper.isUsernameValid(username)) return "redirect:/account/details?error=invalidcharacter";
-        if (!ValidationHelper.isEmailValid(email)) return "redirect:/account/details?error=invalidemail";
-
-        if (!file.isEmpty()) {
-            if (!file.getContentType().contains("image")) {
-                return "redirect:/account/details?error=logotype";
-            }
-
-            if (file.getSize() > 1024000) {
-                return "redirect:/account/details?error=filesize";
-            }
-
-            accountRepository.updateProfilePictureById(account.getId(), ImageUtil.handleImage(file));
-        }
-
-        if (accountRepository.existsByUsernameEqualsIgnoreCase(username))
-            return "redirect:/account/details?error=usernametaken";
-
-        if (accountRepository.existsByEmailEqualsIgnoreCase(email)) return "redirect:/account/details?error=emailtaken";
-
-        accountRepository.setUsernameById(account.getId(), username);
-        accountRepository.setEmailById(account.getId(), email);
-        accountRepository.setPasswordById(account.getId(), passwordEncoder.encode(password));
-        return "redirect:/profile/" + account.getId();
+        return this.messageService.getGroups(account, pageable)
+            .map(MessageGroupDto::fromMessageGroup);
     }
 }

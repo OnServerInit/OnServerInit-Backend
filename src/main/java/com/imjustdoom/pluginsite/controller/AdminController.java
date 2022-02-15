@@ -1,83 +1,52 @@
 package com.imjustdoom.pluginsite.controller;
 
-import com.imjustdoom.pluginsite.model.Account;
+import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
+import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.model.Report;
-import com.imjustdoom.pluginsite.repositories.AccountRepository;
-import com.imjustdoom.pluginsite.repositories.ReportRepository;
-import com.imjustdoom.pluginsite.util.UrlUtil;
-import lombok.AllArgsConstructor;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import com.imjustdoom.pluginsite.service.ReportService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
-@Controller
-@AllArgsConstructor
+@RestController
+@RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
-    private final AccountRepository accountRepository;
-    private final ReportRepository reportRepository;
+    private final ReportService reportService;
 
-    private final UrlUtil urlUtil;
-
-    @GetMapping("/admin")
-    public String admin(Model model, Account account) {
-        model.addAttribute("account", account);
-        return "admin/admin";
+    @GetMapping("/report")
+    public Page<Report> listReports(@PageableDefault(sort = "reportedDate", direction = Sort.Direction.DESC) Pageable pageable) throws RestException {
+        if (pageable.getPageSize() > 50) throw new RestException(RestErrorCode.PAGE_SIZE_TOO_LARGE, "Page size too large (%s > %s)", pageable.getPageSize(), 50);
+        return this.reportService.getReportPage(pageable);
     }
 
-    @GetMapping("/admin/reports")
-    public String reports(Model model, Account account) {
-        model.addAttribute("account", account);
-        model.addAttribute("reports", reportRepository.findAll());
-        return "admin/reports";
+    @GetMapping("/report/{id}")
+    public Report getReport(@PathVariable int id) throws RestException {
+        return this.reportService.getReport(id);
     }
 
-    @GetMapping("/admin/report/{id}")
-    public String report(Model model, Account account, @PathVariable("id") int id) {
-
-        Report report = reportRepository.findById(id).get();
-        String description = urlUtil.encode(report.getReport());
-
-        description.replaceAll("script", "error style=\"display:none;\"");
-        Parser parser = Parser.builder().build();
-        Node document = parser.parse(description);
-        HtmlRenderer renderer = HtmlRenderer.builder().build();
-        String html = renderer.render(document);
-
-        report.setReport(html);
-
-        model.addAttribute("account", account);
-        model.addAttribute("report", report);
-        return "admin/report";
+    @PatchMapping("/report/{id}")
+    public Report updateActionTaken(@PathVariable int id, @RequestParam String actionTaken) {
+        return this.reportService.updateActionTaken(id, actionTaken);
     }
 
-    @PostMapping("/admin/report/{id}")
-    public String report(@PathVariable("id") int id, @RequestParam String action) {
-        reportRepository.updateActionTakenById(id, action);
-        return "redirect:/admin/reports";
-    }
-
-    @GetMapping("/admin/roles")
-    public String roles(Model model, Account account) {
-        model.addAttribute("account", account);
-        return "admin/account/roles";
-    }
-
-    @PostMapping("/admin/roles")
-    public void setRole(@RequestParam String username, @RequestParam String role, Account account, Model model) {
-        model.addAttribute("account", account);
-
-        Optional<Account> optionalAccount = accountRepository.findByUsernameEqualsIgnoreCase(username);
-        if (optionalAccount.isEmpty()) return;
-        role = role.toUpperCase();
-        optionalAccount.get().setRole("ROLE_" + role);
-        accountRepository.setRoleById(optionalAccount.get().getId(), "ROLE_" + role);
-    }
+    // todo didnt add roles since this system should be reworked. The code below is the old code.
+//    @PostMapping("/admin/roles")
+//    public void setRole(@RequestParam String username, @RequestParam String role, Account account, Model model) {
+//        model.addAttribute("account", account);
+//
+//        Optional<Account> optionalAccount = accountRepository.findByUsernameEqualsIgnoreCase(username);
+//        if (optionalAccount.isEmpty()) return;
+//        role = role.toUpperCase();
+//        optionalAccount.get().setRole("ROLE_" + role);
+//        accountRepository.setRoleById(optionalAccount.get().getId(), "ROLE_" + role);
+//    }
 }

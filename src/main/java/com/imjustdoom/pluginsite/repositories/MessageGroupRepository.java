@@ -1,12 +1,13 @@
 package com.imjustdoom.pluginsite.repositories;
 
+import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.MessageGroup;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface MessageGroupRepository extends JpaRepository<MessageGroup, Integer> {
+public interface MessageGroupRepository extends PagingAndSortingRepository<MessageGroup, Integer> {
 
-    // get all message groups that an account is in
-//    @Query("select mg from MessageGroup mg where mg.account.id = ?1")
-//    Iterable<MessageGroup> findAllByAccountId(int accountId);
+    Page<MessageGroup> findAllByMembersContains(Account account, Pageable pageable);
+
 }

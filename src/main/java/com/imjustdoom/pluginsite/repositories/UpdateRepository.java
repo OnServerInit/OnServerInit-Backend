@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UpdateRepository extends JpaRepository<Update, Integer> {
@@ -18,22 +18,16 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
 
     List<Update> findAllByResourceIdAndStatusEquals(int resourceId, String status, Sort sort);
 
-    // TODO: get this to actually work at some point
-    @Query("SELECT updates FROM Update updates WHERE ?3 in(updates.software)")
-    List<Update> findAllByResourceIdAndStatusEqualsAndSoftware(int resourceId, String status, String software, Sort sort);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE Update updates SET updates.download = ?2 WHERE updates.id = ?1")
-    void setDownload(int id, String download);
-
     @Modifying
     @Transactional
     @Query("UPDATE Update updates SET updates.downloads = updates.downloads + 1 WHERE updates.id = ?1")
     void addDownload(int id);
 
     @Query("SELECT SUM(updates.downloads) FROM Update updates WHERE updates.resource.id = ?1")
-    Integer getTotalDownloads(int id);
+    Optional<Integer> getTotalDownloads(int id);
+
+    @Query("SELECT SUM(updates.downloads) FROM Update updates WHERE updates.resource.author.id = ?1")
+    Optional<Integer> getTotalAccountDownloads(int userId);
 
     @Modifying
     @Transactional
@@ -46,5 +40,5 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
     @Modifying
     @Transactional
     @Query("UPDATE Update updates SET updates.status = ?2 WHERE updates.id = ?1")
-    void updateStatusById(int id, String status);
+    Optional<Update> updateStatusById(int id, String status);
 }

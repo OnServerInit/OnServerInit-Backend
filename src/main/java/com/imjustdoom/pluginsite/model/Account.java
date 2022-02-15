@@ -1,6 +1,7 @@
 package com.imjustdoom.pluginsite.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
 public class Account implements UserDetails {
 
     public Account(String username, String email, String password) {
@@ -30,10 +32,10 @@ public class Account implements UserDetails {
     private int id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
-    private List<Resource> resources;
+    private List<Resource> resources = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "reporter")
-    private List<Report> reports;
+    private List<Report> reports = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -56,14 +58,11 @@ public class Account implements UserDetails {
     private List<MessageGroup> groups;
 
     @Lob
-    private byte[] profile_picture;
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
-    private List<Message> messages;
-
-    public Account() {
-
-    }
+    private List<Message> messages = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
