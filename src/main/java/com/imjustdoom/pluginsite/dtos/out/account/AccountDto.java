@@ -9,6 +9,6 @@ public record AccountDto(int id, String username,
 
     public static AccountDto fromAccount(Account account) {
         return new AccountDto(account.getId(), account.getUsername(),
-            account.getProfile_picture(), account.getJoined());
+            account.getProfilePicture(), account.getJoined());
     }
 }

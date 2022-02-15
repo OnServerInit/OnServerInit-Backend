@@ -52,6 +52,7 @@ public class ResourceService {
     // todo: also this is horrible, can we just use querydsl?
     public Resource updateResource(Account account, int resourceId, MultipartFile file, CreateResourceRequest request) throws RestException {
         Resource resource = this.resourceRepository.findById(resourceId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND));
+        if (resource.getAuthor().getId() != account.getId()) throw new RestException(RestErrorCode.FORBIDDEN);
 
         String name = request.getName();
         if (name != null && !name.isEmpty())
@@ -81,8 +82,12 @@ public class ResourceService {
         if (source != null && !source.isEmpty())
             resource.setSource(source);
 
-        if (file != null && !file.isEmpty())
+        if (file != null && !file.isEmpty()) {
+            if (file.getSize() > this.siteConfig.getMaxUploadSize().toBytes()) throw new RestException(RestErrorCode.FILE_TOO_LARGE);
+            if (file.getContentType() == null || !file.getContentType().contains("image")) throw new RestException(RestErrorCode.WRONG_FILE_TYPE);
+
             resource.setLogo(ImageUtil.handleImage(file));
+        }
 
         return this.resourceRepository.save(resource);
     }

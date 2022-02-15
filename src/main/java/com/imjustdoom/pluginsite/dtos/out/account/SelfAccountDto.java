@@ -10,7 +10,7 @@ public record SelfAccountDto(int id, String username,
 
     public static SelfAccountDto fromAccount(Account account) {
         return new SelfAccountDto(account.getId(), account.getUsername(),
-            account.getEmail(), account.getProfile_picture(),
+            account.getEmail(), account.getProfilePicture(),
             account.getJoined());
     }
 }

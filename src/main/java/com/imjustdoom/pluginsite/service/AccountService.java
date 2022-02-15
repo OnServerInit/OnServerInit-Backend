@@ -1,5 +1,6 @@
 package com.imjustdoom.pluginsite.service;
 
+import com.imjustdoom.pluginsite.config.custom.SiteConfig;
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.in.account.CreateAccountRequest;
@@ -21,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final SiteConfig siteConfig;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -50,10 +53,10 @@ public class AccountService implements UserDetailsService {
     // todo will there be concurrency issues with performing this all in one update?
     public Account updateAccountDetails(Account account, UpdateAccountRequest request, MultipartFile file) throws RestException {
         if (file != null) {
-            if (!file.getContentType().contains("image")) throw new RestException(RestErrorCode.WRONG_FILE_TYPE);
-            if (file.getSize() > 1024000) throw new RestException(RestErrorCode.FILE_TOO_LARGE);
+            if (file.getContentType() == null || !file.getContentType().contains("image")) throw new RestException(RestErrorCode.WRONG_FILE_TYPE);
+            if (file.getSize() > this.siteConfig.getMaxUploadSize().toBytes()) throw new RestException(RestErrorCode.FILE_TOO_LARGE);
 
-            account.setProfile_picture(ImageUtil.handleImage(file));
+            account.setProfilePicture(ImageUtil.handleImage(file));
         }
         if (request.getEmail() != null) {
             String email = request.getEmail();
