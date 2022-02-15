@@ -40,20 +40,20 @@ public class AccountController {
 
     // todo login with JWT
 
-    @GetMapping("/account/details")
+    @GetMapping("/details")
     public SelfAccountDto getSelfAccountDetails(Account account) {
         return SelfAccountDto.fromAccount(account);
     }
 
-    @GetMapping("/account/{id}/details")
-    public AccountDto getAccountDetails(@PathVariable int id) throws RestException {
-        return AccountDto.fromAccount(this.accountService.getAccount(id));
+    @PatchMapping("/details")
+    public SelfAccountDto updateAccountDetails(Account account, @RequestBody UpdateAccountRequest request,
+                                               @RequestParam(value = "profilePicture", required = false) MultipartFile file) throws RestException {
+        return SelfAccountDto.fromAccount(this.accountService.updateAccountDetails(account, request, file));
     }
 
-    @PatchMapping("/account/details")
-    public SelfAccountDto updateAccountDetails(Account account, @RequestBody UpdateAccountRequest request,
-                                               @RequestParam("profilePicture") MultipartFile file) throws RestException {
-        return SelfAccountDto.fromAccount(this.accountService.updateAccountDetails(account, request, file));
+    @GetMapping("/{id}/details")
+    public AccountDto getAccountDetails(@PathVariable int id) throws RestException {
+        return AccountDto.fromAccount(this.accountService.getAccount(id));
     }
 
     @GetMapping("/groups")

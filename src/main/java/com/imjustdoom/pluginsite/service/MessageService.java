@@ -11,6 +11,7 @@ import com.imjustdoom.pluginsite.repositories.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -26,13 +27,14 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final MessageGroupRepository messageGroupRepository;
     private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private Account systemAccount;
 
     @PostConstruct
     public void setup() {
         this.systemAccount = this.accountRepository.findByUsernameEqualsIgnoreCase("system").orElseGet(() -> {
-            Account account = new Account("system", "system@example.com", UUID.randomUUID().toString());
+            Account account = new Account("system", "system@example.com", this.passwordEncoder.encode(UUID.randomUUID().toString())); // todo in the future, let's just lock the account
             return this.accountRepository.save(account);
         });
     }
