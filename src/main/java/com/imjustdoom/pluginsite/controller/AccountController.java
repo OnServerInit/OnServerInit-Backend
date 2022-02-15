@@ -2,7 +2,6 @@ package com.imjustdoom.pluginsite.controller;
 
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
-import com.imjustdoom.pluginsite.dtos.in.account.CreateAccountRequest;
 import com.imjustdoom.pluginsite.dtos.in.account.UpdateAccountRequest;
 import com.imjustdoom.pluginsite.dtos.out.account.AccountDto;
 import com.imjustdoom.pluginsite.dtos.out.account.SelfAccountDto;
@@ -17,7 +16,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,15 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountController {
     private final AccountService accountService;
     private final MessageService messageService;
-
-    @PostMapping("/register")
-    public String signupSubmit(@RequestBody CreateAccountRequest accountRequest) throws RestException {
-        Account account = this.accountService.register(accountRequest);
-
-        return ""; // todo return a registration DTO of some sort, probably with a session token
-    }
-
-    // todo login with JWT
 
     @GetMapping("/details")
     public SelfAccountDto getSelfAccountDetails(Account account) {

@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 /config.json
 resources/*
+run
 
 ### STS ###
 .apt_generated
