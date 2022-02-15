@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportController {
     private final ReportService reportService;
 
-    // todo should a DTO be returned instead of the raw Report here?
     @PostMapping
     public void createReport(Account account, @RequestBody CreateReportRequest request) {
         this.reportService.createReport(account, request);

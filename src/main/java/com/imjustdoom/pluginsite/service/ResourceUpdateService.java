@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +62,7 @@ public class ResourceUpdateService {
         return this.updateRepository.save(update);
     }
 
-    public void createUpdate(Account account, List<String> softwareCheckbox, List<String> versionCheckbox, int resourceId,
+    public void createUpdate(Account account, int resourceId,
                              MultipartFile file, CreateUpdateRequest request) throws RestException {
 
         if (this.updateRepository.getUpdatesCreateLastHour(account.getId()) > this.siteConfig.getMaxUpdatesPerHour()) throw new RestException(RestErrorCode.TOO_MANY_RESOURCE_UPDATES);
@@ -75,9 +74,9 @@ public class ResourceUpdateService {
         Resource resource = this.resourceRepository.findById(resourceId).orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND));
         Update update;
         if (file.isEmpty()) {
-            update = new Update(request.getDescription(), null, request.getVersion(), request.getExternalLink(), request.getName(), versionCheckbox, softwareCheckbox, resource);
+            update = new Update(request.getDescription(), null, request.getVersion(), request.getExternalLink(), request.getName(), request.getVersions(), request.getSoftware(), resource);
         } else {
-            update = new Update(request.getDescription(), file.getOriginalFilename(), request.getVersion(), null, request.getName(), versionCheckbox, softwareCheckbox, resource);
+            update = new Update(request.getDescription(), file.getOriginalFilename(), request.getVersion(), null, request.getName(), request.getVersions(), request.getSoftware(), resource);
             Path resourcePath = BASE_PATH.resolve(update.getId() + ".jar");
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, resourcePath);

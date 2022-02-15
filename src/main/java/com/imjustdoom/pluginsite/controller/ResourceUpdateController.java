@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.List;
 
 @RestController
 @RequestMapping("/resource/update")
@@ -41,11 +40,9 @@ public class ResourceUpdateController {
     }
 
     @PostMapping("/")
-    public void createUpdate(Account account, @RequestParam List<String> softwareCheckbox,
-                               @RequestParam List<String> versionCheckbox,
-                               @RequestParam int resourceId, @RequestParam MultipartFile file,
-                               @RequestBody CreateUpdateRequest updateRequest) throws RestException {
-        this.resourceUpdateService.createUpdate(account, softwareCheckbox, versionCheckbox, resourceId, file, updateRequest); // todo should the variables like softwareCheckbox be inside the create request?
+    public void createUpdate(Account account, @RequestParam int resourceId,
+                             @RequestParam MultipartFile file, @RequestBody CreateUpdateRequest updateRequest) throws RestException {
+        this.resourceUpdateService.createUpdate(account, resourceId, file, updateRequest);
     }
 
     @GetMapping(value = "/{updateId}/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
