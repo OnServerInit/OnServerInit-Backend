@@ -3,7 +3,11 @@ package com.imjustdoom.pluginsite.config.security.jwt;
 import com.imjustdoom.pluginsite.config.custom.JwtConfig;
 import com.imjustdoom.pluginsite.model.Account;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -55,9 +59,13 @@ public class JwtProvider {
     }
 
     public boolean validateToken(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(this.jwtConfig.getKey())
-            .build()
-            .parseClaimsJws(token) != null;
+        try {
+            return Jwts.parserBuilder()
+                .setSigningKey(this.jwtConfig.getKey())
+                .build()
+                .parseClaimsJws(token) != null;
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException ex) {
+            return false;
+        }
     }
 }
