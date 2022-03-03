@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,16 +41,19 @@ public class ResourceController {
 
     @PostMapping
     public void createResource(Account account, CreateResourceRequest request) throws RestException {
+        System.out.println("Account " + account + " request: " + request);
         this.resourceService.createResource(account, request);
     }
 
     @PostMapping("/{resourceId}/edit")
+    @PreAuthorize("isAuthenticated()")
     public void updateResourceInfo(Account account, @PathVariable int resourceId, @RequestParam(value = "file", required = false) MultipartFile file, CreateResourceRequest request) throws RestException {
         this.resourceService.updateResource(account, resourceId, file, request);
     }
 
     // todo properly delete
     @DeleteMapping("/{resourceId}")
+    @PreAuthorize("isAuthenticated()")
     public void deleteResource(@PathVariable int resourceId) {
         this.resourceRepository.updateStatusById(resourceId, "removed");
     }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,16 +31,19 @@ public class ResourceUpdateController {
     private final ResourceUpdateService resourceUpdateService;
 
     @PatchMapping("/{updateId}/status")
+    @PreAuthorize("isAuthenticated()")
     public Update changeStatus(Account account, @PathVariable int updateId, @RequestParam String status) throws RestException {
         return this.resourceUpdateService.changeStatus(account, updateId, status);
     }
 
     @PatchMapping("/{updateId}")
+    @PreAuthorize("isAuthenticated()")
     public Update editUpdate(Account account, @PathVariable int updateId, @RequestBody EditResourceUpdateRequest request) throws RestException {
         return this.resourceUpdateService.editUpdate(account, updateId, request);
     }
 
-    @PostMapping("/")
+    @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public void createUpdate(Account account, @RequestParam int resourceId,
                              @RequestParam MultipartFile file, @RequestBody CreateUpdateRequest updateRequest) throws RestException {
         this.resourceUpdateService.createUpdate(account, resourceId, file, updateRequest);

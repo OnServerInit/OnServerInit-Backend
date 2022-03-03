@@ -19,7 +19,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtProvider {
-    public static final String COOKIE_NAME = "JWT_TOKEN";
+    public static final String COOKIE_NAME = "JWT-TOKEN";
     private static final String USER_ID = "userId";
 
     private final JwtConfig jwtConfig;
