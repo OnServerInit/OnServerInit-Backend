@@ -7,10 +7,21 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Setter
@@ -24,7 +35,7 @@ public class Account implements UserDetails {
         this.email = email;
         this.password = password;
         this.joined = LocalDateTime.now();
-        this.role = "ROLE_USER";
+        this.role = Role.USER;
     }
 
     @Id
@@ -52,7 +63,8 @@ public class Account implements UserDetails {
     private int totalDownloads;
 
     @Column(nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @ManyToMany(mappedBy = "members")
     private List<MessageGroup> groups;
@@ -60,17 +72,13 @@ public class Account implements UserDetails {
     @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
     private List<Message> messages = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-
-        list.add(new SimpleGrantedAuthority(getRole()));
-
-        return list;
+        return Collections.singleton(new SimpleGrantedAuthority(this.role.toString()));
     }
 
     @Override
@@ -91,5 +99,15 @@ public class Account implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public enum Role {
+        USER,
+        ADMIN;
+
+        @Override
+        public String toString() {
+            return "ROLE_".concat(super.toString());
+        }
     }
 }
