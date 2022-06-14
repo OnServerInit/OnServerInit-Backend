@@ -12,6 +12,7 @@ import com.imjustdoom.pluginsite.service.ResourceService;
 import com.imjustdoom.pluginsite.service.ResourceUpdateService;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +20,8 @@ import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @RestController
 @RequestMapping("/resources")
@@ -50,14 +53,26 @@ public class ResourceController {
     @GetMapping("/{resourceId}")
     public SimpleResourceDto getResource(@PathVariable int resourceId) throws RestException {
         Resource resource = this.resourceService.getResource(resourceId);
-
         int totalDownloads = this.updateRepository.getTotalDownloads(resource.getId()).orElse(0);
+
         return SimpleResourceDto.create(resource, totalDownloads);
     }
 
-    // todo properly delete
+    // TODO: properly delete
     @DeleteMapping("/{resourceId}/delete")
     public void deleteResource(@PathVariable int resourceId) {
         this.resourceRepository.updateStatusById(resourceId, "removed");
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("GET");
+            }
+        };
     }
 }
