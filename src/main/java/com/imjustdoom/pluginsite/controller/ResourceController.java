@@ -7,7 +7,9 @@ import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
 import com.imjustdoom.pluginsite.repositories.ResourceRepository;
+import com.imjustdoom.pluginsite.repositories.UpdateRepository;
 import com.imjustdoom.pluginsite.service.ResourceService;
+import com.imjustdoom.pluginsite.service.ResourceUpdateService;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,21 +17,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/resource")
+@RequestMapping("/resources")
 @RequiredArgsConstructor
 public class ResourceController {
     private final ResourceService resourceService;
+    private final ResourceUpdateService resourceUpdateService;
     private final ResourceRepository resourceRepository;
+    private final UpdateRepository updateRepository;
 
     @GetMapping
     public Page<SimpleResourceDto> searchResources(@PageableDefault(size = 25, sort = "updated", direction = Sort.Direction.DESC) Pageable pageable,
@@ -48,8 +46,17 @@ public class ResourceController {
         this.resourceService.updateResource(account, resourceId, file, request);
     }
 
+    // TODO: make this return Resource instead of SimpleResourceDto, issue is something with Account giving this error "SyntaxError: JSON.parse: unterminated string at line 1 column 3005806 of the JSON data"
+    @GetMapping("/{resourceId}")
+    public SimpleResourceDto getResource(@PathVariable int resourceId) throws RestException {
+        Resource resource = this.resourceService.getResource(resourceId);
+
+        int totalDownloads = this.updateRepository.getTotalDownloads(resource.getId()).orElse(0);
+        return SimpleResourceDto.create(resource, totalDownloads);
+    }
+
     // todo properly delete
-    @DeleteMapping("/{resourceId}")
+    @DeleteMapping("/{resourceId}/delete")
     public void deleteResource(@PathVariable int resourceId) {
         this.resourceRepository.updateStatusById(resourceId, "removed");
     }

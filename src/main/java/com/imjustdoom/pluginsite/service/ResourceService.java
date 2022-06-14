@@ -24,12 +24,19 @@ public class ResourceService {
     private final UpdateRepository updateRepository;
     private final SiteConfig siteConfig;
 
-    public Page<SimpleResourceDto> searchResources(Pageable pageable, Predicate query) throws RestException {
+    public Page<SimpleResourceDto> searchResources(Pageable pageable, Predicate query) {
         return this.resourceRepository.findAll(query, pageable)
             .map(resource -> {
                 int totalDownloads = this.updateRepository.getTotalDownloads(resource.getId()).orElse(0);
                 return SimpleResourceDto.create(resource, totalDownloads);
             });
+    }
+
+    public Resource getResource(int resourceId) throws RestException {
+        Resource resource = this.resourceRepository.findById(resourceId)
+            .orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND, "Resource not found"));
+        resource.setAuthor(null);
+        return resource;
     }
 
     //TODO: More sanity checks
