@@ -49,7 +49,7 @@ public class ResourceController {
     public void updateResourceInfo(Account account, @PathVariable int resourceId, @RequestParam(value = "file", required = false) MultipartFile file, CreateResourceRequest request) throws RestException {
         this.resourceService.updateResource(account, resourceId, file, request);
     }
-    
+
     @GetMapping("/{resourceId}")
     public ResourceDto getResource(@PathVariable int resourceId) throws RestException {
         Resource resource = this.resourceService.getResource(resourceId);
