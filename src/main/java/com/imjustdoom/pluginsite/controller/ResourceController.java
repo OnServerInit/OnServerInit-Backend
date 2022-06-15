@@ -3,6 +3,7 @@ package com.imjustdoom.pluginsite.controller;
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
+import com.imjustdoom.pluginsite.dtos.out.ResourceDto;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
 import com.imjustdoom.pluginsite.model.Resource;
@@ -48,14 +49,13 @@ public class ResourceController {
     public void updateResourceInfo(Account account, @PathVariable int resourceId, @RequestParam(value = "file", required = false) MultipartFile file, CreateResourceRequest request) throws RestException {
         this.resourceService.updateResource(account, resourceId, file, request);
     }
-
-    // TODO: make this return Resource instead of SimpleResourceDto, issue is something with Account giving this error "SyntaxError: JSON.parse: unterminated string at line 1 column 3005806 of the JSON data"
+    
     @GetMapping("/{resourceId}")
-    public SimpleResourceDto getResource(@PathVariable int resourceId) throws RestException {
+    public ResourceDto getResource(@PathVariable int resourceId) throws RestException {
         Resource resource = this.resourceService.getResource(resourceId);
         int totalDownloads = this.updateRepository.getTotalDownloads(resource.getId()).orElse(0);
 
-        return SimpleResourceDto.create(resource, totalDownloads);
+        return ResourceDto.create(resource, totalDownloads);
     }
 
     // TODO: properly delete
