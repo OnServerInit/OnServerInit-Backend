@@ -1,18 +1,18 @@
 # OnServerInit
 
-A site where you can upload Minecraft Server plugins. Needs a name
+OnServerInit is a WIP Minecraft plugin marketplace. It aims to add the features that are missing
+from other marketplaces. We will have features that help developers with their plugins.
 
-This is a site created in Java using Springboot for the backend and html/css for the frontend. I aim to create a site
-for people to upload their Minecraft plugins for all different software, Sponge, Spigot, Minestom etc
+## Naming
 
-Current name is OnServerInit but not final
+The name is currently OnServerInit but this is not final, any other names are appreciated.
 
-No demo site at this time.
+## Links
 
-Trello board https://trello.com/b/nZ9TzBKC/onserverinit
+Trello board: https://trello.com/b/nZ9TzBKC/onserverinit
 
 Discord invite: https://discord.gg/Qw8N9J9zEc
 
 # Developing
 
-clone the github code then make a mysql database and change the database login details in resources/application.properties file
+Clone the github code then make a mysql database and change the database login details in resources/application.properties file
