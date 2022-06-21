@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ResourceService {
@@ -32,11 +34,13 @@ public class ResourceService {
             });
     }
 
-    public Resource getResource(int resourceId) throws RestException {
-        Resource resource = this.resourceRepository.findById(resourceId)
-            .orElseThrow(() -> new RestException(RestErrorCode.RESOURCE_NOT_FOUND, "Resource not found"));
-        resource.setAuthor(null);
-        return resource;
+    public Resource getResource(int resourceId) {
+        Optional<Resource> resource = this.resourceRepository.findById(resourceId);
+
+        if(resource.isEmpty()) return null;
+
+        resource.get().setAuthor(null);
+        return resource.get();
     }
 
     //TODO: More sanity checks

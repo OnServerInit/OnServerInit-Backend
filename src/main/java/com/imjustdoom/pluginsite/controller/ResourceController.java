@@ -3,6 +3,7 @@ package com.imjustdoom.pluginsite.controller;
 import com.imjustdoom.pluginsite.config.exception.RestErrorCode;
 import com.imjustdoom.pluginsite.config.exception.RestException;
 import com.imjustdoom.pluginsite.dtos.in.CreateResourceRequest;
+import com.imjustdoom.pluginsite.dtos.out.ErrorDto;
 import com.imjustdoom.pluginsite.dtos.out.ResourceDto;
 import com.imjustdoom.pluginsite.dtos.out.SimpleResourceDto;
 import com.imjustdoom.pluginsite.model.Account;
@@ -51,8 +52,10 @@ public class ResourceController {
     }
 
     @GetMapping("/{resourceId}")
-    public ResourceDto getResource(@PathVariable int resourceId) throws RestException {
+    public Object getResource(@PathVariable int resourceId) {
         Resource resource = this.resourceService.getResource(resourceId);
+        if(resource == null) return ErrorDto.create(404, "This resource does not exist :(");
+
         int totalDownloads = this.updateRepository.getTotalDownloads(resource.getId()).orElse(0);
 
         return ResourceDto.create(resource, totalDownloads);
